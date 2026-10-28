@@ -69,7 +69,7 @@
       var img=$('img',el);show(el);
       var tl=gsap.timeline({scrollTrigger:trig(el)});
       tl.fromTo(el,{clipPath:'inset(100% 0% 0% 0%)'},{clipPath:'inset(0% 0% 0% 0%)',duration:T.durLong,ease:T.easeInOut,clearProps:'clipPath'});
-      if(img)tl.fromTo(img,{scale:1.18},{scale:1,duration:1.8,ease:T.ease,clearProps:'transform'},0);
+      if(img&&!img.hasAttribute('data-parallax'))tl.fromTo(img,{scale:1.18},{scale:1,duration:1.8,ease:T.ease,clearProps:'transform'},0);
     },
     'count':function(el){
       var txt=el.textContent,m=txt.match(/^(\D*?)(\d+(?:\.\d+)?)([\s\S]*)$/);if(!m)return;
@@ -96,7 +96,41 @@
       var s=parseFloat(el.getAttribute('data-speed'))||8,box=el.closest('section')||el.parentElement;
       gsap.fromTo(el,{yPercent:-s,scale:1.18},{yPercent:s,scale:1.18,ease:'none',scrollTrigger:{trigger:box,start:'top bottom',end:'bottom top',scrub:true}});
     });
+    // layered parallax inside a section: data-parallax="speed" (negative moves against the others).
+    // An image inside a clipping .frame is scaled up a little so its edges never show.
+    $$('[data-parallax]').forEach(function(el){
+      var s=parseFloat(el.getAttribute('data-parallax'))||6,inFrame=!!el.closest('.frame'),box=el.closest('section')||el.parentElement;
+      gsap.fromTo(el,{yPercent:-s,scale:inFrame?1.16:1},{yPercent:s,scale:inFrame?1.16:1,ease:'none',scrollTrigger:{trigger:box,start:'top bottom',end:'bottom top',scrub:true}});
+    });
   });
+
+  // ---------- atmosphere: one fixed sky behind the cinematic zone, dawn -> day -> sunset -> dusk ----------
+  // Only CSS variables change. Every stop is dark enough for white text (checked in tools/check-contrast.mjs).
+  var atm=$('.atmos');
+  if(atm){
+    var SKY={ // [top, bottom, glow] from the brand palette: navy/teal base, coral and gold light
+      dawn:  ['#0d2638','#1d2c44','rgba(224,102,74,.20)'],
+      day:   ['#08303f','#0c4350','rgba(176,125,58,.16)'],
+      sunset:['#14213a','#3a2433','rgba(224,102,74,.30)'],
+      dusk:  ['#071a26','#0f1d33','rgba(242,215,166,.10)']
+    };
+    var parse=function(c){var m=c.match(/[\d.]+/g);if(c[0]==='#'){var n=parseInt(c.slice(1),16);return [n>>16,n>>8&255,n&255,1];}return [+m[0],+m[1],+m[2],m[3]===undefined?1:+m[3]];};
+    for(var k in SKY)SKY[k]=SKY[k].map(parse);
+    var mix=function(a,b,t){return 'rgba('+[0,1,2].map(function(i){return Math.round(a[i]+(b[i]-a[i])*t);}).join(',')+','+(a[3]+(b[3]-a[3])*t).toFixed(3)+')';};
+    // stops are scroll positions where a section's top reaches mid-screen
+    var plan=[['#hero','dawn'],['#villas','day'],['#gallery','sunset'],['#location','dusk']],stops=[];
+    var measure=function(){stops=plan.map(function(p){var el=$(p[0]);return el?{y:Math.max(0,el.getBoundingClientRect().top+scrollY-innerHeight/2),c:SKY[p[1]]}:null;}).filter(Boolean);stops[0].y=0;};
+    var last='';
+    var paint=function(){
+      var y=scrollY,i=0;while(i<stops.length-1&&y>stops[i+1].y)i++;
+      var a=stops[i],b=stops[Math.min(i+1,stops.length-1)],t=b.y>a.y?Math.min(1,Math.max(0,(y-a.y)/(b.y-a.y))):0;
+      var v=[0,1,2].map(function(j){return mix(a.c[j],b.c[j],t);}),key=v.join();
+      if(key===last)return;last=key;
+      atm.style.setProperty('--atm-top',v[0]);atm.style.setProperty('--atm-bottom',v[1]);atm.style.setProperty('--atm-glow',v[2]);
+    };
+    measure();paint();
+    ScrollTrigger.create({start:0,end:'max',onUpdate:paint,onRefresh:function(){measure();paint();}});
+  }
 
   // ---------- header: hide on scroll down, show on scroll up (desktop) ----------
   if(hdr){
@@ -119,23 +153,30 @@
     var media=$('.hero-media',hero),img=$('.hero-media img',hero),scrim=$('.hero-scrim',hero),copy=$('.hero-copy',hero),cue=$('.scroll-cue',hero);
     var h1=$('h1',copy),eyebrow=$('.eyebrow',copy),sub=$('.sub',copy),pills=$$('.pill',copy),ctas=$$('.cta-row>*',copy),cap=$('.cap',copy);
     var kb=null;
-    if(!late)mm.add(OK,function(){
+    if(!late)mm.add({motion:OK,phone:'(max-width: 767px)'},function(ctx){
+      if(!ctx.conditions.motion)return;
       gsap.set(copy.children,{visibility:'visible'});
       // Ken Burns: settle from a slight zoom, then a very slow drift
       kb=gsap.timeline();
       kb.fromTo(img,{scale:1.14},{scale:1.02,duration:2.8,ease:'power2.out'})
         .to(img,{scale:1.09,duration:18,ease:'sine.inOut',yoyo:true,repeat:-1});
-      // intro sequence: eyebrow, headline lines, sub, pills, buttons, caption, scroll cue
+      // intro: location line, headline lines and the two buttons first; once the headline has settled,
+      // the subtext and pills follow (on phones the pills wait until the visitor starts scrolling)
       var intro=gsap.timeline({delay:.15,defaults:{ease:T.ease}});
       intro.fromTo(eyebrow,{autoAlpha:0,y:14},{autoAlpha:1,y:0,duration:.9});
       var split=SplitText.create(h1,{type:'lines',mask:'lines',linesClass:'ln',autoSplit:true,onSplit:function(self){
         return gsap.fromTo(self.lines,{yPercent:115},{yPercent:0,duration:T.durLong,ease:T.ease,stagger:.12,delay:.35});
       }});
-      intro.fromTo(sub,{autoAlpha:0,y:18},{autoAlpha:1,y:0,duration:1},.95)
-        .fromTo(pills,{autoAlpha:0,y:14},{autoAlpha:1,y:0,duration:.8,stagger:.07},1.1)
-        .fromTo(ctas,{autoAlpha:0,y:14},{autoAlpha:1,y:0,duration:.8,stagger:.09},1.25)
-        .fromTo(cap,{autoAlpha:0},{autoAlpha:.75,duration:.8},1.5);
-      if(cue)intro.fromTo(cue,{autoAlpha:0},{autoAlpha:1,duration:.8},1.7);
+      intro.fromTo(ctas,{autoAlpha:0,y:14},{autoAlpha:1,y:0,duration:.8,stagger:.09},.9)
+        .fromTo(sub,{autoAlpha:0,y:18},{autoAlpha:1,y:0,duration:1},2.05)
+        .fromTo(cap,{autoAlpha:0},{autoAlpha:.75,duration:.8},2.4);
+      if(ctx.conditions.phone){
+        gsap.set(pills,{autoAlpha:0,y:14});
+        ScrollTrigger.create({trigger:hero,start:'top+=8 top',once:true,onEnter:function(){gsap.to(pills,{autoAlpha:1,y:0,duration:.8,stagger:.07,ease:T.ease});}});
+      }else{
+        intro.fromTo(pills,{autoAlpha:0,y:14},{autoAlpha:1,y:0,duration:.8,stagger:.07},2.2);
+      }
+      if(cue)intro.fromTo(cue,{autoAlpha:0},{autoAlpha:1,duration:.8},2.5);
       // on scroll: the image drifts down and grows a touch, the scrim deepens, the copy lifts away
       var out=gsap.timeline({scrollTrigger:{trigger:hero,start:'top top',end:'bottom top',scrub:true}});
       out.fromTo(media,{yPercent:0,scale:1},{yPercent:16,scale:1.06,ease:'none'},0)

@@ -10,14 +10,14 @@ const results = [];
 const check = (name, ok, info = '') => { results.push({ name, ok, info }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  - ' + info : ''}`); };
 const browser = await chromium.launch();
 
-async function open(opts = {}, url = base) {
+async function open(opts = {}, url = base, waitUntil = 'load') {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, ...opts });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); }); // failed loads are checked via responses
   page.on('response', r => { if (r.status() >= 400 && !OPTIONAL.test(r.url())) errors.push(`${r.status()} ${r.url()}`); });
-  await page.goto(url, { waitUntil: 'load' });
+  await page.goto(url, { waitUntil });
   return { ctx, page, errors };
 }
 const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(60); } await page.waitForTimeout(900); };
@@ -59,7 +59,7 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   // reveals: scroll through the page, then everything must be visible
   for (let i = 0; i < 30; i++) await page.mouse.wheel(0, 500), await page.waitForTimeout(90);
   await page.waitForTimeout(1800);
-  const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-anim], [data-anim="stagger"] > *')].filter(e => !e.closest('[hidden]') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).map(e => e.tagName + '.' + e.className + ' ' + (e.textContent || '').trim().slice(0, 30)));
+  const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-anim], [data-anim="stagger"] > *')].filter(e => !e.closest('.sec-bg') && !e.closest('[hidden]') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).map(e => e.tagName + '.' + e.className + ' ' + (e.textContent || '').trim().slice(0, 30)));
   check('desktop: every revealed element ends fully visible', hidden.length === 0, hidden.slice(0, 5).join(' | '));
   const counts = await page.$$eval('[data-anim="count"]', b => b.map(x => x.textContent));
   check('desktop: counters end on the original text', counts.join('|') === '3 cent|< 30 min|~3 km', counts.join(' | '));
@@ -105,6 +105,36 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   await ctx.close();
 }
 
+// ---------- Phase 3: hero order, atmosphere, about half-bleed, curtain hand-off ----------
+{
+  const { ctx, page, errors } = await open({}, base, 'domcontentloaded');
+  await page.waitForTimeout(1300);
+  const early = await page.evaluate(() => ({ h1: getComputedStyle(document.querySelector('.hero h1')).visibility, cta: +getComputedStyle(document.querySelector('.hero .cta-row .btn')).opacity, sub: +getComputedStyle(document.querySelector('.hero .sub')).opacity, pill: +getComputedStyle(document.querySelector('.hero .pill')).opacity }));
+  check('hero: buttons arrive with the headline; subtext and pills only after it settles', early.cta > .5 && early.sub < .05 && early.pill < .05, JSON.stringify(early));
+  await page.waitForTimeout(2500);
+  const order = await page.evaluate(() => [...document.querySelector('.hero-copy').querySelectorAll('.eyebrow,h1,.cta-row,.sub,.pills,.cap')].map(e => e.className || e.tagName).join(' > '));
+  check('hero: order is location, headline, buttons, subtext, pills, caption', order === 'eyebrow > H1 > cta-row > sub > pills > cap', order);
+  const sky = async y => { await page.evaluate(y => window.lenis.scrollTo(y, { immediate: true }), y); await page.waitForTimeout(300); return page.evaluate(() => getComputedStyle(document.querySelector('.atmos')).getPropertyValue('--atm-bottom').trim()); };
+  const ys = await page.evaluate(() => ['#villas', '#gallery', '#location'].map(s => Math.round(document.querySelector(s).getBoundingClientRect().top + scrollY - innerHeight / 2)));
+  const skies = [await sky(0), await sky(ys[0]), await sky(ys[1]), await sky(ys[2])];
+  check('atmosphere: sky changes dawn -> day -> sunset -> dusk with scroll', new Set(skies).size === 4, skies.join(' | '));
+  await page.evaluate(() => window.lenis.scrollTo('#about', { immediate: true })); await page.waitForTimeout(1500);
+  const bleed = await page.evaluate(() => ({ right: Math.round(document.querySelector('#about .frame').getBoundingClientRect().right), vw: document.documentElement.clientWidth, hscroll: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
+  check('about: image runs to the right edge, no horizontal scroll', bleed.right >= bleed.vw - 1 && !bleed.hscroll, JSON.stringify(bleed));
+  await page.screenshot({ path: `${out}/1440-about.png` });
+  const devTop = await page.evaluate(() => Math.round(document.getElementById('development').getBoundingClientRect().top + scrollY));
+  await page.evaluate(y => window.lenis.scrollTo(y + 500, { immediate: true }), devTop); await page.waitForTimeout(600);
+  const cur = await page.evaluate(() => ({ dev: Math.round(document.getElementById('development').getBoundingClientRect().top), loc: Math.round(document.getElementById('location').getBoundingClientRect().top), vh: innerHeight }));
+  check('hand-off: banner holds at the top while Location slides over it', cur.dev === 0 && cur.loc < cur.vh, JSON.stringify(cur));
+  await page.screenshot({ path: `${out}/1440-curtain.png` });
+  await page.evaluate(() => window.lenis.scrollTo('#enquire', { immediate: true })); await page.waitForTimeout(1800);
+  await page.screenshot({ path: `${out}/1440-enquire.png` });
+  await page.evaluate(() => window.lenis.scrollTo('#gallery', { immediate: true })); await page.waitForTimeout(1500);
+  await page.screenshot({ path: `${out}/1440-gallery.png` });
+  check('phase 3: no JS errors', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
 // ---------- mobile 390 (touch, native scrolling) ----------
 {
   const { ctx, page, errors } = await open({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
@@ -113,6 +143,12 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   const st = await page.evaluate(() => ({ heroH: document.querySelector('.hero').getBoundingClientRect().height, vh: innerHeight, pos: getComputedStyle(document.querySelector('.hero-media img')).objectPosition, overflow: document.documentElement.scrollWidth > innerWidth }));
   check('mobile: full-height hero (100svh) with mobile crop', st.heroH >= 842 && st.pos.startsWith('56%'), `${st.heroH}/${st.vh}px, object-position ${st.pos}`);
   check('mobile: no horizontal page scroll', !st.overflow);
+  const pillsBefore = await page.evaluate(() => getComputedStyle(document.querySelector('.hero .pill')).visibility);
+  const subShown = await page.evaluate(() => +getComputedStyle(document.querySelector('.hero .sub')).opacity > .99);
+  await page.evaluate(() => scrollTo(0, 40)); await page.waitForTimeout(1200);
+  const pillsAfter = await page.evaluate(() => getComputedStyle(document.querySelector('.hero .pill')).visibility + ' ' + getComputedStyle(document.querySelector('.hero .pill')).opacity);
+  check('mobile: subtext shown after headline; pills wait until scrolled', subShown && pillsBefore === 'hidden' && pillsAfter === 'visible 1', `before: ${pillsBefore}, after: ${pillsAfter}`);
+  await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(400);
   await page.tap('#menuBtn'); await page.waitForTimeout(300);
   check('mobile: menu opens', await page.evaluate(() => !document.getElementById('mnav').hidden));
   await page.tap('#mnav a[href="#gallery"]'); await page.waitForTimeout(1800);
@@ -135,7 +171,7 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   await page.waitForTimeout(400);
   const st = await page.evaluate(() => ({
     motion: document.documentElement.classList.contains('motion'), lenis: document.documentElement.classList.contains('lenis'),
-    hidden: [...document.querySelectorAll('[data-anim], .hero-copy>*:not(.cap)')].filter(e => e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).length,
+    hidden: [...document.querySelectorAll('[data-anim], .hero-copy>*:not(.cap)')].filter(e => !e.closest('.sec-bg') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).length,
     imgTransform: getComputedStyle(document.querySelector('.hero-media img')).transform,
   }));
   check('reduced motion: no smooth scroll, nothing hidden, no Ken Burns', !st.motion && !st.lenis && st.hidden === 0 && st.imgTransform === 'none', JSON.stringify(st));

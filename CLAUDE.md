@@ -14,7 +14,10 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 - The head script sets `js hero-panel motion` on `<html>` (`motion` only without reduced motion). CSS hides reveal targets only under `.motion`. A 4 s failsafe removes `motion` and `hero-panel` if the scripts never run. Scripts that run late skip entrance animations.
 - Lenis: wheel smoothing only, native touch. Anchors are handled in motion.js; Lenis applies the CSS `scroll-padding-top` for the header. `site:lock` events from main.js (lightbox, enquiry panel) stop and start Lenis. Scrollable overlays carry `data-lenis-prevent`.
 - `CONFIG.HERO_FORM_MODE`: `'panel'` (the hero form moves into `#enqPanel`, opened by `[data-panel]` buttons) or `'inline'`. `CONFIG.heroLoop`: an optional desktop hero video, probed with a HEAD request after load.
-- Tests: `node tools/test-motion.mjs` (31 behaviour checks), `tools/verify-load.mjs`, `tools/check-brand.mjs`.
+- Atmosphere: `.atmos` is a fixed sky behind the `.cine` sections (strip, about, villas, walkthrough, gallery, development banner, enquire). motion.js blends `--atm-top/--atm-bottom/--atm-glow` dawn, then day, sunset and dusk, using stops at #hero, #villas, #gallery and #location. Every other `main>section` is opaque white or sand.
+- Layered parallax: `data-parallax="speed"` (an image inside a clipping `.frame` is scaled so its edges never show). Curtain hand-off: `.handoff` wraps #development (sticky, desktop) and #location (`.curtain`, slides over).
+- Hero copy order: location line, h1, buttons, then `.hero-more` (subtext and pills), which arrive after the headline. On phones the pills wait for the first scroll and sit just below the fold.
+- Tests: `node tools/test-motion.mjs` (38 behaviour checks), `node tools/check-contrast.mjs` (measures real contrast behind text over images and the atmosphere; must report 0 below AA), `tools/verify-load.mjs`, `tools/check-brand.mjs`.
 
 ## HARD RULES
 1. Never change, rewrite or delete the client's copy, prices, facts, disclaimers, FAQ or compliance text. The one exception is brand surfaces (see REBRAND). Keep "Defender Real Estates & Builders Limited" exactly as written (it is the RERA promoter name).
