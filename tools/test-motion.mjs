@@ -57,7 +57,8 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   check('desktop: progress line follows scroll', prog !== 'none' && prog !== 'matrix(0, 0, 0, 1, 0, 0)', prog);
 
   // reveals: scroll through the page, then everything must be visible
-  for (let i = 0; i < 30; i++) await page.mouse.wheel(0, 500), await page.waitForTimeout(90);
+  // wheel down until the bottom of the page is reached (page length changes with design and pinned scenes)
+  for (let i = 0; i < 120 && await page.evaluate(() => scrollY + innerHeight < document.documentElement.scrollHeight - 4); i++) await page.mouse.wheel(0, 500), await page.waitForTimeout(90);
   await page.waitForTimeout(1800);
   const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-anim], [data-anim="stagger"] > *')].filter(e => !e.closest('.sec-bg') && !e.closest('[hidden]') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).map(e => e.tagName + '.' + e.className + ' ' + (e.textContent || '').trim().slice(0, 30)));
   check('desktop: every revealed element ends fully visible', hidden.length === 0, hidden.slice(0, 5).join(' | '));

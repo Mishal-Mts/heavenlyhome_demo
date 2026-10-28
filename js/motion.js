@@ -109,10 +109,10 @@
   // Only CSS variables change. Every stop is dark enough for white text (checked in tools/check-contrast.mjs).
   var atm=$('.atmos');
   if(atm){
-    var SKY={ // [top, bottom, glow] from the brand palette: navy/teal base, coral and gold light
-      dawn:  ['#0d2638','#1d2c44','rgba(224,102,74,.20)'],
+    var SKY={ // [top, bottom, glow] from the brand palette: navy base, gold and red light
+      dawn:  ['#0d2638','#1b2a44','rgba(242,215,166,.14)'],
       day:   ['#08303f','#0c4350','rgba(176,125,58,.16)'],
-      sunset:['#14213a','#3a2433','rgba(224,102,74,.30)'],
+      sunset:['#14213a','#36202e','rgba(209,0,28,.22)'],
       dusk:  ['#071a26','#0f1d33','rgba(242,215,166,.10)']
     };
     var parse=function(c){var m=c.match(/[\d.]+/g);if(c[0]==='#'){var n=parseInt(c.slice(1),16);return [n>>16,n>>8&255,n&255,1];}return [+m[0],+m[1],+m[2],m[3]===undefined?1:+m[3]];};

@@ -1,4 +1,4 @@
-:root{--teal:#00606e;--teal2:#0a7a8a;--navy:#0b2a3c;--deep:#071a26;--sand:#f7f3ec;--gold:#b07d3a;--coral:#e0664a;--coral2:#c9533a;--ink:#1c2a33;--mute:#5d6a73;--line:#e8e3d8;--r:16px;--serif:"Playfair Display",Georgia,serif;--sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+:root{--teal:#163b54;--teal2:#24506c;--navy:#0b2a3c;--deep:#071a26;--sand:#f6f2ea;--gold:#8a5f24;--coral:#d1001c;--coral2:#a8001a;--ink:#1c2a33;--mute:#5d6a73;--line:#e8e3d8;--r:16px;--serif:"Playfair Display",Georgia,serif;--sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:76px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:var(--sans);color:var(--ink);line-height:1.6;background:#fff;-webkit-font-smoothing:antialiased}
@@ -16,7 +16,7 @@ h1,h2,h3{font-family:var(--serif);line-height:1.15;color:var(--navy);font-weight
 .alt{background:var(--sand)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:999px;font:600 .96rem var(--sans);text-decoration:none;border:0;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
 .btn:hover{transform:translateY(-1px)}
-.btn-primary{background:var(--coral);color:#fff;box-shadow:0 8px 20px rgba(224,102,74,.32)}
+.btn-primary{background:var(--coral);color:#fff;box-shadow:0 8px 22px rgba(209,0,28,.24)}
 .btn-primary:hover{background:var(--coral2)}
 .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.7);backdrop-filter:blur(4px)}
 .btn-teal{background:var(--teal);color:#fff}
@@ -219,7 +219,7 @@ details p{margin-top:0;padding-bottom:16px;color:var(--mute);font-size:.94rem}
 /* forms */
 label{display:block;font-size:.78rem;font-weight:600;margin:12px 0 5px;color:var(--navy)}
 input,select,textarea{width:100%;min-height:50px;border-radius:12px;border:1.5px solid #d3dbe0;padding:11px 14px;font:inherit;color:var(--ink);background:#fff}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,96,110,.15)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,42,60,.14)}
 textarea{min-height:90px}
 .row{display:grid}
 @media(min-width:700px){.row{grid-template-columns:1fr 1fr;gap:16px}}
@@ -523,3 +523,82 @@ main>section,.handoff>.curtain{background:#fff}
 .strip-bg img{opacity:.14}
 .gulf .sec-bg img{opacity:.22}
 .ai-badge{position:absolute;left:10px;bottom:12px;z-index:3;background:rgba(7,26,38,.74);color:#fff;font-size:.62rem;font-weight:600;letter-spacing:.05em;padding:3px 9px;border-radius:999px;pointer-events:none}
+
+/* ======================= Design polish pass ======================= */
+/* --- typography: larger, lighter display headings, calmer rhythm --- */
+body{line-height:1.7}
+h1,h2,h3{font-weight:400;letter-spacing:-.012em}
+section{padding:clamp(72px,10vw,136px) 0}
+.eyebrow{letter-spacing:.22em;font-size:.72rem;margin-bottom:16px}
+.sec-head{margin-bottom:clamp(36px,5vw,64px)}
+.sec-head h2{font-size:clamp(2.1rem,4.4vw,3.5rem);line-height:1.08;margin-bottom:18px}
+.sec-head p{font-size:1.05rem;line-height:1.7;max-width:52ch}
+.hero h1{font-size:clamp(2.4rem,6.4vw,4.8rem);line-height:1.04;letter-spacing:-.02em}
+@media(min-width:1500px){.hero h1{font-size:5.4rem}}
+@media(max-width:420px){.hero h1{font-size:2.3rem}}
+.hero .eyebrow{margin-bottom:20px}
+.about h2,#about h2{font-size:clamp(2.3rem,3.8vw,3.6rem);line-height:1.08}
+.banner h2,.cta-sec h2,.gulf h2{font-size:clamp(2.1rem,4.4vw,3.4rem);line-height:1.08;margin-bottom:18px}
+.card h3{font-size:1.6rem}
+.price{font-weight:400;font-size:2.1rem;letter-spacing:-.01em}
+.gf h3{font-size:2rem}
+details summary{font-weight:500}
+
+/* --- fewer competing elements: lighter chrome, fewer boxes and shadows --- */
+.pill{background:transparent;border-color:rgba(255,255,255,.3);backdrop-filter:none;font-weight:500}
+.card{box-shadow:0 14px 40px rgba(7,26,38,.08)}
+.cine .card{border:0}
+.badge{font-size:.64rem;padding:5px 11px}
+.strip li{border:0!important}
+.strip b{font-weight:400;font-size:1.7rem}
+.specs div{background:none;border:0;border-top:1px solid var(--line);border-radius:0;padding:16px 0}
+.am div{background:none;border:0;padding:10px 6px;font-weight:500}
+.am .ic{border-radius:50%;background:none;border:1px solid rgba(138,95,36,.35)}
+.rent .card,#rent .card{box-shadow:none}
+.gl{box-shadow:none}
+details{border-radius:0;border:0;border-bottom:1px solid var(--line);background:none;padding:0 4px;margin-bottom:0}
+#faq .sec-head+details{border-top:1px solid var(--line)}
+
+/* --- accent (red) only on primary buttons and small highlights; gold and navy for the rest --- */
+nav ul a:hover{color:#f2d7a6}
+header.solid nav ul a:hover{color:var(--gold)}
+.badge.b2{background:var(--gold)}
+.dots button.on::before{background:var(--navy)}
+.cine .dots button.on::before{background:#d9b26a}
+.loc-list li::before{background:var(--gold)}
+summary::after{color:var(--gold)}
+.gf .mg{background:var(--gold)}
+.ci a:hover{color:var(--navy)}
+.hs i{border-color:#d9b26a}
+.p360{background:rgba(7,26,38,.8)}
+.car-btn:hover:not(:disabled){background:var(--navy);border-color:var(--navy)}
+.ticks li::before,.trust li::before{background-color:var(--gold)}
+.steps .on{background:var(--navy);border-color:var(--navy)}
+.mapbox circle[fill="#e0664a"]{fill:var(--coral)}
+.mapbox .pulse{stroke:var(--coral)}
+.progress span{background:#d9b26a}
+/* secondary buttons on dark areas become quiet outlines */
+.cine .btn-teal,.gulf .btn-teal{background:transparent;border:1.5px solid rgba(255,255,255,.55)}
+/* focus ring stays visible on dark areas */
+.hero :focus-visible,.cine :focus-visible,.gulf :focus-visible,footer :focus-visible,.strip :focus-visible{outline-color:#f2d7a6}
+
+/* --- no two neighbouring sections share a layout (desktop): split headings alternate with centred ones --- */
+@media(min-width:1024px){
+ /* walkthrough: heading left, intro right, then the two frames */
+ #walkthrough .sec-head{display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:6px 64px;text-align:left}
+ #walkthrough .sec-head .eyebrow{grid-column:1}
+ #walkthrough .sec-head h2{grid-column:1;margin-bottom:0}
+ #walkthrough .sec-head p{grid-column:2;grid-row:2;margin:0}
+ /* location: left-aligned heading above the list and sketch */
+ #location .sec-head{text-align:left}
+ #location .ornament{justify-content:flex-start}
+ /* approvals: heading in a side column */
+ #trust>.wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,2fr);gap:64px;align-items:start}
+ #trust .sec-head{text-align:left;margin:0}
+ #trust .grid.two{grid-template-columns:1fr;gap:40px}
+ /* rent-out: heading beside the two options */
+ #rent>.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:24px 64px;align-items:center}
+ #rent .sec-head{text-align:left;margin:0}
+ #rent .sec-head p{margin:0}
+ #rent>.wrap>.note{grid-column:2;text-align:left!important}
+}
