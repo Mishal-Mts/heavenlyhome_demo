@@ -1,0 +1,17 @@
+{
+  "name": "defender-villas",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static site for Defender Villas (beach villas near Kodungallur). No runtime build step.",
+  "scripts": {
+    "images": "node tools/build-images.mjs",
+    "brand": "node tools/build-brand.mjs",
+    "serve": "http-server . -p 8080 -c-1",
+    "shots": "node tools/screenshots.mjs"
+  },
+  "devDependencies": {
+    "http-server": "14.1.1",
+    "playwright": "1.56.1",
+    "sharp": "0.34.4"
+  }
+}
