@@ -4,7 +4,8 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 
 ## Files
 - `index.html`: markup. `css/styles.css`: styles. `js/main.js`: behaviour, with **CONFIG at the top** (all client details and `CONFIG.brand`).
-- `images/originals/`: source files (never referenced by the page). `tools/build-images.mjs` (`npm run images`) makes AVIF/WebP widths in `images/` and rewrites every `<picture data-img="name">` in index.html.
+- Images are **slots** in `CONFIG.images` (js/main.js): `{current, hires}`. `tools/build-images.mjs` (`npm run images` or `update-images.bat`) uses hires if the file exists, else current. It writes AVIF/WebP/JPEG copies only to `images/auto/` and rewrites every `<picture data-img="slot">` (sources, fallback src, width/height, `data-lowres` + `--src-w/--src-h` when the image is smaller than its place). Optional slots (current:'') stay `hidden`; `data-show-with` elements (AI badges, footer disclosure) follow them. The report prints every slot and which file it uses.
+- `images/originals/` is legacy (Phase 0 copies; the logo source for `tools/build-brand.mjs`, which now needs `--force`).
 - `tools/build-brand.mjs` (`npm run brand`): logo variants, favicons and `images/og-image.jpg`.
 - `tools/screenshots.mjs <label>`, `tools/diff.mjs <a> <b>`, `tools/check-brand.mjs`: Playwright checks (serve first with `npm run serve`).
 
@@ -20,6 +21,12 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 - Signature scenes (only at min-width 1024px, min-height 700px, motion allowed): #villas `.v-scene` pins and crossfades the Premium card into the Budget card (`.is-pinned`; the plan card moves to `.v-plan` and back on revert). #gallery pins and scrolls its track sideways (`.is-hscroll`). Keyboard focus inside a pinned scene seeks the scroll to show the focused item. Phones, smaller screens and reduced motion keep the swipe carousels. Pins use refreshPriority; the atmosphere trigger is -1 so it measures after them.
 - Location sketch: `.route-draw` (a mask path, pathLength 1) draws with stroke-dashoffset on scroll; `.pulse` ring is CSS. Ornament divider: `#i-orn` symbol.
 - Tests: `node tools/test-motion.mjs` (50 behaviour checks), `node tools/check-contrast.mjs` (measures real contrast behind text over images and the atmosphere; must report 0 below AA), `tools/verify-load.mjs`, `tools/check-brand.mjs`.
+
+## IMAGE SAFETY RULES
+- Never delete, overwrite, rename, move or recompress any existing image in /images. Processing writes new files only (images/auto/).
+- `images/brochure-originals/` is a permanent read-only backup of the whole /images folder as it was before Phase 5. Never modify it.
+- New images are added next to the brochure ones as `<slot>-hires.<ext>`. Replacing or undoing never needs a code change.
+- Never remove a brochure image from the page unless the user explicitly says so.
 
 ## HARD RULES
 1. Never change, rewrite or delete the client's copy, prices, facts, disclaimers, FAQ or compliance text. The one exception is brand surfaces (see REBRAND). Keep "Defender Real Estates & Builders Limited" exactly as written (it is the RERA promoter name).

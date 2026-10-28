@@ -94,7 +94,8 @@
   mm.add('(min-width: 768px) and '+OK,function(){
     $$('[data-anim="parallax"]').forEach(function(el){
       var s=parseFloat(el.getAttribute('data-speed'))||8,box=el.closest('section')||el.parentElement;
-      gsap.fromTo(el,{yPercent:-s,scale:1.18},{yPercent:s,scale:1.18,ease:'none',scrollTrigger:{trigger:box,start:'top bottom',end:'bottom top',scrub:true}});
+      var sc=el.hasAttribute('data-lowres')?1.04:1.18; // a small image is barely enlarged
+      gsap.fromTo(el,{yPercent:-s,scale:sc},{yPercent:s,scale:sc,ease:'none',scrollTrigger:{trigger:box,start:'top bottom',end:'bottom top',scrub:true}});
     });
     // layered parallax inside a section: data-parallax="speed" (negative moves against the others).
     // An image inside a clipping .frame is scaled up a little so its edges never show.
@@ -119,7 +120,7 @@
     var mix=function(a,b,t){return 'rgba('+[0,1,2].map(function(i){return Math.round(a[i]+(b[i]-a[i])*t);}).join(',')+','+(a[3]+(b[3]-a[3])*t).toFixed(3)+')';};
     // stops are scroll positions where a section's top reaches mid-screen
     var plan=[['#hero','dawn'],['#villas','day'],['#gallery','sunset'],['#location','dusk']],stops=[];
-    var measure=function(){stops=plan.map(function(p){var el=$(p[0]);return el?{y:Math.max(0,el.getBoundingClientRect().top+scrollY-innerHeight/2),c:SKY[p[1]]}:null;}).filter(Boolean);stops[0].y=0;};
+    var measure=function(){stops=plan.map(function(p){var el=$(p[0]);return el?{y:Math.max(0,el.getBoundingClientRect().top+scrollY-innerHeight/2),c:SKY[p[1]],n:p[1]}:null;}).filter(Boolean);stops[0].y=0;};
     var last='';
     var paint=function(){
       var y=scrollY,i=0;while(i<stops.length-1&&y>stops[i+1].y)i++;
@@ -127,6 +128,8 @@
       var v=[0,1,2].map(function(j){return mix(a.c[j],b.c[j],t);}),key=v.join();
       if(key===last)return;last=key;
       atm.style.setProperty('--atm-top',v[0]);atm.style.setProperty('--atm-bottom',v[1]);atm.style.setProperty('--atm-glow',v[2]);
+      // optional faint sky images (CONFIG.images atmos-*): each stage's image fades with its colours
+      ['dawn','day','sunset','dusk'].forEach(function(n){atm.style.setProperty('--w-'+n,(n===a.n?1-t:0)+(n===b.n&&b!==a?t:0));});
     };
     measure();paint();
     // refreshPriority -1: measured after the pinned scenes have added their scroll distance
@@ -159,8 +162,9 @@
       gsap.set(copy.children,{visibility:'visible'});
       // Ken Burns: settle from a slight zoom, then a very slow drift
       kb=gsap.timeline();
-      kb.fromTo(img,{scale:1.14},{scale:1.02,duration:2.8,ease:'power2.out'})
-        .to(img,{scale:1.09,duration:18,ease:'sine.inOut',yoyo:true,repeat:-1});
+      var lo=img.hasAttribute('data-lowres'); // a small brochure image zooms less, so it is not visibly enlarged
+      kb.fromTo(img,{scale:lo?1.06:1.14},{scale:lo?1:1.02,duration:2.8,ease:'power2.out'})
+        .to(img,{scale:lo?1.03:1.09,duration:18,ease:'sine.inOut',yoyo:true,repeat:-1});
       // intro: location line, headline lines and the two buttons first; once the headline has settled,
       // the subtext and pills follow (on phones the pills wait until the visitor starts scrolling)
       var intro=gsap.timeline({delay:.15,defaults:{ease:T.ease}});

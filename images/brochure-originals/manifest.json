@@ -1,0 +1,119 @@
+{
+ "aerial": {
+  "width": 1400,
+  "height": 689,
+  "widths": [
+   800,
+   1400
+  ],
+  "fallback": {
+   "w": 1400,
+   "h": 689
+  }
+ },
+ "beach": {
+  "width": 969,
+  "height": 785,
+  "widths": [
+   800,
+   969
+  ],
+  "fallback": {
+   "w": 969,
+   "h": 785
+  }
+ },
+ "entry": {
+  "width": 538,
+  "height": 550,
+  "widths": [
+   538
+  ],
+  "fallback": {
+   "w": 538,
+   "h": 550
+  }
+ },
+ "hero": {
+  "width": 1400,
+  "height": 789,
+  "widths": [
+   800,
+   1400
+  ],
+  "fallback": {
+   "w": 1400,
+   "h": 789
+  }
+ },
+ "pavilion": {
+  "width": 1322,
+  "height": 568,
+  "widths": [
+   800,
+   1322
+  ],
+  "fallback": {
+   "w": 1322,
+   "h": 568
+  }
+ },
+ "row": {
+  "width": 1400,
+  "height": 618,
+  "widths": [
+   800,
+   1400
+  ],
+  "fallback": {
+   "w": 1400,
+   "h": 618
+  }
+ },
+ "stairs": {
+  "width": 740,
+  "height": 1095,
+  "widths": [
+   740
+  ],
+  "fallback": {
+   "w": 740,
+   "h": 1095
+  }
+ },
+ "sunset": {
+  "width": 1047,
+  "height": 501,
+  "widths": [
+   800,
+   1047
+  ],
+  "fallback": {
+   "w": 1047,
+   "h": 501
+  }
+ },
+ "villa": {
+  "width": 1400,
+  "height": 1067,
+  "widths": [
+   800,
+   1400
+  ],
+  "fallback": {
+   "w": 1400,
+   "h": 1067
+  }
+ },
+ "wall": {
+  "width": 608,
+  "height": 640,
+  "widths": [
+   608
+  ],
+  "fallback": {
+   "w": 608,
+   "h": 640
+  }
+ }
+}

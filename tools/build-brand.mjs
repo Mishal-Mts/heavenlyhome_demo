@@ -4,6 +4,13 @@
 import sharp from 'sharp';
 import { writeFileSync, existsSync } from 'node:fs';
 
+// Safety: this script rewrites the brand files in /images (logo variants, favicons, og-image.jpg).
+// They already exist, so it only runs when asked explicitly:  node tools/build-brand.mjs --force
+if (!process.argv.includes('--force')) {
+  console.log('Brand files already exist. Nothing was changed. To rebuild them on purpose run: node tools/build-brand.mjs --force');
+  process.exit(0);
+}
+
 const SRC = 'images/originals/logo-defender-villas.png';
 const HERO = existsSync('images/originals/hero.jpg') ? 'images/originals/hero.jpg' : 'images/hero.jpg';
 

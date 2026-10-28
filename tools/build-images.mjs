@@ -1,53 +1,111 @@
-// Responsive image pipeline.
-// Usage: npm run images
+// Image slots -> web-ready files.   Run: npm run images   (or double-click update-images.bat)
 //
-// 1. Every JPG/PNG photo in images/originals/ (not logo-*) is resized to 800, 1400 and 2400 px wide
-//    (never upscaled; the source width is used when it is smaller) and written to images/ as
-//    <name>-<width>.avif and <name>-<width>.webp, plus a <name>.jpg fallback capped at 1400 px.
-// 2. index.html is updated: every <picture data-img="<name>"> gets fresh <source> tags for the widths
-//    that exist, its <img> gets the real width/height (so layout never shifts), and the hero preload
-//    link (<link data-img="hero">) gets a matching imagesrcset.
-// Drop a higher-resolution original into images/originals/ with the same name and re-run: the page
-// picks up the bigger files automatically.
+// SAFETY: this script only READS the images in /images. It never changes, moves, renames or deletes them.
+// Everything it makes goes into images/auto/ (a folder this script owns and may rewrite), and it updates
+// the <picture> tags in index.html.
+//
+// For every slot in CONFIG.images (js/main.js):
+//   - if the slot's hires file exists, that is the source; otherwise the slot's current (brochure) file is used
+//   - AVIF + WebP copies are made at 800 / 1400 / 2400 px wide (never wider than the source) in images/auto/
+//   - <picture data-img="slot"> in index.html gets those copies; its <img> keeps a JPEG fallback
+//     (the brochure file itself, or images/auto/<slot>.jpg for a hires source)
+//   - an image smaller than its place on the page needs is marked data-lowres, so the CSS shows it in a
+//     smaller frame instead of stretching it
+//   - optional slots (current:'') stay hidden until their hires file exists
+// At the end it prints every slot: current image, whether a hires file exists, and which one the page uses.
 import sharp from 'sharp';
-import { readdirSync, readFileSync, writeFileSync, copyFileSync } from 'node:fs';
-import { parse } from 'node:path';
+import vm from 'node:vm';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 
-const SRC = 'images/originals', OUT = 'images', WIDTHS = [800, 1400, 2400];
-const files = readdirSync(SRC).filter(f => /\.(jpe?g|png)$/i.test(f) && !/^(logo-|legacy-)/i.test(f));
-const manifest = {};
+const OUT = 'images/auto', WIDTHS = [800, 1400, 2400];
+// width in CSS pixels each slot fills at its largest on a typical desktop (for the "too small" check)
+const NEED = {
+  'hero': 1600, 'hero-mobile': 860, 'about-main': 1000, 'about-beach': 360, 'villa-premium': 770, 'villa-budget': 770,
+  'walkthrough-poster': 660, 'preview-360': 1000, 'development-banner': 1600, 'enquire-backdrop': 1600,
+  'nri-backdrop': 1600, 'strip-texture': 1600, 'atmos-dawn': 1600, 'atmos-day': 1600, 'atmos-sunset': 1600, 'atmos-dusk': 1600,
+};
+const need = slot => NEED[slot] || (slot.startsWith('gallery-') ? 560 : 800);
 
-for (const f of files) {
-  const name = parse(f).name, src = `${SRC}/${f}`;
-  const { width, height } = await sharp(src).metadata();
-  const widths = [...new Set(WIDTHS.map(w => Math.min(w, width)))].sort((a, b) => a - b);
-  for (const w of widths) {
-    const img = sharp(src).rotate().resize({ width: w });
-    await img.clone().avif({ quality: 52, effort: 4 }).toFile(`${OUT}/${name}-${w}.avif`);
-    await img.clone().webp({ quality: 78 }).toFile(`${OUT}/${name}-${w}.webp`);
+// ---- read CONFIG from js/main.js (the one place the client edits) ----
+const js = readFileSync('js/main.js', 'utf8');
+const start = js.indexOf('var CONFIG='), end = js.indexOf('\n};', start);
+const ctx = {}; vm.runInNewContext(js.slice(start, end + 3).replace('var CONFIG=', 'CONFIG='), ctx);
+const SLOTS = ctx.CONFIG.images || {}, GRADE = ctx.CONFIG.imageGrade || '';
+
+mkdirSync(OUT, { recursive: true });
+const manifestPath = `${OUT}/manifest.json`;
+const old = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {};
+const manifest = {}, rows = [];
+
+const grade = img => GRADE === 'warm'
+  ? img.modulate({ saturation: 1.05 }).linear([1.03, 1.01, 0.98], [-3, -2, 3]) // gentle: warmer highlights, slightly teal shadows
+  : img;
+
+for (const [slot, s] of Object.entries(SLOTS)) {
+  const hasHires = !!s.hires && existsSync(s.hires), hasCurrent = !!s.current && existsSync(s.current);
+  const src = hasHires ? s.hires : hasCurrent ? s.current : '';
+  const row = { slot, current: s.current || '(none: optional)', currentSize: '', hires: s.hires, hiresExists: hasHires, using: src ? (hasHires ? 'hires' : 'current') : 'hidden (no image yet)', status: '' };
+  if (hasCurrent) { const m = await sharp(s.current).metadata(); row.currentSize = `${m.width}x${m.height}`; }
+  if (!src) { rows.push(row); continue; }
+  const st = statSync(src), meta = await sharp(src).metadata();
+  const key = `${src}|${st.size}|${st.mtimeMs}|${GRADE}`;
+  const widths = [...new Set(WIDTHS.map(w => Math.min(w, meta.width)))].sort((a, b) => a - b);
+  const fallback = hasHires ? `${OUT}/${slot}.jpg` : s.current;
+  if (old[slot]?.key !== key || !widths.every(w => existsSync(`${OUT}/${slot}-${w}.avif`))) {
+    for (const w of widths) {
+      const img = grade(sharp(src).rotate().resize({ width: w }));
+      await img.clone().avif({ quality: 52, effort: 4 }).toFile(`${OUT}/${slot}-${w}.avif`);
+      await img.clone().webp({ quality: 78 }).toFile(`${OUT}/${slot}-${w}.webp`);
+    }
+    if (hasHires) await grade(sharp(src).rotate().resize({ width: Math.min(meta.width, 1600) })).jpeg({ quality: 82, mozjpeg: true }).toFile(fallback);
   }
-  const fw = Math.min(width, 1400);
-  // small JPG originals are copied as-is so they are not recompressed on every run
-  if (/\.jpe?g$/i.test(f) && width <= 1400) copyFileSync(src, `${OUT}/${name}.jpg`);
-  else await sharp(src).rotate().resize({ width: fw }).jpeg({ quality: 82, mozjpeg: true }).toFile(`${OUT}/${name}.jpg`);
-  manifest[name] = { width, height, widths, fallback: { w: fw, h: Math.round(height * fw / width) } };
-  console.log(`${name}: ${width}x${height} -> ${widths.join(', ')}`);
+  const fw = hasHires ? Math.min(meta.width, 1600) : meta.width, fh = Math.round(meta.height * fw / meta.width);
+  manifest[slot] = { key, source: src, width: meta.width, height: meta.height, widths, fallback, fw, fh, lowres: meta.width < need(slot) };
+  row.status = meta.width < need(slot) ? `smaller than needed (${meta.width} < ${need(slot)} px): shown in a smaller frame, needs a higher-resolution image`
+    : meta.width < need(slot) * 1.5 ? 'OK on normal screens, a little soft on high-DPI screens' : 'OK';
+  row.sourceSize = `${meta.width}x${meta.height}`;
+  rows.push(row);
 }
+writeFileSync(manifestPath, JSON.stringify(manifest, null, 1));
 
-// Rewrite <picture data-img> blocks and the hero preload in index.html
+// ---- update index.html ----
 let html = readFileSync('index.html', 'utf8');
-const set = (n, ext) => manifest[n].widths.map(w => `images/${n}-${w}.${ext} ${w}w`).join(', ');
-html = html.replace(/<picture data-img="([\w-]+)">([\s\S]*?)<\/picture>/g, (all, n, inner) => {
-  if (!manifest[n]) { console.warn(`no original for picture "${n}"; left unchanged`); return all; }
+const set = (n, ext) => manifest[n].widths.map(w => `${OUT}/${n}-${w}.${ext} ${w}w`).join(', ');
+html = html.replace(/<picture data-img="([\w-]+)"([^>]*)>([\s\S]*?)<\/picture>/g, (all, n, attrs, inner) => {
   let img = inner.match(/<img[^>]*>/)[0];
+  attrs = attrs.replace(/ hidden/g, '');
+  const m = manifest[n];
+  if (!m) { // optional slot with no image (yet, or again after an undo): hidden, no file referenced
+    img = img.replace(/ src="[^"]*"/, '').replace(/ width="\d+"/, ' width="2400"').replace(/ height="\d+"/, ' height="1350"');
+    return `<picture data-img="${n}"${attrs} hidden>${img}</picture>`;
+  }
   const sizes = (img.match(/ sizes="([^"]*)"/) || [, '100vw'])[1];
-  const { w, h } = manifest[n].fallback;
-  img = img.replace(/ width="\d+"/, ` width="${w}"`).replace(/ height="\d+"/, ` height="${h}"`);
-  return `<picture data-img="${n}"><source type="image/avif" srcset="${set(n, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${set(n, 'webp')}" sizes="${sizes}">${img}</picture>`;
+  img = img.replace(/ src="[^"]*"/, '').replace(/<img /, `<img src="${m.fallback}" `)
+    .replace(/ width="\d+"/, ` width="${m.fw}"`).replace(/ height="\d+"/, ` height="${m.fh}"`)
+    .replace(/ data-lowres(="[^"]*")?/, '').replace(/ style="--src-w:[^"]*"/, '');
+  if (m.lowres) img = img.replace(/<img /, `<img data-lowres style="--src-w:${m.width}px;--src-h:${m.height}px" `);
+  let sources = '';
+  const mob = (attrs.match(/data-mobile="([\w-]+)"/) || [])[1];
+  if (mob && manifest[mob]) sources += `<source media="(max-width:767px)" type="image/avif" srcset="${set(mob, 'avif')}" sizes="100vw"><source media="(max-width:767px)" type="image/webp" srcset="${set(mob, 'webp')}" sizes="100vw">`;
+  sources += `<source type="image/avif" srcset="${set(n, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${set(n, 'webp')}" sizes="${sizes}">`;
+  return `<picture data-img="${n}"${attrs}>${sources}${img}</picture>`;
 });
-html = html.replace(/<link rel="preload" as="image" data-img="([\w-]+)"[^>]*>/, (all, n) => manifest[n]
-  ? `<link rel="preload" as="image" data-img="${n}" type="image/avif" imagesrcset="${set(n, 'avif')}" imagesizes="100vw" fetchpriority="high">`
-  : all);
+// walkthrough still frame
+html = html.replace(/poster="[^"]*" data-poster-slot="([\w-]+)"/g, (all, n) => `poster="${manifest[n] ? manifest[n].fallback : 'images/hero.jpg'}" data-poster-slot="${n}"`);
+// elements that only show when one of their slots has an image (e.g. the artist's impression badge on an optional backdrop)
+html = html.replace(/<(\w+)([^>]*?) data-show-with="([^"]+)"( hidden)?>/g, (all, tag, a, list, h) =>
+  `<${tag}${a} data-show-with="${list}"${list.split(' ').some(n => manifest[n]) ? '' : ' hidden'}>`);
+// hero preload (desktop image, plus the phone version when there is one)
+html = html.replace(/<!--hero-preload-->[\s\S]*?<!--\/hero-preload-->/, () => {
+  const mob = manifest['hero-mobile'];
+  const desk = `<link rel="preload" as="image" data-img="hero" type="image/avif" imagesrcset="${set('hero', 'avif')}" imagesizes="100vw" fetchpriority="high"${mob ? ' media="(min-width:768px)"' : ''}>`;
+  return `<!--hero-preload-->${desk}${mob ? `<link rel="preload" as="image" data-img="hero-mobile" type="image/avif" imagesrcset="${set('hero-mobile', 'avif')}" imagesizes="100vw" fetchpriority="high" media="(max-width:767px)">` : ''}<!--/hero-preload-->`;
+});
 writeFileSync('index.html', html);
-writeFileSync(`${OUT}/manifest.json`, JSON.stringify(manifest, null, 1));
-console.log('index.html updated');
+
+// ---- report ----
+const pad = (t, n) => String(t).padEnd(n);
+console.log('\n' + pad('SLOT', 25) + pad('CURRENT (brochure)', 30) + pad('HI-RES?', 9) + 'PAGE USES');
+for (const r of rows) console.log(pad(r.slot, 25) + pad(r.current + (r.currentSize ? ` ${r.currentSize}` : ''), 30) + pad(r.hiresExists ? 'yes' : 'no', 9) + r.using + (r.status ? `  - ${r.status}` : ''));
+writeFileSync(`${OUT}/report.json`, JSON.stringify(rows, null, 1));
+console.log(`\nDone. Web copies are in ${OUT}/. Your original images were not changed.`);

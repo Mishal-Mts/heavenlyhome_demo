@@ -495,3 +495,31 @@ main>section,.handoff>.curtain{background:#fff}
 .ornament svg{width:120px;height:26px}
 .cine .ornament{color:#f2d7a6}
 @media(prefers-reduced-motion:reduce){.mapbox .pulse{animation:none;opacity:0}}
+
+/* ---------- Phase 5: image slots ---------- */
+/* An image smaller than its place (data-lowres, set by tools/build-images.mjs) is never stretched:
+   full-width places cap it at its real size and fade its edges into the dark background; frames shrink to fit it.
+   When a large enough hi-res image is added and the script is run, data-lowres disappears and these rules stop applying. */
+@media(min-width:768px){
+ .hero-media img[data-lowres],.banner>picture>img[data-lowres],.sec-bg img[data-lowres]{max-height:var(--src-h);-webkit-mask-image:linear-gradient(180deg,#000 80%,transparent);mask-image:linear-gradient(180deg,#000 80%,transparent)}
+}
+@media(min-width:1400px){
+ .hero-media img[data-lowres],.banner>picture>img[data-lowres],.sec-bg img[data-lowres]{max-width:var(--src-w);left:0;right:0;margin:0 auto;
+  -webkit-mask-image:linear-gradient(180deg,#000 80%,transparent),linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(180deg,#000 80%,transparent),linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-composite:intersect}
+}
+.card .ph img[data-lowres],.gs img[data-lowres]{max-width:var(--src-w);margin:0 auto}
+.gs:has(img[data-lowres]),.card .ph:has(img[data-lowres]){background:var(--deep)}
+@media(min-width:1024px){#villas.is-pinned .card .ph:has(img[data-lowres]){flex-basis:min(58%,600px)}}
+/* optional atmosphere slots (hidden until a hi-res file exists): faint images inside the sky and behind two sections */
+.atmos img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.atmos{--w-dawn:1;--w-day:0;--w-sunset:0;--w-dusk:0}
+.atmos img[data-stage="dawn"]{opacity:calc(var(--w-dawn) * .22)}
+.atmos img[data-stage="day"]{opacity:calc(var(--w-day) * .22)}
+.atmos img[data-stage="sunset"]{opacity:calc(var(--w-sunset) * .22)}
+.atmos img[data-stage="dusk"]{opacity:calc(var(--w-dusk) * .22)}
+.strip.cine,.gulf{position:relative;overflow:hidden}
+.strip.cine>.wrap,.gulf>.wrap{position:relative;z-index:2}
+.strip-bg img{opacity:.14}
+.gulf .sec-bg img{opacity:.22}
+.ai-badge{position:absolute;left:10px;bottom:12px;z-index:3;background:rgba(7,26,38,.74);color:#fff;font-size:.62rem;font-weight:600;letter-spacing:.05em;padding:3px 9px;border-radius:999px;pointer-events:none}

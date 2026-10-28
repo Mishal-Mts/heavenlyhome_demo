@@ -1,0 +1,255 @@
+[
+ {
+  "slot": "hero",
+  "current": "images/hero.jpg",
+  "currentSize": "1400x789",
+  "hires": "images/hero-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "smaller than needed (1400 < 1600 px): shown in a smaller frame, needs a higher-resolution image",
+  "sourceSize": "1400x789"
+ },
+ {
+  "slot": "hero-mobile",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/hero-mobile-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
+  "slot": "about-main",
+  "current": "images/row.jpg",
+  "currentSize": "1400x618",
+  "hires": "images/about-main-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK on normal screens, a little soft on high-DPI screens",
+  "sourceSize": "1400x618"
+ },
+ {
+  "slot": "about-beach",
+  "current": "images/beach.jpg",
+  "currentSize": "969x785",
+  "hires": "images/about-beach-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "969x785"
+ },
+ {
+  "slot": "villa-premium",
+  "current": "images/villa.jpg",
+  "currentSize": "1400x1067",
+  "hires": "images/villa-premium-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x1067"
+ },
+ {
+  "slot": "villa-budget",
+  "current": "images/wall.jpg",
+  "currentSize": "608x640",
+  "hires": "images/villa-budget-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "smaller than needed (608 < 770 px): shown in a smaller frame, needs a higher-resolution image",
+  "sourceSize": "608x640"
+ },
+ {
+  "slot": "walkthrough-poster",
+  "current": "images/hero.jpg",
+  "currentSize": "1400x789",
+  "hires": "images/walkthrough-poster-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x789"
+ },
+ {
+  "slot": "preview-360",
+  "current": "images/aerial.jpg",
+  "currentSize": "1400x689",
+  "hires": "images/preview-360-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK on normal screens, a little soft on high-DPI screens",
+  "sourceSize": "1400x689"
+ },
+ {
+  "slot": "gallery-beach-villa",
+  "current": "images/hero.jpg",
+  "currentSize": "1400x789",
+  "hires": "images/gallery-beach-villa-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x789"
+ },
+ {
+  "slot": "gallery-villa-front",
+  "current": "images/villa.jpg",
+  "currentSize": "1400x1067",
+  "hires": "images/gallery-villa-front-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x1067"
+ },
+ {
+  "slot": "gallery-villa-row",
+  "current": "images/row.jpg",
+  "currentSize": "1400x618",
+  "hires": "images/gallery-villa-row-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x618"
+ },
+ {
+  "slot": "gallery-entrance",
+  "current": "images/entry.jpg",
+  "currentSize": "538x550",
+  "hires": "images/gallery-entrance-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "smaller than needed (538 < 560 px): shown in a smaller frame, needs a higher-resolution image",
+  "sourceSize": "538x550"
+ },
+ {
+  "slot": "gallery-staircase",
+  "current": "images/stairs.jpg",
+  "currentSize": "740x1095",
+  "hires": "images/gallery-staircase-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK on normal screens, a little soft on high-DPI screens",
+  "sourceSize": "740x1095"
+ },
+ {
+  "slot": "gallery-feature-wall",
+  "current": "images/wall.jpg",
+  "currentSize": "608x640",
+  "hires": "images/gallery-feature-wall-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK on normal screens, a little soft on high-DPI screens",
+  "sourceSize": "608x640"
+ },
+ {
+  "slot": "gallery-beach",
+  "current": "images/beach.jpg",
+  "currentSize": "969x785",
+  "hires": "images/gallery-beach-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "969x785"
+ },
+ {
+  "slot": "gallery-beachfront-dusk",
+  "current": "images/aerial.jpg",
+  "currentSize": "1400x689",
+  "hires": "images/gallery-beachfront-dusk-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x689"
+ },
+ {
+  "slot": "gallery-pavilion",
+  "current": "images/pavilion.jpg",
+  "currentSize": "1322x568",
+  "hires": "images/gallery-pavilion-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1322x568"
+ },
+ {
+  "slot": "gallery-sunset",
+  "current": "images/sunset.jpg",
+  "currentSize": "1047x501",
+  "hires": "images/gallery-sunset-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1047x501"
+ },
+ {
+  "slot": "development-banner",
+  "current": "images/aerial.jpg",
+  "currentSize": "1400x689",
+  "hires": "images/development-banner-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "smaller than needed (1400 < 1600 px): shown in a smaller frame, needs a higher-resolution image",
+  "sourceSize": "1400x689"
+ },
+ {
+  "slot": "enquire-backdrop",
+  "current": "images/pavilion.jpg",
+  "currentSize": "1322x568",
+  "hires": "images/enquire-backdrop-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "smaller than needed (1322 < 1600 px): shown in a smaller frame, needs a higher-resolution image",
+  "sourceSize": "1322x568"
+ },
+ {
+  "slot": "nri-backdrop",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/nri-backdrop-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
+  "slot": "strip-texture",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/strip-texture-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
+  "slot": "atmos-dawn",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/atmos-dawn-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
+  "slot": "atmos-day",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/atmos-day-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
+  "slot": "atmos-sunset",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/atmos-sunset-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
+  "slot": "atmos-dusk",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/atmos-dusk-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ }
+]

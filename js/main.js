@@ -28,6 +28,43 @@ var CONFIG={
   yt:'',           // OR a YouTube video ID. If filled, it is used instead of the MP4 (loads only when Play is tapped).
   HERO_FORM_MODE:'panel',          // 'panel': the hero form opens in a slide-in panel from every Enquire button. 'inline': the form sits in the hero as before.
   heroLoop:'images/hero-loop.mp4', // Optional looping hero video (6-10 s, muted). Plays on desktop only if the file exists; set '' to switch off.
+  // ---------------------------------------- IMAGES ----------------------------------------
+  // Every picture on the page is a "slot".
+  //   current = the brochure image used today. It is never changed, moved or deleted.
+  //   hires   = where a better replacement goes. Save the new file with exactly this name, then double-click
+  //             update-images.bat (or run: npm run images). If the hires file exists the page uses it,
+  //             otherwise it keeps using the current image. To go back, delete or rename the hires file and
+  //             run update-images.bat again. Full steps: README.md, "Adding or replacing images".
+  //   Slots with current:'' are optional extras: they stay hidden until their hires file exists.
+  imageGrade:'warm', // 'warm' = gentle, consistent teal-and-gold colour grade on the web copies the script makes. '' = no grade.
+  images:{
+    'hero':                    {current:'images/hero.jpg',     hires:'images/hero-hires.jpg'},                    // Hero background, full screen
+    'hero-mobile':             {current:'',                    hires:'images/hero-mobile-hires.jpg'},             // Optional: portrait version of the hero for phones
+    'about-main':              {current:'images/row.jpg',      hires:'images/about-main-hires.jpg'},              // About: large image (runs to the screen edge)
+    'about-beach':             {current:'images/beach.jpg',    hires:'images/about-beach-hires.jpg'},             // About: small floating beach photo (real photo)
+    'villa-premium':           {current:'images/villa.jpg',    hires:'images/villa-premium-hires.jpg'},           // Villas: 2-in-1 Premium card
+    'villa-budget':            {current:'images/wall.jpg',     hires:'images/villa-budget-hires.jpg'},            // Villas: Single-storey Budget card
+    'walkthrough-poster':      {current:'images/hero.jpg',     hires:'images/walkthrough-poster-hires.jpg'},      // Walkthrough: still frame before Play
+    'preview-360':             {current:'images/aerial.jpg',   hires:'images/preview-360-hires.jpg'},             // Walkthrough: 360 preview demo (a real 360 photo goes in tour360 above)
+    'gallery-beach-villa':     {current:'images/hero.jpg',     hires:'images/gallery-beach-villa-hires.jpg'},     // Gallery 1: Beach villa
+    'gallery-villa-front':     {current:'images/villa.jpg',    hires:'images/gallery-villa-front-hires.jpg'},     // Gallery 2: 2-in-1 villa front
+    'gallery-villa-row':       {current:'images/row.jpg',      hires:'images/gallery-villa-row-hires.jpg'},       // Gallery 3: Villa row
+    'gallery-entrance':        {current:'images/entry.jpg',    hires:'images/gallery-entrance-hires.jpg'},        // Gallery 4: Entrance & planters
+    'gallery-staircase':       {current:'images/stairs.jpg',   hires:'images/gallery-staircase-hires.jpg'},       // Gallery 5: Terrace & glass staircase
+    'gallery-feature-wall':    {current:'images/wall.jpg',     hires:'images/gallery-feature-wall-hires.jpg'},    // Gallery 6: Feature wall
+    'gallery-beach':           {current:'images/beach.jpg',    hires:'images/gallery-beach-hires.jpg'},           // Gallery 7: The beach (real photo)
+    'gallery-beachfront-dusk': {current:'images/aerial.jpg',   hires:'images/gallery-beachfront-dusk-hires.jpg'}, // Gallery 8: Beachfront at dusk
+    'gallery-pavilion':        {current:'images/pavilion.jpg', hires:'images/gallery-pavilion-hires.jpg'},        // Gallery 9: Seaside pavilion
+    'gallery-sunset':          {current:'images/sunset.jpg',   hires:'images/gallery-sunset-hires.jpg'},          // Gallery 10: Sunset by the sea
+    'development-banner':      {current:'images/aerial.jpg',   hires:'images/development-banner-hires.jpg'},      // "The development" banner, full width
+    'enquire-backdrop':        {current:'images/pavilion.jpg', hires:'images/enquire-backdrop-hires.jpg'},        // Closing enquiry section background, full width
+    'nri-backdrop':            {current:'',                    hires:'images/nri-backdrop-hires.jpg'},            // Optional: Gulf & NRI section background (shoreline)
+    'strip-texture':           {current:'',                    hires:'images/strip-texture-hires.jpg'},           // Optional: faint wave texture behind the stats strip
+    'atmos-dawn':              {current:'',                    hires:'images/atmos-dawn-hires.jpg'},              // Optional: faint sky behind About (dawn)
+    'atmos-day':               {current:'',                    hires:'images/atmos-day-hires.jpg'},               // Optional: faint coconut grove behind Villas/Walkthrough
+    'atmos-sunset':            {current:'',                    hires:'images/atmos-sunset-hires.jpg'},            // Optional: faint sunset sky behind Gallery/Development
+    'atmos-dusk':              {current:'',                    hires:'images/atmos-dusk-hires.jpg'}               // Optional: faint dusk plate behind the closing enquiry
+  },
   minu:{           // Minu John (sister concern digital card)
     phone:'',      //   Phone, country code + digits. Shows the Call icon.
     whatsapp:'',   //   WhatsApp number. If empty the phone is used. Shows the WhatsApp icon.
