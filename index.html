@@ -49,6 +49,7 @@
  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></symbol>
  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
  <symbol id="i-web" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+ <symbol id="i-orn" viewBox="0 0 120 26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20c6-4 12-4 18 0s12 4 18 0"/><path d="M82 20c6-4 12-4 18 0s12 4 18 0"/><path d="M60 24c-1-5 1-10 0-15"/><path d="M60 9c-4-4-9-4-13-1M60 9c4-4 9-4 13-1M60 9c-2-4-1-7 2-8M60 9c3-2 7-1 9 3M60 9c-3-2-7-1-9 3"/><path d="M44 24h32"/></symbol>
  <symbol id="i-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></symbol>
 </svg>
 
@@ -143,9 +144,10 @@
 </div></section>
 
 <section id="villas" class="cine"><div class="wrap">
+ <div class="v-scene">
  <div class="sec-head" data-anim="stagger"><span class="eyebrow">The villas</span><h2 data-anim="line-reveal">Two ways to own at Heavenly Homes</h2><p>Swipe to compare. Independent homes designed for privacy, natural light and sea breeze.</p></div>
- <div class="car v3" role="region" aria-roledescription="carousel" aria-label="Villa types">
-  <div class="car-track" tabindex="0" data-anim="stagger">
+ <div class="car v3" role="region" aria-roledescription="carousel" aria-label="Villa types" data-anim="fade-up">
+  <div class="car-track" tabindex="0">
    <div class="car-slide"><article class="card">
     <div class="ph ai" data-anim="clip-reveal"><picture data-img="villa"><source type="image/avif" srcset="images/villa-800.avif 800w, images/villa-1400.avif 1400w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><source type="image/webp" srcset="images/villa-800.webp 800w, images/villa-1400.webp 1400w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><img src="images/villa.jpg" width="1400" height="1067" loading="lazy" alt="Artist’s impression: premium 2-in-1 beach villa with balconies and parking" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"></picture><span class="badge">PREMIUM</span></div>
     <div class="body"><h3>2-in-1 Beach Villa</h3><div class="price">&#8377;2 Crore</div>
@@ -176,18 +178,19 @@
   </div>
   <div class="car-ctl"><button class="car-btn prev" type="button" aria-label="Previous"><svg><use href="#i-prev"/></svg></button><div class="dots"></div><button class="car-btn next" type="button" aria-label="Next"><svg><use href="#i-next"/></svg></button></div>
  </div>
+ </div><!-- /v-scene -->
  <p class="note" style="margin-top:14px;text-align:center">Images are design concepts. Prices as given by the developer; GST, registration and other charges extra unless stated.</p>
 </div></section>
 <section id="walkthrough" class="cine"><div class="wrap">
  <div class="sec-head" data-anim="stagger"><span class="eyebrow">Walkthrough</span><h2 data-anim="line-reveal">Walk through Heavenly Homes</h2><p>Watch the walkthrough, then drag to look around the beachfront in the 360 preview.</p></div>
- <div class="wt" data-anim="stagger">
-  <div class="vbox" id="vbox">
+ <div class="wt">
+  <div class="vbox" id="vbox" data-anim="clip-reveal">
    <video id="vid" muted loop playsinline preload="none" poster="images/hero.jpg" aria-label="Defender Villas walkthrough video"><source src="images/walkthrough.mp4" type="video/mp4"></video>
    <button class="vplay" id="vplay" type="button" aria-label="Play walkthrough video"><i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg></i>Play walkthrough</button>
    <div class="vfall" id="vfall" role="status"><b style="font-family:var(--serif);font-size:1.3rem">This video is unavailable right now</b><p>Request a private live video tour instead.</p><div class="cta-row" style="justify-content:center"><a class="btn btn-primary" href="#enquire" data-villa="Video tour (Gulf / NRI buyer)">Request a video tour</a></div></div>
   </div>
   <!-- 360 SLOT: save a real equirectangular photo as images/tour-360.jpg and set CONFIG.tour360 = 'images/tour-360.jpg'. It then replaces this demo with Pannellum 2.5.6 (cdnjs, pinned). -->
-  <div class="pw ai" id="pw">
+  <div class="pw ai" id="pw" data-anim="clip-reveal">
    <div class="pano" id="pano" tabindex="0" role="group" aria-label="360 degree preview. Drag, swipe or use the arrow keys to look around.">
     <div class="pano-in" id="panoIn">
      <picture data-img="aerial"><source type="image/avif" srcset="images/aerial-800.avif 800w, images/aerial-1400.avif 1400w" sizes="(min-width:900px) 75vw, 150vw"><source type="image/webp" srcset="images/aerial-800.webp 800w, images/aerial-1400.webp 1400w" sizes="(min-width:900px) 75vw, 150vw"><img src="images/aerial.jpg" width="1400" height="689" loading="lazy" alt="Artist’s impression: evening aerial view of the beachfront with pavilion, villas and shore" draggable="false" sizes="(min-width:900px) 75vw, 150vw"></picture>
@@ -241,6 +244,7 @@
 </section>
 
 <section id="location" class="curtain"><div class="wrap">
+ <div class="ornament" aria-hidden="true"><svg><use href="#i-orn"/></svg></div>
  <div class="sec-head" data-anim="stagger"><span class="eyebrow">Location</span><h2 data-anim="line-reveal">A coastal address, well connected</h2></div>
  <div class="grid two" data-anim="stagger">
   <div>
@@ -261,8 +265,10 @@
     <text x="20" y="168" font-size="13" fill="#0a7a8a" font-family="Inter,sans-serif" font-weight="600" transform="rotate(-90 28 168)">Arabian Sea</text>
     <path d="M338 0V330" stroke="#b07d3a" stroke-width="7" stroke-linecap="round" opacity=".45"/>
     <text x="346" y="24" font-size="12" fill="#8a5d22" font-family="Inter,sans-serif" font-weight="700">NH-66</text>
-    <path d="M152 126H338" stroke="#5d6a73" stroke-width="1.5" stroke-dasharray="4 5"/>
+    <defs><mask id="routeMask" maskUnits="userSpaceOnUse" x="0" y="0" width="420" height="330"><path class="route-draw" d="M146 126H338" fill="none" stroke="#fff" stroke-width="10" pathLength="1" stroke-dasharray="1 1"/></mask></defs>
+    <path d="M152 126H338" stroke="#5d6a73" stroke-width="1.5" stroke-dasharray="4 5" mask="url(#routeMask)"/>
     <text x="205" y="118" font-size="11" fill="#5d6a73" font-family="Inter,sans-serif">about 3 km</text>
+    <circle class="pulse" cx="146" cy="126" r="9" fill="none" stroke="#e0664a" stroke-width="2"/>
     <circle cx="146" cy="126" r="9" fill="#e0664a"/><circle cx="146" cy="126" r="3.5" fill="#fff"/>
     <text x="132" y="152" font-size="13" fill="#0b2a3c" font-family="Inter,sans-serif" font-weight="700">Heavenly Homes</text>
     <g font-family="Inter,sans-serif" font-size="12" fill="#1c2a33">
@@ -383,6 +389,7 @@
  </div>
 </div></section>
 <section id="faq"><div class="wrap">
+ <div class="ornament" aria-hidden="true"><svg><use href="#i-orn"/></svg></div>
  <div class="sec-head" data-anim="stagger"><span class="eyebrow">FAQ</span><h2 data-anim="line-reveal">Common questions</h2></div>
  <details><summary>What are the prices?</summary><p>Premium 2-in-1 beach villa: &#8377;2 crore. Budget single-storey villa: &#8377;50 lakh, expandable to two storeys. GST, registration and other charges extra unless stated.</p></details>
  <details><summary>How big is each plot?</summary><p>Plots are 3 cents. Customisation is possible.</p></details>

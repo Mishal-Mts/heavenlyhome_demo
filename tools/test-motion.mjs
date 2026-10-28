@@ -86,7 +86,8 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   const c = await page.evaluate(() => ({ hidden: document.getElementById('enqPanel').hidden, focusBack: document.activeElement.matches('#hdr .nav-actions .btn-primary[data-panel]'), locked: document.documentElement.classList.contains('locked') }));
   check('panel: Esc closes, focus returns to Enquire, scroll unlocked', c.hidden && c.focusBack && !c.locked, JSON.stringify(c));
   // villa button pre-selects the panel form
-  await page.locator('#villas').scrollIntoViewIfNeeded(); await page.waitForTimeout(1500);
+  // (on desktop the Budget card is the second state of the pinned villa scene: scroll to the end of the pin first)
+  await page.evaluate(() => { const s = ScrollTrigger.getAll().find(s => s.pin && s.trigger.classList.contains('v-scene')); window.lenis.scrollTo(s.end - 4, { immediate: true }); }); await page.waitForTimeout(900);
   await page.click('[data-villa="Budget single-storey villa (Rs 50 Lakh)"]'); await page.waitForTimeout(700);
   check('panel: villa button opens panel with that villa selected', await page.evaluate(() => !document.getElementById('enqPanel').hidden && document.getElementById('q-villa').value.startsWith('Budget')));
   // submit with empty ENDPOINTS shows thank-you (existing behaviour)
@@ -135,6 +136,53 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   await ctx.close();
 }
 
+// ---------- Phase 4: pinned villas, horizontal gallery, route draw ----------
+{
+  const { ctx, page, errors } = await open();
+  await page.waitForTimeout(1500);
+  const pins = await page.evaluate(() => ScrollTrigger.getAll().filter(s => s.pin).map(s => ({ id: s.trigger.className, start: s.start, end: s.end })));
+  const v = pins.find(p => p.id.includes('v-scene')), g = pins.find(p => p.id.includes('cine'));
+  check('villas + gallery are pinned on desktop', !!v && !!g, JSON.stringify(pins.map(p => p.id)));
+  const go = async y => { await page.evaluate(y => window.lenis.scrollTo(y, { immediate: true }), y); await page.waitForTimeout(700); };
+  const vstate = () => page.evaluate(() => { const [a, b] = document.querySelectorAll('#villas .car-slide'); return { a: +getComputedStyle(a).opacity, b: +getComputedStyle(b).opacity, aHidden: a.getAttribute('aria-hidden'), top: Math.round(document.querySelector('#villas .v-scene').getBoundingClientRect().top) }; });
+  await go(v.start + 10); const v1 = await vstate();
+  await go(v.end - 10); const v2 = await vstate();
+  check('villas: Premium shows first, Budget replaces it, scene stays put while pinned', v1.a === 1 && v1.b === 0 && v2.b === 1 && v2.a === 0 && v1.top === 0 && v2.top === 0, JSON.stringify({ v1, v2 }));
+  const plan = await page.evaluate(() => !!document.querySelector('.v-plan .card .sz'));
+  check('villas: the plan table follows as its own panel', plan);
+  await go(v.start - 400);
+  await page.evaluate(() => document.querySelectorAll('#villas .car-slide')[1].querySelector('.btn').focus()); await page.waitForTimeout(700);
+  const kb = await vstate();
+  check('villas: keyboard focus on the Budget button scrolls the scene to show it', kb.b === 1, JSON.stringify(kb));
+  const trackX = () => page.evaluate(() => Math.round(gsap.getProperty(document.querySelector('#gallery .car-track'), 'x')));
+  await go(g.start + 10); const x1 = await trackX();
+  await go((g.start + g.end) / 2); const x2 = await trackX();
+  await go(g.end - 10); const x3 = await trackX();
+  const lastVisible = await page.evaluate(() => { const s = [...document.querySelectorAll('#gallery .car-slide')].filter(s => !s.hidden).pop().getBoundingClientRect(); return s.right <= innerWidth && s.left >= 0; });
+  check('gallery: images scroll sideways while pinned and the last one comes fully into view', x1 > -20 && x2 < x1 - 300 && x3 < x2 && lastVisible, `x: ${x1} -> ${x2} -> ${x3}`);
+  await go((g.start + g.end) / 2);
+  const target = await page.evaluate(() => { const b = [...document.querySelectorAll('#gallery [data-lb]')].find(b => { const r = b.getBoundingClientRect(); return r.left > 100 && r.right < innerWidth - 100; }); b.setAttribute('data-test', '1'); return b.querySelector('span').textContent; });
+  await page.click('[data-test="1"]'); await page.waitForTimeout(300);
+  const lbo = await page.evaluate(() => document.getElementById('lb').classList.contains('on'));
+  await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+  check('gallery: clicking an image in the pinned row opens the lightbox', lbo, target);
+  await go(g.start - 300);
+  await page.evaluate(() => [...document.querySelectorAll('#gallery [data-lb]')].filter(b => !b.closest('[hidden]')).pop().focus()); await page.waitForTimeout(700);
+  const kf = await page.evaluate(() => { const r = [...document.querySelectorAll('#gallery [data-lb]')].filter(b => !b.closest('[hidden]')).pop().getBoundingClientRect(); return { left: Math.round(r.left), right: Math.round(r.right), vw: innerWidth }; });
+  check('gallery: keyboard focus on the last image scrolls it into view', kf.left >= 0 && kf.right <= kf.vw, JSON.stringify(kf));
+  const mapTop = await page.evaluate(() => Math.round(document.getElementById('mapbox').getBoundingClientRect().top + scrollY));
+  await go(mapTop - 900); const d0 = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.route-draw')).strokeDashoffset));
+  await go(mapTop - 100); const d1 = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.route-draw')).strokeDashoffset));
+  check('location: the route to NH-66 draws on scroll', d0 > .9 && d1 < .05, `dashoffset ${d0} -> ${d1}`);
+  await page.screenshot({ path: `${out}/1440-location.png` });
+  // resize to phone width: scenes are undone and the carousels return
+  await page.setViewportSize({ width: 390, height: 844 }); await page.waitForTimeout(1200);
+  const back = await page.evaluate(() => ({ pinned: document.getElementById('villas').classList.contains('is-pinned'), planInTrack: !!document.querySelector('#villas .car-track .card .sz'), noPlanHolder: !document.querySelector('.v-plan'), h: document.getElementById('gallery').classList.contains('is-hscroll'), x: gsap.getProperty(document.querySelector('#gallery .car-track'), 'x') }));
+  check('resize to phone: pinned scenes are undone cleanly', !back.pinned && back.planInTrack && back.noPlanHolder && !back.h && back.x === 0, JSON.stringify(back));
+  check('phase 4: no JS errors', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
 // ---------- mobile 390 (touch, native scrolling) ----------
 {
   const { ctx, page, errors } = await open({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
@@ -161,6 +209,8 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   await page.tap('.panel-close'); await page.waitForTimeout(700);
   await page.evaluate(() => scrollTo(0, 700)); await page.waitForTimeout(1200);
   await page.screenshot({ path: `${out}/390-scrolled.png` });
+  const mob = await page.evaluate(() => ({ pinned: document.getElementById('villas').classList.contains('is-pinned'), h: document.getElementById('gallery').classList.contains('is-hscroll'), planInTrack: !!document.querySelector('#villas .car-track .card .sz'), ctl: !document.querySelector('#gallery .car-ctl').hidden }));
+  check('mobile: no pinned scenes; villa and gallery swipe carousels as before', !mob.pinned && !mob.h && mob.planInTrack && mob.ctl, JSON.stringify(mob));
   check('mobile: no JS errors', errors.length === 0, errors.join(' | '));
   await ctx.close();
 }
@@ -177,6 +227,8 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   check('reduced motion: no smooth scroll, nothing hidden, no Ken Burns', !st.motion && !st.lenis && st.hidden === 0 && st.imgTransform === 'none', JSON.stringify(st));
   await page.click('#hdr .nav-actions .btn-primary[data-panel]'); await page.waitForTimeout(200);
   check('reduced motion: panel opens instantly', await page.evaluate(() => !document.getElementById('enqPanel').hidden && getComputedStyle(document.querySelector('.panel-sheet')).transform === 'none'));
+  const rm = await page.evaluate(() => ({ pinned: document.getElementById('villas').classList.contains('is-pinned'), h: document.getElementById('gallery').classList.contains('is-hscroll'), planInTrack: !!document.querySelector('#villas .car-track .card .sz'), route: getComputedStyle(document.querySelector('.route-draw')).strokeDashoffset }));
+  check('reduced motion: no pinned scenes, carousels as before, route fully drawn', !rm.pinned && !rm.h && rm.planInTrack && parseFloat(rm.route) === 0, JSON.stringify(rm));
   check('reduced motion: no JS errors', errors.length === 0, errors.join(' | '));
   await ctx.close();
 }

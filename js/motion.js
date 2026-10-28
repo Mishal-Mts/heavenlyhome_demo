@@ -129,7 +129,8 @@
       atm.style.setProperty('--atm-top',v[0]);atm.style.setProperty('--atm-bottom',v[1]);atm.style.setProperty('--atm-glow',v[2]);
     };
     measure();paint();
-    ScrollTrigger.create({start:0,end:'max',onUpdate:paint,onRefresh:function(){measure();paint();}});
+    // refreshPriority -1: measured after the pinned scenes have added their scroll distance
+    ScrollTrigger.create({start:0,end:'max',refreshPriority:-1,onUpdate:paint,onRefresh:function(){measure();paint();}});
   }
 
   // ---------- header: hide on scroll down, show on scroll up (desktop) ----------
@@ -205,6 +206,65 @@
       });
     }
   }
+
+  // ---------- signature scenes (desktop, tall enough screen, motion allowed) ----------
+  var PIN=DESK+' and (min-height: 700px) and '+OK;
+  // jump the page to the point of a pinned scene where a focused element is visible (keyboard users)
+  var seek=function(st,p){var y=st.start+(st.end-st.start)*p;if(lenis)lenis.scrollTo(y,{immediate:true});else scrollTo(0,y);};
+
+  // villas: the Premium and Budget cards share one stage and crossfade with scroll; the plan card follows as its own panel
+  var vScene=$('#villas .v-scene');
+  if(vScene&&!late)mm.add(PIN,function(){
+    var sec=$('#villas'),car=$('.car',vScene),track=$('.car-track',car),slides=[].slice.call(track.children);
+    var a=slides[0],b=slides[1],plan=slides[2],holder=document.createElement('div');
+    holder.className='v-plan';vScene.parentNode.insertBefore(holder,vScene.nextSibling);holder.appendChild(plan);
+    sec.classList.add('is-pinned');
+    var bodyA=$$('.body>*',a),bodyB=$$('.body>*',b),imgA=$('.ph img',a),imgB=$('.ph img',b);
+    var setActive=function(p){var on=p>.5;a.style.pointerEvents=on?'none':'';b.style.pointerEvents=on?'':'none';a.setAttribute('aria-hidden',on);b.setAttribute('aria-hidden',!on);};
+    gsap.set(b,{opacity:0});setActive(0);
+    var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:vScene,start:'top top',end:'+=130%',pin:true,scrub:true,anticipatePin:1,refreshPriority:2,
+      onUpdate:function(s){setActive(s.progress);}}});
+    // the first card's text leaves before the second card's text arrives, so the two never overlap
+    tl.to({},{duration:.3})
+      .to(bodyA,{y:-24,opacity:0,stagger:.03,duration:.3},'swap')
+      .to(imgA,{scale:1.08,duration:1},'swap')
+      .to(b,{opacity:1,duration:.4},'swap+=.3')           // the second card fades in on top of the still-opaque first card
+      .set(a,{opacity:0},'swap+=.71')
+      .fromTo(imgB,{scale:1.16},{scale:1,duration:1},'swap+=.1')
+      .fromTo(bodyB,{y:34,opacity:0},{y:0,opacity:1,stagger:.06,duration:.4},'swap+=.62')
+      .to({},{duration:.3});
+    var onFocus=function(e){var st=tl.scrollTrigger;seek(st,b.contains(e.target)?.95:0);};
+    a.addEventListener('focusin',onFocus);b.addEventListener('focusin',onFocus);
+    return function(){
+      a.removeEventListener('focusin',onFocus);b.removeEventListener('focusin',onFocus);
+      track.appendChild(plan);holder.remove();sec.classList.remove('is-pinned');
+      [a,b].forEach(function(s){s.style.pointerEvents='';s.removeAttribute('aria-hidden');});
+      gsap.set([a,b,imgA,imgB].concat(bodyA,bodyB),{clearProps:'opacity,transform'});
+      if(car.refresh)car.refresh();
+    };
+  });
+
+  // gallery: the image row scrolls sideways while the section is pinned; the lightbox still opens on click
+  var gal=$('#gallery');
+  if(gal&&!late)mm.add(PIN,function(){
+    var track=$('.car-track',gal),car=$('.car',gal);
+    gal.classList.add('is-hscroll');
+    var vis=function(){return [].slice.call(track.children).filter(function(s){return !s.hidden;});};
+    var dist=function(){var s=vis(),last=s[s.length-1];return last?Math.max(0,last.offsetLeft+last.offsetWidth-track.clientWidth):0;};
+    var tw=gsap.to(track,{x:function(){return -dist();},ease:'none',scrollTrigger:{trigger:gal,start:'top top',end:function(){return '+='+dist();},pin:true,scrub:true,anticipatePin:1,invalidateOnRefresh:true,refreshPriority:1}});
+    var onFocus=function(e){var s=e.target.closest('.car-slide');if(!s)return;var d=dist();seek(tw.scrollTrigger,d?Math.min(1,s.offsetLeft/d):0);};
+    track.addEventListener('focusin',onFocus);
+    return function(){track.removeEventListener('focusin',onFocus);gal.classList.remove('is-hscroll');gsap.set(track,{clearProps:'transform'});if(car.refresh)car.refresh();};
+  });
+
+  // location sketch: the route from the project to NH-66 draws itself as the map scrolls into view
+  var route=$('#mapbox .route-draw');
+  if(route&&!late)mm.add(OK,function(){
+    gsap.fromTo(route,{strokeDashoffset:1},{strokeDashoffset:0,ease:'none',scrollTrigger:{trigger:'#mapbox',start:'top 80%',end:'center 50%',scrub:true}});
+  });
+
+  // optional gallery slides appearing later change the layout
+  document.addEventListener('site:layout',function(){ScrollTrigger.refresh();});
 
   // re-measure once web fonts and images have settled (prevents wrong trigger positions)
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ScrollTrigger.refresh();});

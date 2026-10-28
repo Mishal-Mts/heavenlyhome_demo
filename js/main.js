@@ -183,7 +183,7 @@ var ENDPOINTS=[];
   addEventListener('load',function(){setTimeout(function(){
     $$('.car-slide[data-opt]').forEach(function(s){
       var im=$('img',s),t=new Image();
-      t.onload=function(){im.src=t.src;s.hidden=false;var c=s.closest('.car');if(c&&c.refresh)c.refresh();};
+      t.onload=function(){im.src=t.src;s.hidden=false;var c=s.closest('.car');if(c&&c.refresh)c.refresh();document.dispatchEvent(new Event('site:layout'));};
       t.src=im.getAttribute('data-src');
     });
     if(C.stageDate){var pc=$('#progCap');if(pc)pc.textContent='Latest site progress \u00b7 '+C.stageDate;}

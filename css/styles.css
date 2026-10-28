@@ -454,3 +454,44 @@ main>section,.handoff>.curtain{background:#fff}
  .hero-panel .hero-copy::before{display:none}
  .hero-panel .scroll-cue{display:none}
 }
+
+/* ---------- Phase 4: signature scenes ---------- */
+/* villas: on desktop the two villa cards share one stage and crossfade as you scroll (js/motion.js adds .is-pinned) */
+@media(min-width:1024px){
+ #villas.is-pinned .v-scene{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:84px 0 36px}
+ #villas.is-pinned .sec-head{margin-bottom:26px}
+ #villas.is-pinned .car-track{display:grid;overflow:visible;padding:0;scroll-snap-type:none}
+ #villas.is-pinned .car-slide{grid-area:1/1;width:100%;min-width:0;position:relative;z-index:1}
+ #villas.is-pinned .car-slide+.car-slide{z-index:2}
+ #villas.is-pinned .car-ctl{display:none!important}
+ #villas.is-pinned .card{flex-direction:row;height:min(56svh,500px);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+ #villas.is-pinned .card .ph{flex:0 0 58%;aspect-ratio:auto;height:100%}
+ #villas.is-pinned .card .ph img{position:absolute;inset:0}
+ #villas.is-pinned .card .body{padding:clamp(28px,3vw,48px);justify-content:center}
+ #villas.is-pinned .card h3{font-size:2rem}
+ #villas.is-pinned .price{font-size:2.6rem}
+ #villas.is-pinned .card .btn{align-self:flex-start;margin-top:8px}
+ .v-plan{max-width:860px;margin:8px auto 0}
+ .v-plan .card .body{display:grid;grid-template-columns:1fr 1.2fr;gap:6px 40px;align-items:start;padding:32px 36px}
+ .v-plan .card .body>*{grid-column:1}
+ .v-plan .card .body>table,.v-plan .card .body>table~*{grid-column:2}
+ .v-plan .card .body>table{grid-row:1/span 4;margin-top:0}
+}
+/* gallery: on desktop the row of images scrolls sideways while the section is pinned (.is-hscroll) */
+@media(min-width:1024px){
+ #gallery.is-hscroll{overflow:hidden;min-height:100svh;display:flex;align-items:center}
+ #gallery.is-hscroll>.wrap{width:100%}
+ #gallery.is-hscroll .car-track{overflow:visible;scroll-snap-type:none;padding:0;will-change:transform}
+ #gallery.is-hscroll .car-slide{flex:0 0 clamp(380px,34vw,560px)}
+ #gallery.is-hscroll .car-ctl{display:none!important}
+}
+/* location sketch: pulsing project marker */
+.mapbox .pulse{transform-box:fill-box;transform-origin:center;animation:mpulse 2.4s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes mpulse{0%{transform:scale(1);opacity:.85}100%{transform:scale(2.8);opacity:0}}
+/* walkthrough: cinematic frame around the video and the 360 preview */
+.cine .vbox,.cine .pw{outline:1px solid rgba(242,215,166,.38);outline-offset:7px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+/* ornament divider (original wave + palm line) */
+.ornament{display:flex;justify-content:center;margin:0 auto 18px;color:var(--gold)}
+.ornament svg{width:120px;height:26px}
+.cine .ornament{color:#f2d7a6}
+@media(prefers-reduced-motion:reduce){.mapbox .pulse{animation:none;opacity:0}}
