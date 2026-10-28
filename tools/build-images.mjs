@@ -68,6 +68,11 @@ for (const [slot, s] of Object.entries(SLOTS)) {
 }
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 1));
 
+// small WebP copies of the two logo variants for the page (shown at most ~40 px tall; 80 px covers high-DPI screens)
+for (const f of ['logo-defender-villas', 'logo-defender-villas-white']) {
+  if (existsSync(`images/${f}.png`)) await sharp(`images/${f}.png`).resize({ height: 80 }).webp({ quality: 90, alphaQuality: 100 }).toFile(`${OUT}/${f}-h80.webp`);
+}
+
 // ---- update index.html ----
 let html = readFileSync('index.html', 'utf8');
 const set = (n, ext) => manifest[n].widths.map(w => `${OUT}/${n}-${w}.${ext} ${w}w`).join(', ');
@@ -90,8 +95,16 @@ html = html.replace(/<picture data-img="([\w-]+)"([^>]*)>([\s\S]*?)<\/picture>/g
   sources += `<source type="image/avif" srcset="${set(n, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${set(n, 'webp')}" sizes="${sizes}">`;
   return `<picture data-img="${n}"${attrs}>${sources}${img}</picture>`;
 });
-// walkthrough still frame
-html = html.replace(/poster="[^"]*" data-poster-slot="([\w-]+)"/g, (all, n) => `poster="${manifest[n] ? manifest[n].fallback : 'images/hero.jpg'}" data-poster-slot="${n}"`);
+// optional hero video: the page only asks for it when the file exists (no failed request otherwise)
+const loop = ctx.CONFIG.heroLoop || '';
+const hasLoop = !!loop && existsSync(loop);
+html = html.replace(/<section class="hero" id="hero"( data-loop="[^"]*")?>/, `<section class="hero" id="hero"${hasLoop ? ` data-loop="${loop}"` : ''}>`);
+rows.push({ slot: 'hero-loop (video)', current: '(none: optional)', hiresExists: hasLoop, using: hasLoop ? `video ${loop}` : 'still image (no video file yet)' });
+// walkthrough still frame: written as data-poster (js/main.js applies it when the section comes near), using the lighter WebP copy
+html = html.replace(/(?:data-)?poster="[^"]*" data-poster-slot="([\w-]+)"/g, (all, n) => {
+  const m = manifest[n], w = m && Math.min(1400, Math.max(...m.widths));
+  return `data-poster="${m ? `${OUT}/${n}-${w}.webp` : 'images/hero.jpg'}" data-poster-slot="${n}"`;
+});
 // elements that only show when one of their slots has an image (e.g. the artist's impression badge on an optional backdrop)
 html = html.replace(/<(\w+)([^>]*?) data-show-with="([^"]+)"( hidden)?>/g, (all, tag, a, list, h) =>
   `<${tag}${a} data-show-with="${list}"${list.split(' ').some(n => manifest[n]) ? '' : ' hidden'}>`);

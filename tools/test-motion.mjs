@@ -248,7 +248,7 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   await ctx.route(/(motion|main)\.js|gsap|lenis/, r => r.abort());
-  const page = await ctx.newPage(); await page.goto(base, { waitUntil: 'load' }); await page.waitForTimeout(3400);
+  const page = await ctx.newPage(); await page.goto(base, { waitUntil: 'load' }); await page.waitForTimeout(4500); // head failsafe fires at 4 s
   const st = await page.evaluate(() => ({ cls: document.documentElement.className, h1: getComputedStyle(document.querySelector('.hero h1')).visibility, form: getComputedStyle(document.querySelector('#heroForm')).display, about: getComputedStyle(document.querySelector('#about [data-anim]')).visibility }));
   check('scripts fail: failsafe shows all content and the inline form', st.h1 === 'visible' && st.form !== 'none' && st.about === 'visible', JSON.stringify(st));
   await ctx.close();

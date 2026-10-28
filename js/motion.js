@@ -60,9 +60,12 @@
       gsap.fromTo(kids,{autoAlpha:0,y:T.y},{autoAlpha:1,y:0,duration:T.dur,ease:T.ease,stagger:T.stagger,scrollTrigger:trig(el),clearProps:'transform'});
     },
     'line-reveal':function(el){
-      show(el);
-      SplitText.create(el,{type:'lines',mask:'lines',linesClass:'ln',autoSplit:true,onSplit:function(self){
-        return gsap.from(self.lines,{yPercent:115,duration:T.durLong,ease:T.ease,stagger:.1,scrollTrigger:trig(el)});
+      // split into lines only when the heading is about to come on screen (splitting is layout work)
+      ScrollTrigger.create({trigger:el,start:'top bottom+=320',once:true,onEnter:function(){
+        show(el);
+        SplitText.create(el,{type:'lines',mask:'lines',linesClass:'ln',autoSplit:true,onSplit:function(self){
+          return gsap.from(self.lines,{yPercent:115,duration:T.durLong,ease:T.ease,stagger:.1,scrollTrigger:trig(el)});
+        }});
       }});
     },
     'clip-reveal':function(el){
@@ -81,8 +84,12 @@
   };
 
   var mm=gsap.matchMedia();
+  // Everything below the hero is set up at the browser's first idle moment (see the end of this file),
+  // so the hero paints and starts animating without waiting for the rest of the page to be measured.
+  var later=[];
 
   // ---------- reveals (any width, motion allowed) ----------
+  later.push(function(){
   if(!late)mm.add(OK,function(){
     $$('[data-anim]').forEach(function(el){
       var k=el.getAttribute('data-anim');if(k==='parallax')return;
@@ -135,6 +142,7 @@
     // refreshPriority -1: measured after the pinned scenes have added their scroll distance
     ScrollTrigger.create({start:0,end:'max',refreshPriority:-1,onUpdate:paint,onRefresh:function(){measure();paint();}});
   }
+  });
 
   // ---------- header: hide on scroll down, show on scroll up (desktop) ----------
   if(hdr){
@@ -192,19 +200,18 @@
     });
 
     // optional looping hero video: desktop, motion allowed, no Save-Data, and only if the file exists.
-    // The still image (poster) paints first; the video is fetched only after the page has loaded.
-    var src=C.heroLoop,saveData=navigator.connection&&navigator.connection.saveData;
-    if(src&&!saveData&&/^https?:/.test(location.protocol)&&matchMedia(DESK+' and '+OK).matches){
+    // The image script (update-images.bat) writes data-loop on the hero when CONFIG.heroLoop's file exists,
+    // so no request is ever made for a missing video. The still image paints first; the video starts after load.
+    var src=hero.getAttribute('data-loop'),saveData=navigator.connection&&navigator.connection.saveData;
+    if(src&&!saveData&&matchMedia(DESK+' and '+OK).matches){
       addEventListener('load',function(){
         var start=function(){
-          fetch(src,{method:'HEAD'}).then(function(r){
-            if(!r.ok||!/video/.test(r.headers.get('content-type')||'video'))return;
-            var v=document.createElement('video');
-            v.muted=true;v.loop=true;v.playsInline=true;v.preload='metadata';v.setAttribute('aria-hidden','true');v.setAttribute('playsinline','');
-            v.poster=img.currentSrc||img.src;v.src=src;
-            v.addEventListener('playing',function(){gsap.to(v,{opacity:1,duration:1.2,ease:'power2.out'});if(kb)kb.pause();},{once:true});
-            media.appendChild(v);var p=v.play();if(p&&p.catch)p.catch(function(){v.remove();});
-          }).catch(function(){});
+          var v=document.createElement('video');
+          v.muted=true;v.loop=true;v.playsInline=true;v.preload='metadata';v.setAttribute('aria-hidden','true');v.setAttribute('playsinline','');
+          v.poster=img.currentSrc||img.src;v.src=src;
+          v.addEventListener('playing',function(){gsap.to(v,{opacity:1,duration:1.2,ease:'power2.out'});if(kb)kb.pause();},{once:true});
+          v.addEventListener('error',function(){v.remove();});
+          media.appendChild(v);var p=v.play();if(p&&p.catch)p.catch(function(){v.remove();});
         };
         if('requestIdleCallback' in window)requestIdleCallback(start,{timeout:2500});else setTimeout(start,1200);
       });
@@ -212,6 +219,7 @@
   }
 
   // ---------- signature scenes (desktop, tall enough screen, motion allowed) ----------
+  later.push(function(){
   var PIN=DESK+' and (min-height: 700px) and '+OK;
   // jump the page to the point of a pinned scene where a focused element is visible (keyboard users)
   var seek=function(st,p){var y=st.start+(st.end-st.start)*p;if(lenis)lenis.scrollTo(y,{immediate:true});else scrollTo(0,y);};
@@ -266,11 +274,20 @@
   if(route&&!late)mm.add(OK,function(){
     gsap.fromTo(route,{strokeDashoffset:1},{strokeDashoffset:0,ease:'none',scrollTrigger:{trigger:'#mapbox',start:'top 80%',end:'center 50%',scrub:true}});
   });
+  });
 
   // optional gallery slides appearing later change the layout
   document.addEventListener('site:layout',function(){ScrollTrigger.refresh();});
 
-  // re-measure once web fonts and images have settled (prevents wrong trigger positions)
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ScrollTrigger.refresh();});
-  addEventListener('load',function(){ScrollTrigger.refresh();});
+  // run the deferred set-up at the first idle moment (at most ~1.2 s after start), in page order, then measure once
+  var ready=false;
+  var runLater=function(){if(ready)return;ready=true;later.forEach(function(f){f();});ScrollTrigger.sort();ScrollTrigger.refresh();};
+  if('requestIdleCallback' in window)requestIdleCallback(runLater,{timeout:1200});else setTimeout(runLater,300);
+  // re-measure whenever the page height changes (late web fonts re-wrapping text, optional photos appearing...),
+  // so scroll-triggered reveals never wait at stale positions
+  addEventListener('load',function(){if(ready)ScrollTrigger.refresh();});
+  if('ResizeObserver' in window){
+    var lastH=0,rt=0,main=$('main');
+    new ResizeObserver(function(){var h=main.offsetHeight;if(!ready||Math.abs(h-lastH)<2)return;lastH=h;clearTimeout(rt);rt=setTimeout(function(){ScrollTrigger.refresh();},200);}).observe(main);
+  }
 })();

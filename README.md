@@ -63,7 +63,12 @@ Then open http://localhost:8080. With the server running:
 - `node tools/check-brand.mjs` checks the logo swap and brand text.
 - `node tools/test-motion.mjs` checks the motion features: Lenis, reveals, header, enquiry panel, lightbox, pinned scenes, reduced motion, no-JS and the script-failure fallback.
 - `node tools/check-contrast.mjs` measures real text contrast over the images and the background sky.
+- `node tools/test-final.mjs` runs the slow-phone (4x CPU, Fast 4G), saved-contact, map, video, 360, keyboard and inline-form checks.
+- `node tools/serve.mjs 8081` serves the site the way a real host does (compressed), then `node tools/lighthouse.mjs http://localhost:8081/ mobile` (or `desktop`) runs Lighthouse.
+
+## Publishing
+Upload everything **except** `node_modules`, `tools`, `.shots` and `images/brochure-originals` (the backup does not need to be online). Turn on **HTTPS** at your host (the canonical URL, sitemap and share links use https://defendervillas.com) and leave the host's compression (gzip or brotli) on. The site uses no outside services at page load: fonts and scripts are all in the folder.
 
 ## Hero options (in CONFIG)
 - `HERO_FORM_MODE: 'panel'`: the hero form opens in a slide-in panel from every Enquire button. Set `'inline'` to put the form back in the hero.
-- `heroLoop: 'images/hero-loop.mp4'`: add a 6-10 s muted loop with this name and it plays behind the hero on desktop. Phones, Save-Data and reduced motion keep the still image.
+- `heroLoop: 'images/hero-loop.mp4'`: save a 6-10 s muted loop with this name, then double-click `update-images.bat`; it plays behind the hero on desktop. Phones, Save-Data and reduced motion keep the still image.

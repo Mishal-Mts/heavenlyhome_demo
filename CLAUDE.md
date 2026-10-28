@@ -22,6 +22,12 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 - Location sketch: `.route-draw` (a mask path, pathLength 1) draws with stroke-dashoffset on scroll; `.pulse` ring is CSS. Ornament divider: `#i-orn` symbol.
 - Tests: `node tools/test-motion.mjs` (50 behaviour checks), `node tools/check-contrast.mjs` (measures real contrast behind text over images and the atmosphere; must report 0 below AA), `tools/verify-load.mjs`, `tools/check-brand.mjs`.
 
+## Performance notes (Phase 6)
+- No runtime CDNs: fonts are self-hosted (`vendor/fonts`, @font-face written into the top of css/styles.css by `tools/build-fonts.mjs`), Pannellum 2.5.6 is in `vendor/pannellum-2.5.6`. One stylesheet only (Lenis base rules are copied into styles.css).
+- motion.js sets up the hero at once; everything below the hero runs at the first idle moment (`later` queue, then ScrollTrigger.sort + refresh). Headings are split only as they approach the screen. A ResizeObserver on <main> re-measures triggers when the page height changes (late fonts, optional photos).
+- Nothing missing is requested at page load: optional gallery photos are probed when the gallery comes near; the hero video is used only if the image script found the file (`data-loop` on #hero); the walkthrough still frame is `data-poster`, applied when the section comes near.
+- Lighthouse (`tools/serve.mjs` + `tools/lighthouse.mjs`): mobile 97-98 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100. `tools/test-final.mjs`: throttled phone/desktop, vCard, map, video, 360, keyboard, inline mode.
+
 ## IMAGE SAFETY RULES
 - Never delete, overwrite, rename, move or recompress any existing image in /images. Processing writes new files only (images/auto/).
 - `images/brochure-originals/` is a permanent read-only backup of the whole /images folder as it was before Phase 5. Never modify it.

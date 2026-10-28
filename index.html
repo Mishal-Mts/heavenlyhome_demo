@@ -8,9 +8,8 @@
 <meta name="theme-color" content="#0b2a3c">
 <script>(function(d){var m=!matchMedia('(prefers-reduced-motion: reduce)').matches;d.className='js hero-panel'+(m?' motion':'');setTimeout(function(){if(!window.__mainReady)d.classList.remove('hero-panel');if(!window.__motionReady)d.classList.remove('motion');},4000);})(document.documentElement)</script>
 <!--hero-preload--><link rel="preload" as="image" data-img="hero" type="image/avif" imagesrcset="images/auto/hero-800.avif 800w, images/auto/hero-1400.avif 1400w" imagesizes="100vw" fetchpriority="high"><!--/hero-preload-->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="vendor/fonts/playfair-display-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="vendor/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- SETTINGS: every client detail (phones, emails, addresses, K-RERA no., licences, logos, video) lives in the CONFIG object at the top of js/main.js. Leave a value as '' and the related text or button stays hidden. -->
 <link rel="canonical" href="https://defendervillas.com/">
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -30,7 +29,6 @@
 <meta name="twitter:description" content="Premium gated 2-in-1 beach villas and budget villas near Kodungallur, Thrissur, Kerala.">
 <meta name="twitter:image" content="https://defendervillas.com/images/og-image.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Defender Real Estates & Builders Limited","brand":{"@type":"Brand","name":"Defender Villas"},"url":"https://defendervillas.com/","logo":"https://defendervillas.com/images/logo-defender-villas.png"}</script>
-<link rel="stylesheet" href="vendor/lenis-1.3.26/lenis.css">
 <link rel="stylesheet" href="css/styles.css">
 <script src="vendor/gsap-3.15.0/gsap.min.js" defer></script>
 <script src="vendor/gsap-3.15.0/ScrollTrigger.min.js" defer></script>
@@ -57,7 +55,7 @@
 <div class="progress" aria-hidden="true"><span></span></div>
 <header id="hdr">
  <div class="wrap nav">
-  <a class="logo" href="#top"><span class="lg"><img class="lo-l" src="images/logo-defender-villas-white.png" width="754" height="160" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><img class="lo-d" src="images/logo-defender-villas.png" width="754" height="160" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><b class="wm" data-brand="upper">DEFENDER VILLAS</b></span><small>BY DEFENDER REAL ESTATES</small></a>
+  <a class="logo" href="#top"><span class="lg"><img class="lo-l" src="images/auto/logo-defender-villas-white-h80.webp" width="377" height="80" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><img class="lo-d" src="images/auto/logo-defender-villas-h80.webp" width="377" height="80" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><b class="wm" data-brand="upper">DEFENDER VILLAS</b></span><small>BY DEFENDER REAL ESTATES</small></a>
   <nav aria-label="Main"><ul>
    <li><a href="#villas">Villas</a></li><li><a href="#walkthrough">Walkthrough</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#location">Location</a></li><li><a href="#nri">Gulf &amp; NRI</a></li><li><a href="#group">Our Group</a></li><li><a href="#faq">FAQ</a></li>
   </ul></nav>
@@ -185,11 +183,11 @@
  <div class="sec-head" data-anim="stagger"><span class="eyebrow">Walkthrough</span><h2 data-anim="line-reveal">Walk through Heavenly Homes</h2><p>Watch the walkthrough, then drag to look around the beachfront in the 360 preview.</p></div>
  <div class="wt">
   <div class="vbox" id="vbox" data-anim="clip-reveal">
-   <video id="vid" muted loop playsinline preload="none" poster="images/hero.jpg" data-poster-slot="walkthrough-poster" aria-label="Defender Villas walkthrough video"><source src="images/walkthrough.mp4" type="video/mp4"></video>
+   <video id="vid" muted loop playsinline preload="none" data-poster="images/auto/walkthrough-poster-1400.webp" data-poster-slot="walkthrough-poster" aria-label="Defender Villas walkthrough video"><source src="images/walkthrough.mp4" type="video/mp4"></video>
    <button class="vplay" id="vplay" type="button" aria-label="Play walkthrough video"><i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg></i>Play walkthrough</button>
    <div class="vfall" id="vfall" role="status"><b style="font-family:var(--serif);font-size:1.3rem">This video is unavailable right now</b><p>Request a private live video tour instead.</p><div class="cta-row" style="justify-content:center"><a class="btn btn-primary" href="#enquire" data-villa="Video tour (Gulf / NRI buyer)">Request a video tour</a></div></div>
   </div>
-  <!-- 360 SLOT: save a real equirectangular photo as images/tour-360.jpg and set CONFIG.tour360 = 'images/tour-360.jpg'. It then replaces this demo with Pannellum 2.5.6 (cdnjs, pinned). -->
+  <!-- 360 SLOT: save a real equirectangular photo as images/tour-360.jpg and set CONFIG.tour360 = 'images/tour-360.jpg'. It then replaces this demo with Pannellum 2.5.6 (vendor/pannellum-2.5.6, pinned). -->
   <div class="pw ai" id="pw" data-anim="clip-reveal">
    <div class="pano" id="pano" tabindex="0" role="group" aria-label="360 degree preview. Drag, swipe or use the arrow keys to look around.">
     <div class="pano-in" id="panoIn">
@@ -356,7 +354,7 @@
   <div class="car-track" tabindex="0" data-anim="stagger">
    <div class="car-slide ft"><article class="gf" id="bizcard">
     <span class="ftag">Featured</span>
-    <span class="lg"><img src="images/logo-sister.png" alt="Sister concern logo" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><span class="mg">MJ</span></span>
+    <span class="lg"><img src="images/logo-sister.png" alt="Sister concern logo" loading="lazy" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><span class="mg">MJ</span></span>
     <small>Sister concern</small>
     <h3>Minu John</h3>
     <p class="ttl">Realtor &amp; Licensed General Contractor</p>
@@ -369,7 +367,7 @@
     </div>
    </article></div>
    <div class="car-slide hh"><article class="gl">
-    <span class="lg"><img src="images/logo-defender-villas.png" width="754" height="160" alt="Defender Villas logo" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><span class="mg">D</span></span>
+    <span class="lg"><img src="images/auto/logo-defender-villas-h80.webp" width="377" height="80" alt="Defender Villas logo" loading="lazy" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><span class="mg">D</span></span>
     <hr class="ac">
     <h3>Heavenly Homes</h3>
     <p>Premium gated beach villas, a project by Defender Real Estates &amp; Builders Limited.</p>
@@ -377,7 +375,7 @@
     <a class="btn btn-teal sm" href="#villas">View villas</a>
    </article></div>
    <div class="car-slide mc"><article class="gl">
-    <span class="lg"><img src="images/logo-mercea.png" alt="Mercea Technical Services logo" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><b class="wm" style="color:var(--navy)">MERCEA</b></span>
+    <span class="lg"><img src="images/logo-mercea.png" width="123" height="147" alt="Mercea Technical Services logo" loading="lazy" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><b class="wm" style="color:var(--navy)">MERCEA</b></span>
     <hr class="ac">
     <h3>Mercea Technical Services LLC</h3>
     <p id="mcDesc">Our Dubai-based group company, serving Gulf and NRI buyers.</p>
@@ -442,9 +440,9 @@
 
 <footer><div class="wrap">
  <div class="fgrid">
-  <div><span class="lg"><img src="images/logo-defender-villas-white.png" width="754" height="160" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><b class="wm" data-brand="upper" style="color:#fff;font-size:1.2rem;letter-spacing:.04em">DEFENDER VILLAS</b></span><br>A project by Defender Real Estates &amp; Builders Limited<br>Perinjanam Moonupedika, near Kodungallur, Thrissur, Kerala<span id="fReraWrap" hidden><br>K-RERA No: <span id="fRera"></span></span></div>
-  <div><h4>Explore</h4><ul><li><a href="#villas">Villas &amp; prices</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#location">Location</a></li><li><a href="#nri">Gulf &amp; NRI</a></li><li><a href="#group">Our Group</a></li><li><a href="#faq">FAQ</a></li></ul></div>
-  <div><h4>Contact</h4><ul>
+  <div><span class="lg"><img src="images/auto/logo-defender-villas-white-h80.webp" width="377" height="80" alt="Defender Villas" loading="lazy" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><b class="wm" data-brand="upper" style="color:#fff;font-size:1.2rem;letter-spacing:.04em">DEFENDER VILLAS</b></span><br>A project by Defender Real Estates &amp; Builders Limited<br>Perinjanam Moonupedika, near Kodungallur, Thrissur, Kerala<span id="fReraWrap" hidden><br>K-RERA No: <span id="fRera"></span></span></div>
+  <div><h3>Explore</h3><ul><li><a href="#villas">Villas &amp; prices</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#location">Location</a></li><li><a href="#nri">Gulf &amp; NRI</a></li><li><a href="#group">Our Group</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+  <div><h3>Contact</h3><ul>
    <li data-needs="call" hidden><a href="#enquire" data-call="main"><span data-ptext="phone"></span></a></li>
    <li data-needs="wa" hidden><a href="#enquire" data-wa="main" data-wt="Hi, I’m interested in {brand}.">WhatsApp</a></li>
    <li data-needs="mail" hidden><a id="fMail" href="#enquire"></a></li>

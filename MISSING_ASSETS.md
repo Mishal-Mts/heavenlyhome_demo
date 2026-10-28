@@ -71,7 +71,7 @@ The villa images **must** come from the client's original renders or photos. Nev
 
 | Save as | Spec | Where it is used |
 |---|---|---|
-| images/hero-loop.mp4 | 6–10 s seamless loop, 1920 × 1080, H.264, muted, under 6 MB. Drone or slow gimbal shot of the beach or villas. | Behind the hero on desktop (plays automatically when the file exists) |
+| images/hero-loop.mp4 | 6–10 s seamless loop, 1920 × 1080, H.264, muted, under 6 MB. Drone or slow gimbal shot of the beach or villas. | Behind the hero on desktop. After adding the file, double-click `update-images.bat` so the page starts using it |
 | images/walkthrough.mp4 | 1920 × 1080 H.264, ideally under 40 MB (or upload to YouTube and set `yt` in CONFIG) | Walkthrough "Play" button |
 | images/tour-360.jpg | Equirectangular 360° photo, 2:1, at least 6000 × 3000 | Replaces the 360 demo. Set `tour360:'images/tour-360.jpg'` in CONFIG |
 | Real site photos | Several, landscape, at least 2000 px wide: plot, access road, beach walk, gate | For future gallery or progress use (real photos, so no "Artist's impression" label) |

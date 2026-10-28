@@ -251,5 +251,11 @@
   "hiresExists": false,
   "using": "hidden (no image yet)",
   "status": ""
+ },
+ {
+  "slot": "hero-loop (video)",
+  "current": "(none: optional)",
+  "hiresExists": false,
+  "using": "still image (no video file yet)"
  }
 ]

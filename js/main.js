@@ -27,7 +27,7 @@ var CONFIG={
   tour360:'',      // Real 360 photo (equirectangular JPG), e.g. 'images/tour-360.jpg'. Replaces the 360 preview demo with Pannellum.
   yt:'',           // OR a YouTube video ID. If filled, it is used instead of the MP4 (loads only when Play is tapped).
   HERO_FORM_MODE:'panel',          // 'panel': the hero form opens in a slide-in panel from every Enquire button. 'inline': the form sits in the hero as before.
-  heroLoop:'images/hero-loop.mp4', // Optional looping hero video (6-10 s, muted). Plays on desktop only if the file exists; set '' to switch off.
+  heroLoop:'images/hero-loop.mp4', // Optional looping hero video (6-10 s, muted). Add the file, then run update-images.bat; plays on desktop only. '' = off.
   // ---------------------------------------- IMAGES ----------------------------------------
   // Every picture on the page is a "slot".
   //   current = the brochure image used today. It is never changed, moved or deleted.
@@ -216,17 +216,25 @@ var ENDPOINTS=[];
     tr.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(upd);},{passive:true});
     addEventListener('resize',upd);el.refresh=build;build();
   });
-  // optional gallery photos: a slide appears only if its image file exists in images/
-  addEventListener('load',function(){setTimeout(function(){
+  // optional gallery photos: a slide appears only if its image file exists in images/.
+  // Checked when the gallery comes near (not at page load), so missing files cost nothing up front.
+  var probe=function(){
     $$('.car-slide[data-opt]').forEach(function(s){
       var im=$('img',s),t=new Image();
       t.onload=function(){im.src=t.src;s.hidden=false;var c=s.closest('.car');if(c&&c.refresh)c.refresh();document.dispatchEvent(new Event('site:layout'));};
       t.src=im.getAttribute('data-src');
     });
     if(C.stageDate){var pc=$('#progCap');if(pc)pc.textContent='Latest site progress \u00b7 '+C.stageDate;}
-  },600);});
+  };
+  var galSec=$('#gallery');
+  if(galSec&&'IntersectionObserver' in window){var io4=new IntersectionObserver(function(es){if(es[0].isIntersecting){io4.disconnect();probe();}},{rootMargin:'1200px 0px'});io4.observe(galSec);}
+  else addEventListener('load',probe);
   // walkthrough video: nothing loads until Play. YouTube (CONFIG.yt) wins over the MP4.
   var vb=$('#vbox'),vid=$('#vid'),vp=$('#vplay'),vf=$('#vfall');
+  // its still frame loads when the walkthrough comes near (or on Play), not at page load
+  var poster=function(){var p=vid.getAttribute('data-poster');if(p&&!vid.getAttribute('poster'))vid.poster=p;};
+  if('IntersectionObserver' in window){var io5=new IntersectionObserver(function(es){if(es[0].isIntersecting){io5.disconnect();poster();}},{rootMargin:'800px 0px'});io5.observe(vb);}else poster();
+  vp.addEventListener('click',poster);
   if(C.video&&!C.yt&&safe(C.video))$('source',vid).src=C.video;
   function vfail(){vp.style.display='none';vf.classList.add('on');}
   vp.addEventListener('click',function(){
@@ -243,8 +251,8 @@ var ENDPOINTS=[];
   if(C.tour360&&safe(C.tour360)){
     pano.textContent='';pano.className='';pano.removeAttribute('tabindex');
     var io2=new IntersectionObserver(function(es){if(es[0].isIntersecting){io2.disconnect();
-      var lk=document.createElement('link');lk.rel='stylesheet';lk.href='https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css';document.head.appendChild(lk);
-      var sp=document.createElement('script');sp.src='https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js';
+      var lk=document.createElement('link');lk.rel='stylesheet';lk.href='vendor/pannellum-2.5.6/pannellum.css';document.head.appendChild(lk);
+      var sp=document.createElement('script');sp.src='vendor/pannellum-2.5.6/pannellum.js';
       sp.onload=function(){window.pannellum.viewer('pano',{type:'equirectangular',panorama:C.tour360,autoLoad:true,compass:false,showFullscreenCtrl:true,hfov:100});};
       document.head.appendChild(sp);}},{rootMargin:'300px'});io2.observe(pano);
   }else{
