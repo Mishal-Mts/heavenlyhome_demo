@@ -1,11 +1,17 @@
 // ======================= CONFIG: the only place to edit client details =======================
 // Leave a value as '' and the related text, button or section stays hidden on the page.
 var CONFIG={
+  brand:{          // Brand shown in the header, footer, WhatsApp messages, saved contact and form consent line.
+    name:'Defender Villas',              //   Brand name.
+    project:'',                          //   Optional project name, if the project keeps its own name (see BRAND_REVIEW.md).
+    domain:'https://defendervillas.com', //   Live domain (canonical URL). HTTPS must be enabled on the host.
+    tagline:''                           //   Optional short tagline.
+  },
   phone:'',        // Main sales phone: country code + digits, no spaces, e.g. '91XXXXXXXXXX'. Needed for the Call buttons, header number and footer.
   whatsapp:'',     // WhatsApp number, same format. If empty, the main phone is used for WhatsApp.
-  email:'',        // Sales email address (footer and Heavenly Homes card).
+  email:'',        // Sales email address (footer and project card in Our Group).
   mapLink:'https://www.google.com/maps?q=10.298030853271484,76.1274185180664&z=17&hl=en', // Google Maps link for the project location (map button and iframe use it).
-  website:'',      // Heavenly Homes / Defender website, e.g. 'https://www.example.com' (Heavenly Homes card).
+  website:'https://defendervillas.com', // Project website (project card in Our Group).
   office:'',       // Defender Real Estates & Builders Limited registered office address (footer).
   cin:'',          // Defender company CIN (footer).
   reraNo:'',       // K-RERA registration number. Shows the compliance bar under the hero, the Approvals list and the footer.
@@ -26,7 +32,7 @@ var CONFIG={
     email:'',      //   Email. Added to the saved contact.
     address:'',    //   Office address (tap-to-map row on the card).
     website:'',    //   Website (row on the card).
-    company:'',    //   Business name for the saved contact (default: Heavenly Homes) and footer.
+    company:'',    //   Business name for the saved contact (default: CONFIG.brand.name) and footer.
     licence:''     //   Contractor licence / realtor registration number (footer).
   },
   mercea:{         // Mercea Technical Services LLC, Dubai
@@ -42,9 +48,14 @@ var CONFIG={
 var ENDPOINTS=[];
 // ==============================================================================================
 (function(){
-  var C=CONFIG,M=C.minu||{},D=C.mercea||{};
+  var C=CONFIG,M=C.minu||{},D=C.mercea||{},B=(C.brand&&C.brand.name)||'Defender Villas';
   var $=function(s,c){return (c||document).querySelector(s)},$$=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
   var WA=C.whatsapp||C.phone,MWA=M.whatsapp||M.phone;
+  // brand text from CONFIG.brand.name
+  $$('[data-brand]').forEach(function(el){el.textContent=el.getAttribute('data-brand')==='upper'?B.toUpperCase():B;});
+  $$('[data-wt]').forEach(function(a){a.setAttribute('data-wt',a.getAttribute('data-wt').replace(/\{brand\}/g,B));});
+  $$('img[alt="Defender Villas"]').forEach(function(i){i.alt=B;});
+  var vl=$('#vid');if(vl)vl.setAttribute('aria-label',B+' walkthrough video');
   var HAS={call:!!C.phone,wa:!!WA,mail:!!C.email,minucall:!!M.phone,minuwa:!!MWA,minusave:!!(M.phone||M.email)};
   function fmt(n){return /^91\d{10}$/.test(n)?'+91 '+n.slice(2,7)+' '+n.slice(7):(/^\d+$/.test(n)?'+'+n:n)}
   function safe(u){return /^(https?:\/\/|images\/|docs\/|\/)/i.test(u||'')?u:''}
@@ -105,10 +116,10 @@ var ENDPOINTS=[];
   addEventListener('resize',function(){if(innerWidth>=1040&&!mn.hidden)menu(false);});
   // Minu John vCard
   $('#vcfbtn').addEventListener('click',function(){
-    var L=['BEGIN:VCARD','VERSION:3.0','N:John;Minu;;;','FN:Minu John','ORG:'+(M.company||'Heavenly Homes'),'TITLE:Realtor & Licensed General Contractor'];
+    var L=['BEGIN:VCARD','VERSION:3.0','N:John;Minu;;;','FN:Minu John','ORG:'+(M.company||B),'TITLE:Realtor & Licensed General Contractor'];
     if(M.phone)L.push('TEL;TYPE=CELL:+'+M.phone);
     if(M.email)L.push('EMAIL:'+M.email);
-    L.push('NOTE:Heavenly Homes\\, Perinjanam Moonupedika\\, Kodungallur\\, Thrissur\\, Kerala','END:VCARD');
+    L.push('NOTE:'+B+'\\, Perinjanam Moonupedika\\, Kodungallur\\, Thrissur\\, Kerala','END:VCARD');
     var b=new Blob([L.join('\r\n')],{type:'text/vcard'}),u=URL.createObjectURL(b),a=document.createElement('a');
     a.href=u;a.download='Minu-John.vcf';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},2000);
   });
@@ -154,13 +165,13 @@ var ENDPOINTS=[];
   if(C.video&&!C.yt&&safe(C.video))$('source',vid).src=C.video;
   function vfail(){vp.style.display='none';vf.classList.add('on');}
   vp.addEventListener('click',function(){
-    if(C.yt){vid.remove();vp.remove();var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(C.yt)+'?autoplay=1&rel=0&playsinline=1';f.title='Heavenly Homes walkthrough';f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;vb.appendChild(f);return;}
+    if(C.yt){vid.remove();vp.remove();var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(C.yt)+'?autoplay=1&rel=0&playsinline=1';f.title=B+' walkthrough';f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;vb.appendChild(f);return;}
     $('source',vid).addEventListener('error',vfail);vid.addEventListener('error',vfail);
     vid.preload='auto';var p=vid.play();
     if(p&&p.then){p.then(function(){vp.style.display='none';vid.controls=true;}).catch(vfail);}
   });
   // click-to-load map
-  $('#mapbtn').addEventListener('click',function(){var b=$('#mapbox');$('svg',b).remove();this.remove();var f=document.createElement('iframe');f.title='Map: Heavenly Homes location, Perinjanam Moonupedika';f.loading='lazy';f.referrerPolicy='no-referrer-when-downgrade';f.src=C.mapLink+(C.mapLink.indexOf('?')>-1?'&':'?')+'output=embed';b.appendChild(f);});
+  $('#mapbtn').addEventListener('click',function(){var b=$('#mapbox');$('svg',b).remove();this.remove();var f=document.createElement('iframe');f.title='Map: '+B+' location, Perinjanam Moonupedika';f.loading='lazy';f.referrerPolicy='no-referrer-when-downgrade';f.src=C.mapLink+(C.mapLink.indexOf('?')>-1?'&':'?')+'output=embed';b.appendChild(f);});
   $('#mapLink').href=C.mapLink;
   // 360 preview: light drag/swipe panorama (no library). CONFIG.tour360 swaps in Pannellum with a real equirectangular photo.
   var pano=$('#pano'),pin=$('#panoIn');

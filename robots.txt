@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /images/originals/
+Disallow: /tools/
+
+Sitemap: https://defendervillas.com/sitemap.xml
