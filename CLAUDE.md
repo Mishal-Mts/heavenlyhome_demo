@@ -8,6 +8,14 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 - `tools/build-brand.mjs` (`npm run brand`): logo variants, favicons and `images/og-image.jpg`.
 - `tools/screenshots.mjs <label>`, `tools/diff.mjs <a> <b>`, `tools/check-brand.mjs`: Playwright checks (serve first with `npm run serve`).
 
+## Motion (js/motion.js)
+- GSAP 3.15.0 (core, ScrollTrigger, SplitText) and Lenis 1.3.26 are vendored in `/vendor` (pinned; refresh with `npm run vendor`). All scripts load with `defer`: gsap, ScrollTrigger, SplitText, lenis, main.js, motion.js.
+- Reveal hooks: `data-anim="fade-up | stagger | line-reveal | clip-reveal | parallax | count"`. Tokens (ease, durations, travel) are defined once at the top of motion.js.
+- The head script sets `js hero-panel motion` on `<html>` (`motion` only without reduced motion). CSS hides reveal targets only under `.motion`. A 4 s failsafe removes `motion` and `hero-panel` if the scripts never run. Scripts that run late skip entrance animations.
+- Lenis: wheel smoothing only, native touch. Anchors are handled in motion.js; Lenis applies the CSS `scroll-padding-top` for the header. `site:lock` events from main.js (lightbox, enquiry panel) stop and start Lenis. Scrollable overlays carry `data-lenis-prevent`.
+- `CONFIG.HERO_FORM_MODE`: `'panel'` (the hero form moves into `#enqPanel`, opened by `[data-panel]` buttons) or `'inline'`. `CONFIG.heroLoop`: an optional desktop hero video, probed with a HEAD request after load.
+- Tests: `node tools/test-motion.mjs` (31 behaviour checks), `tools/verify-load.mjs`, `tools/check-brand.mjs`.
+
 ## HARD RULES
 1. Never change, rewrite or delete the client's copy, prices, facts, disclaimers, FAQ or compliance text. The one exception is brand surfaces (see REBRAND). Keep "Defender Real Estates & Builders Limited" exactly as written (it is the RERA promoter name).
 2. Keep CONFIG and ENDPOINTS, and keep every hook working: data-needs / data-call / data-wa / data-wt / data-ptext / data-villa / data-brand, the enquiry forms, the vCard, lightbox, click-to-load map, video play, the 360 preview with its Pannellum swap, and the optional gallery slides (`data-opt`). Don't break ids that main.js uses.

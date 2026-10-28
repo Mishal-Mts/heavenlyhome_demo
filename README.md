@@ -25,3 +25,8 @@ npm run serve
 Then open http://localhost:8080. With the server running:
 - `node tools/screenshots.mjs <label>` takes full-page screenshots at 390, 768 and 1440 px.
 - `node tools/check-brand.mjs` checks the logo swap and brand text.
+- `node tools/test-motion.mjs` checks the motion features: Lenis, reveals, header, enquiry panel, lightbox, reduced motion, no-JS and the script-failure fallback.
+
+## Hero options (in CONFIG)
+- `HERO_FORM_MODE: 'panel'`: the hero form opens in a slide-in panel from every Enquire button. Set `'inline'` to put the form back in the hero.
+- `heroLoop: 'images/hero-loop.mp4'`: add a 6-10 s muted loop with this name and it plays behind the hero on desktop. Phones, Save-Data and reduced motion keep the still image.

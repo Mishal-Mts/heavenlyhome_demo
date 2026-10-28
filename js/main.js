@@ -26,6 +26,8 @@ var CONFIG={
   video:'',        // Optional. Walkthrough video path if different from the default images/walkthrough.mp4.
   tour360:'',      // Real 360 photo (equirectangular JPG), e.g. 'images/tour-360.jpg'. Replaces the 360 preview demo with Pannellum.
   yt:'',           // OR a YouTube video ID. If filled, it is used instead of the MP4 (loads only when Play is tapped).
+  HERO_FORM_MODE:'panel',          // 'panel': the hero form opens in a slide-in panel from every Enquire button. 'inline': the form sits in the hero as before.
+  heroLoop:'images/hero-loop.mp4', // Optional looping hero video (6-10 s, muted). Plays on desktop only if the file exists; set '' to switch off.
   minu:{           // Minu John (sister concern digital card)
     phone:'',      //   Phone, country code + digits. Shows the Call icon.
     whatsapp:'',   //   WhatsApp number. If empty the phone is used. Shows the WhatsApp icon.
@@ -123,15 +125,41 @@ var ENDPOINTS=[];
     var b=new Blob([L.join('\r\n')],{type:'text/vcard'}),u=URL.createObjectURL(b),a=document.createElement('a');
     a.href=u;a.download='Minu-John.vcf';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},2000);
   });
+  // page scroll lock (lightbox, enquiry panel): js/motion.js listens for 'site:lock' to stop/start Lenis
+  var locks=0;
+  function lock(on){locks=Math.max(0,locks+(on?1:-1));document.documentElement.classList.toggle('locked',locks>0);document.dispatchEvent(new CustomEvent('site:lock',{detail:locks>0}));}
   // lightbox
   var lb=$('#lb'),lbi=$('img',lb);
-  $$('[data-lb]').forEach(function(b){b.addEventListener('click',function(){var i=$('img',b);lbi.src=i.src;lbi.alt=i.alt;lb.classList.add('on');});});
-  lb.addEventListener('click',function(){lb.classList.remove('on');});
-  addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('on');});
-  // reveal on scroll
-  var rv=$$('.rv');
-  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.1});rv.forEach(function(el){io.observe(el);});}
-  else{rv.forEach(function(el){el.classList.add('in');});}
+  function lbClose(){if(lb.classList.contains('on')){lb.classList.remove('on');lock(false);}}
+  $$('[data-lb]').forEach(function(b){b.addEventListener('click',function(){var i=$('img',b);lbi.src=i.src;lbi.alt=i.alt;if(!lb.classList.contains('on')){lb.classList.add('on');lock(true);}});});
+  lb.addEventListener('click',lbClose);
+  addEventListener('keydown',function(e){if(e.key==='Escape')lbClose();});
+  // enquiry panel: CONFIG.HERO_FORM_MODE 'panel' moves the hero form into a slide-in panel opened by [data-panel] buttons.
+  // 'inline' (or no JS) keeps the form in the hero and those buttons simply link to #enquire.
+  var pnl=$('#enqPanel'),hf=$('#heroForm'),opener=null;
+  if(C.HERO_FORM_MODE!=='inline'&&pnl&&hf){
+    $('#panelBody').appendChild(hf);document.documentElement.classList.add('hero-panel'); // re-add if the head failsafe removed it on a slow load
+    var sheet=$('.panel-sheet',pnl),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var focusables=function(){return $$('a[href],button:not([disabled]),input:not([type=hidden]):not([tabindex="-1"]),select,textarea',sheet).filter(function(e){return e.offsetParent!==null;});};
+    var pOpen=function(from){
+      if(!pnl.hidden)return;opener=from||document.activeElement;pnl.hidden=false;lock(true);
+      void sheet.offsetWidth;pnl.classList.add('open');
+      setTimeout(function(){$('#q-name').focus({preventScroll:true});},reduce?0:350);
+    };
+    var pClose=function(){
+      if(pnl.hidden)return;pnl.classList.remove('open');lock(false);
+      var done=function(){pnl.hidden=true;};if(reduce)done();else setTimeout(done,560);
+      if(opener&&opener.focus)opener.focus({preventScroll:true});
+    };
+    $$('[data-panel]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();pOpen(a);});});
+    $$('[data-close]',pnl).forEach(function(b){b.addEventListener('click',pClose);});
+    pnl.addEventListener('keydown',function(e){
+      if(e.key==='Escape'){e.stopPropagation();pClose();return;}
+      if(e.key!=='Tab')return;var f=focusables(),a=f[0],z=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}
+    });
+    window.enquiryPanel={open:pOpen,close:pClose};
+  }else{document.documentElement.classList.remove('hero-panel');}
   // carousels: CSS scroll-snap + arrows + dots (hidden slides are skipped)
   $$('.car').forEach(function(el){
     var tr=$('.car-track',el),dots=$('.dots',el),pv=$('.prev',el),nx=$('.next',el),ctl=$('.car-ctl',el),raf=0,sl=[],ds=[];
@@ -203,7 +231,7 @@ var ENDPOINTS=[];
     }
   }
   // villa buttons pre-select the form
-  $$('[data-villa]').forEach(function(a){a.addEventListener('click',function(){$('#villa').value=a.getAttribute('data-villa');});});
+  $$('[data-villa]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-villa');$('#villa').value=v;$('#q-villa').value=v;});});
   // forms
   $$('form.enq').forEach(function(f){
     var ok=$('.ok',f),err=$('.err',f);
@@ -226,4 +254,5 @@ var ENDPOINTS=[];
       });
     });
   });
+  window.__mainReady=true;
 })();

@@ -25,7 +25,11 @@ h1,h2,h3{font-family:var(--serif);line-height:1.15;color:var(--navy);font-weight
 .btn svg,.ico{width:20px;height:20px;flex:none}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 /* header */
-header{position:fixed;top:0;left:0;right:0;z-index:40;padding-top:env(safe-area-inset-top,0px);transition:background .25s,box-shadow .25s}
+header{position:fixed;top:0;left:0;right:0;z-index:40;padding-top:env(safe-area-inset-top,0px);transition:background .25s,box-shadow .25s,transform .45s cubic-bezier(.22,1,.36,1)}
+/* dark fade behind the transparent header so the white logo and links stay readable over bright sky */
+header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 36px);background:linear-gradient(180deg,rgba(7,26,38,.62) 0%,rgba(7,26,38,.34) 55%,rgba(7,26,38,0) 100%);pointer-events:none;z-index:-1;transition:opacity .25s}
+header.solid::before{opacity:0}
+header.hide{transform:translateY(-100%)}
 header.solid{background:rgba(255,255,255,.96);backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--line)}
 .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
 .logo{display:flex;flex-direction:column;text-decoration:none;color:#fff;line-height:1}
@@ -44,14 +48,17 @@ header.solid .nav-call{color:var(--navy)}
 @media(min-width:960px){.nav-call{display:inline-flex}}
 /* hero */
 .hero{position:relative;color:#fff;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:110px 0 70px;background:var(--deep);overflow:hidden}
-.hero>picture>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,26,38,.82) 0%,rgba(7,26,38,.45) 55%,rgba(7,26,38,.15) 100%),linear-gradient(0deg,rgba(7,26,38,.75),rgba(7,26,38,0) 40%)}
+.hero-media{position:absolute;inset:0;overflow:hidden}
+.hero-media img,.hero-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-media video{opacity:0}
+.hero-scrim{position:absolute;inset:0;z-index:1;background:var(--deep);opacity:0;pointer-events:none}
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(7,26,38,.82) 0%,rgba(7,26,38,.45) 55%,rgba(7,26,38,.15) 100%),linear-gradient(0deg,rgba(7,26,38,.75),rgba(7,26,38,0) 40%)}
 .hero .wrap{position:relative;z-index:2;display:grid;gap:30px;width:100%}
 @media(max-width:959px){
- .hero{display:block;min-height:0;padding:0;background:linear-gradient(180deg,#0b2a3c,#071a26)}
- .hero>picture>img{position:relative;height:auto;aspect-ratio:16/10;display:block}
- .hero::after{display:none}
- .hero .wrap{padding-top:24px;padding-bottom:32px}
+ html:not(.hero-panel) .hero{display:block;min-height:0;padding:0;background:linear-gradient(180deg,#0b2a3c,#071a26)}
+ html:not(.hero-panel) .hero-media{position:relative;aspect-ratio:16/10}
+ html:not(.hero-panel) .hero::after{display:none}
+ html:not(.hero-panel) .hero .wrap{padding-top:24px;padding-bottom:32px}
 }
 .hero h1{color:#fff;font-size:clamp(2.1rem,6.2vw,3.9rem);max-width:15ch}
 .hero .sub{max-width:46ch;margin:14px 0 20px;font-size:1.04rem;color:#e6eef3}
@@ -64,7 +71,20 @@ header.solid .nav-call{color:var(--navy)}
 .lead p.s{color:var(--mute);font-size:.88rem;margin-bottom:12px}
 .alt-wa{margin-top:12px;text-align:center;font-size:.86rem;color:var(--mute)}
 .alt-wa a{color:#12843f;font-weight:700}
-@media(min-width:960px){.hero .wrap{grid-template-columns:1.25fr .85fr;align-items:center}}
+@media(min-width:960px){html:not(.hero-panel) .hero .wrap{grid-template-columns:1.25fr .85fr;align-items:center}}
+/* panel mode: full-bleed 100svh hero, copy at the bottom, form lives in the slide-in panel */
+.hero-panel .hero{align-items:flex-end;padding:120px 0 clamp(64px,10svh,110px)}
+.hero-panel .hero .lead{display:none}
+.hero-panel .hero h1{max-width:14ch}
+.hero-panel .hero::after{background:linear-gradient(90deg,rgba(7,26,38,.84) 0%,rgba(7,26,38,.52) 50%,rgba(7,26,38,.1) 100%),linear-gradient(0deg,rgba(7,26,38,.85),rgba(7,26,38,0) 55%)}
+@media(max-width:959px){.hero-panel .hero::after{background:linear-gradient(0deg,rgba(7,26,38,.96) 0%,rgba(7,26,38,.88) 42%,rgba(7,26,38,.35) 70%,rgba(7,26,38,.3) 100%)}}
+/* portrait screens: the photo fills the top of the screen and fades into navy, so the villa stays visible and the text sits on a dark ground */
+@media(max-width:767px){.hero-panel .hero-media{bottom:auto;height:64%}.hero-panel .hero-media img{object-position:56% 50%}.hero-panel .hero-media::after{content:"";position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(0deg,var(--deep),rgba(7,26,38,0))}.hero-panel .hero{padding-bottom:max(64px,env(safe-area-inset-bottom))}}
+.scroll-cue{display:none}
+.hero-panel .scroll-cue{display:block;position:absolute;left:50%;bottom:18px;z-index:2;width:2px;height:44px;margin-left:-1px;overflow:hidden;background:rgba(255,255,255,.22);border-radius:2px}
+.scroll-cue i{position:absolute;left:0;top:0;width:100%;height:100%;background:#fff;transform:translateY(-100%);animation:cue 2.2s cubic-bezier(.65,0,.35,1) infinite}
+@keyframes cue{0%{transform:translateY(-100%)}55%{transform:translateY(0)}100%{transform:translateY(100%)}}
+@media(max-width:767px){.hero-panel .scroll-cue{bottom:14px;height:32px}}
 /* compliance bar + strip */
 .rera{background:#fff;border-bottom:1px solid var(--line);font-size:.8rem;color:var(--mute)}
 .rera .wrap{display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:center;padding-top:10px;padding-bottom:10px;text-align:center}
@@ -232,9 +252,25 @@ footer .disc{margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,
 .lb img{max-height:88vh;max-width:96vw;border-radius:10px}
 .lb button{position:absolute;top:16px;right:18px;background:none;border:0;color:#fff;font-size:2.2rem;cursor:pointer;line-height:1}
 /* reveal (only when JS is on) */
-.js .rv{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
-.js .rv.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}.car-track{scroll-behavior:auto}}
+/* reveals (js/motion.js). Hidden only while .motion is on <html>: it is never set under reduced motion and is removed by a failsafe if the script does not run */
+.motion [data-anim]:not([data-anim="parallax"]):not([data-anim="count"]),.motion .hero-copy>*{visibility:hidden}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+html.locked{overflow:hidden}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.car-track{scroll-behavior:auto}.scroll-cue i{animation:none;transform:none}header,.panel-sheet,.panel-backdrop{transition:none!important}}
+/* scroll progress line (decorative) */
+.progress{position:fixed;left:0;right:0;top:0;height:2px;z-index:45;pointer-events:none}
+.progress span{display:block;height:100%;background:var(--gold);transform:scaleX(0);transform-origin:0 50%}
+html:not(.js) .progress{display:none}
+/* enquiry slide-in panel */
+.panel{position:fixed;inset:0;z-index:90}
+.panel-backdrop{position:absolute;inset:0;background:rgba(7,26,38,.6);opacity:0;transition:opacity .4s}
+.panel-sheet{position:absolute;top:0;right:0;bottom:0;width:min(460px,100%);background:#fff;overflow-y:auto;overscroll-behavior:contain;padding:max(56px,calc(env(safe-area-inset-top) + 48px)) 28px max(28px,env(safe-area-inset-bottom));box-shadow:-24px 0 60px rgba(7,26,38,.25);transform:translateX(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}
+.panel.open .panel-backdrop{opacity:1}
+.panel.open .panel-sheet{transform:none}
+.panel-close{position:absolute;top:max(10px,env(safe-area-inset-top));right:12px;width:44px;height:44px;border:0;border-radius:50%;background:var(--sand);color:var(--navy);font-size:1.8rem;line-height:1;cursor:pointer}
+.panel .lead{background:none;box-shadow:none;border-radius:0;padding:0}
+.panel .lead h3{font-size:1.6rem}
+@media(max-width:420px){.panel-sheet{padding-left:18px;padding-right:18px}}
 
 /* logos with text fallback */
 .lg{display:inline-flex;align-items:center;min-height:28px}
@@ -353,3 +389,4 @@ header.open .menu-btn span:nth-child(3){transform:translateY(-7px) rotate(-45deg
 @media(max-height:520px) and (orientation:landscape){.hero{min-height:0}.hero .wrap{padding-top:90px;padding-bottom:40px}}
 .am div{overflow-wrap:anywhere}
 @media(max-width:330px){.am{grid-template-columns:1fr}}
+.banner{overflow:hidden}

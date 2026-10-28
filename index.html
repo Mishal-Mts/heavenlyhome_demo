@@ -6,7 +6,7 @@
 <title>Defender Villas | Premium Gated Beach Villas near Kodungallur, Thrissur</title>
 <meta name="description" content="Defender Villas: premium gated 2-in-1 beach villas and budget villas at Perinjanam Moonupedika, near Kodungallur, Thrissur, Kerala. Enquire for prices, site visits and video tours for Gulf and NRI buyers.">
 <meta name="theme-color" content="#0b2a3c">
-<script>document.documentElement.className='js'</script>
+<script>(function(d){var m=!matchMedia('(prefers-reduced-motion: reduce)').matches;d.className='js hero-panel'+(m?' motion':'');setTimeout(function(){if(!window.__mainReady)d.classList.remove('hero-panel');if(!window.__motionReady)d.classList.remove('motion');},4000);})(document.documentElement)</script>
 <link rel="preload" as="image" data-img="hero" type="image/avif" imagesrcset="images/hero-800.avif 800w, images/hero-1400.avif 1400w" imagesizes="100vw" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,14 @@
 <meta name="twitter:description" content="Premium gated 2-in-1 beach villas and budget villas near Kodungallur, Thrissur, Kerala.">
 <meta name="twitter:image" content="https://defendervillas.com/images/og-image.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Defender Real Estates & Builders Limited","brand":{"@type":"Brand","name":"Defender Villas"},"url":"https://defendervillas.com/","logo":"https://defendervillas.com/images/logo-defender-villas.png"}</script>
+<link rel="stylesheet" href="vendor/lenis-1.3.26/lenis.css">
 <link rel="stylesheet" href="css/styles.css">
+<script src="vendor/gsap-3.15.0/gsap.min.js" defer></script>
+<script src="vendor/gsap-3.15.0/ScrollTrigger.min.js" defer></script>
+<script src="vendor/gsap-3.15.0/SplitText.min.js" defer></script>
+<script src="vendor/lenis-1.3.26/lenis.min.js" defer></script>
+<script src="js/main.js" defer></script>
+<script src="js/motion.js" defer></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -45,6 +52,7 @@
  <symbol id="i-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></symbol>
 </svg>
 
+<div class="progress" aria-hidden="true"><span></span></div>
 <header id="hdr">
  <div class="wrap nav">
   <a class="logo" href="#top"><span class="lg"><img class="lo-l" src="images/logo-defender-villas-white.png" width="754" height="160" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><img class="lo-d" src="images/logo-defender-villas.png" width="754" height="160" alt="Defender Villas" hidden onload="this.hidden=false;this.parentNode.querySelector('.wm,.mg').hidden=true" onerror="this.remove()"><b class="wm" data-brand="upper">DEFENDER VILLAS</b></span><small>BY DEFENDER REAL ESTATES</small></a>
@@ -53,21 +61,22 @@
   </ul></nav>
   <div class="nav-actions">
    <a class="nav-call" href="#enquire" data-needs="call" data-call="main" hidden><svg class="ico"><use href="#i-phone"/></svg><span data-ptext="phone"></span></a>
-   <a class="btn btn-primary" href="#enquire">Enquire</a>
+   <a class="btn btn-primary" href="#enquire" data-panel>Enquire</a>
    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
   </div>
  </div>
- <nav class="mnav" id="mnav" aria-label="Mobile menu" hidden><ul>
+ <nav class="mnav" id="mnav" aria-label="Mobile menu" hidden data-lenis-prevent><ul>
   <li><a href="#villas">Villas</a></li><li><a href="#walkthrough">Walkthrough</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#location">Location</a></li><li><a href="#nri">Gulf &amp; NRI</a></li><li><a href="#group">Our Group</a></li><li><a href="#faq">FAQ</a></li>
-  <li><a class="btn btn-primary" href="#enquire">Enquire now</a></li>
+  <li><a class="btn btn-primary" href="#enquire" data-panel>Enquire now</a></li>
  </ul></nav>
 </header>
 
 <main id="top">
-<section class="hero">
- <picture data-img="hero"><source type="image/avif" srcset="images/hero-800.avif 800w, images/hero-1400.avif 1400w" sizes="100vw"><source type="image/webp" srcset="images/hero-800.webp 800w, images/hero-1400.webp 1400w" sizes="100vw"><img src="images/hero.jpg" width="1400" height="789" fetchpriority="high" alt="Artist’s impression of a modern beach villa on a palm-fringed beach" sizes="100vw"></picture>
+<section class="hero" id="hero">
+ <div class="hero-media"><picture data-img="hero"><source type="image/avif" srcset="images/hero-800.avif 800w, images/hero-1400.avif 1400w" sizes="100vw"><source type="image/webp" srcset="images/hero-800.webp 800w, images/hero-1400.webp 1400w" sizes="100vw"><img src="images/hero.jpg" width="1400" height="789" fetchpriority="high" alt="Artist’s impression of a modern beach villa on a palm-fringed beach" sizes="100vw"></picture></div>
+ <div class="hero-scrim" aria-hidden="true"></div>
  <div class="wrap">
-  <div>
+  <div class="hero-copy">
    <span class="eyebrow" style="color:#f2d7a6">Perinjanam Moonupedika &middot; near Kodungallur, Thrissur</span>
    <h1>Wake up to the sea. Own a villa at the shore.</h1>
    <p class="sub">Premium gated 2-in-1 beach villas and budget villas on 3-cent plots. God’s own project in God’s own country.</p>
@@ -78,8 +87,8 @@
    </div>
    <small class="cap">Artist’s impression. Final specifications subject to approval and agreement.</small>
   </div>
-  <form class="lead enq" novalidate>
-   <h3>Get prices &amp; a call back</h3>
+  <form class="lead enq" id="heroForm" novalidate>
+   <h3 id="qTitle">Get prices &amp; a call back</h3>
    <p class="s">3 quick fields. Our team calls you, usually the same day.</p>
    <label for="q-name" style="margin-top:0">Name *</label><input id="q-name" name="name" autocomplete="name" required>
    <label for="q-phone">Phone / WhatsApp *</label><input id="q-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+91 or +971 ..." required>
@@ -91,6 +100,7 @@
    <p class="alt-wa" data-needs="wa" hidden>Prefer WhatsApp? <a href="#enquire" data-wa="main" data-wt="Hi, I’m interested in {brand}. Please share prices and a site visit or video tour.">Chat now</a></p>
   </form>
  </div>
+ <span class="scroll-cue" aria-hidden="true"><i></i></span>
 </section>
 
 <div class="rera" id="reraBar" hidden><div class="wrap">
@@ -100,18 +110,18 @@
 </div></div>
 
 <div class="strip"><div class="wrap"><ul>
- <li><b>3 cent</b><span>independent plots</span></li>
+ <li><b data-anim="count">3 cent</b><span>independent plots</span></li>
  <li><b>Gated</b><span>24/7 security</span></li>
- <li><b>&lt; 30 min</b><span>Kochi airport &amp; Lulu Mall</span></li>
- <li><b>~3 km</b><span>from NH-66</span></li>
+ <li><b data-anim="count">&lt; 30 min</b><span>Kochi airport &amp; Lulu Mall</span></li>
+ <li><b data-anim="count">~3 km</b><span>from NH-66</span></li>
  <li><b>Soil tested</b><span>before construction</span></li>
 </ul></div></div>
 
 <section id="about"><div class="wrap">
  <div class="about">
-  <div class="rv">
+  <div data-anim="stagger">
    <span class="eyebrow">About the project</span>
-   <h2>A peaceful coastal community of independent villas</h2>
+   <h2 data-anim="line-reveal">A peaceful coastal community of independent villas</h2>
    <p>Heavenly Homes is a limited gated community close to the Arabian Sea, combining contemporary villa architecture with quality construction and carefully planned common infrastructure.</p>
    <p>Each home is designed for privacy, comfortable family living, and good natural light and ventilation in a coastal setting.</p>
    <ul class="ticks">
@@ -122,28 +132,28 @@
    </ul>
    <div class="cta-row"><a class="btn btn-teal" href="#enquire">Request brochure</a><a class="btn btn-wa" data-needs="wa" hidden href="#enquire" data-wa="main" data-wt="Hi, please send the {brand} brochure and price sheet."><svg class="ico"><use href="#i-wa"/></svg>WhatsApp us</a></div>
   </div>
-  <div class="collage rv">
-   <div class="ai"><picture data-img="row"><source type="image/avif" srcset="images/row-800.avif 800w, images/row-1400.avif 1400w" sizes="(min-width:900px) 50vw, 100vw"><source type="image/webp" srcset="images/row-800.webp 800w, images/row-1400.webp 1400w" sizes="(min-width:900px) 50vw, 100vw"><img class="main" src="images/row.jpg" width="1400" height="618" loading="lazy" alt="Artist’s impression: row of two-storey villas with balconies and planters" sizes="(min-width:900px) 50vw, 100vw"></picture></div>
-   <picture data-img="beach"><source type="image/avif" srcset="images/beach-800.avif 800w, images/beach-969.avif 969w" sizes="(min-width:900px) 20vw, 38vw"><source type="image/webp" srcset="images/beach-800.webp 800w, images/beach-969.webp 969w" sizes="(min-width:900px) 20vw, 38vw"><img class="float" src="images/beach.jpg" width="969" height="785" loading="lazy" alt="Photo of the Arabian Sea beach near the project" sizes="(min-width:900px) 20vw, 38vw"></picture>
+  <div class="collage">
+   <div class="ai" data-anim="clip-reveal"><picture data-img="row"><source type="image/avif" srcset="images/row-800.avif 800w, images/row-1400.avif 1400w" sizes="(min-width:900px) 50vw, 100vw"><source type="image/webp" srcset="images/row-800.webp 800w, images/row-1400.webp 1400w" sizes="(min-width:900px) 50vw, 100vw"><img class="main" src="images/row.jpg" width="1400" height="618" loading="lazy" alt="Artist’s impression: row of two-storey villas with balconies and planters" sizes="(min-width:900px) 50vw, 100vw"></picture></div>
+   <picture data-img="beach"><source type="image/avif" srcset="images/beach-800.avif 800w, images/beach-969.avif 969w" sizes="(min-width:900px) 20vw, 38vw"><source type="image/webp" srcset="images/beach-800.webp 800w, images/beach-969.webp 969w" sizes="(min-width:900px) 20vw, 38vw"><img class="float" data-anim="fade-up" src="images/beach.jpg" width="969" height="785" loading="lazy" alt="Photo of the Arabian Sea beach near the project" sizes="(min-width:900px) 20vw, 38vw"></picture>
   </div>
  </div>
 </div></section>
 
 <section id="villas" class="alt"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">The villas</span><h2>Two ways to own at Heavenly Homes</h2><p>Swipe to compare. Independent homes designed for privacy, natural light and sea breeze.</p></div>
- <div class="car v3 rv" role="region" aria-roledescription="carousel" aria-label="Villa types">
-  <div class="car-track" tabindex="0">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">The villas</span><h2 data-anim="line-reveal">Two ways to own at Heavenly Homes</h2><p>Swipe to compare. Independent homes designed for privacy, natural light and sea breeze.</p></div>
+ <div class="car v3" role="region" aria-roledescription="carousel" aria-label="Villa types">
+  <div class="car-track" tabindex="0" data-anim="stagger">
    <div class="car-slide"><article class="card">
-    <div class="ph ai"><picture data-img="villa"><source type="image/avif" srcset="images/villa-800.avif 800w, images/villa-1400.avif 1400w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><source type="image/webp" srcset="images/villa-800.webp 800w, images/villa-1400.webp 1400w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><img src="images/villa.jpg" width="1400" height="1067" loading="lazy" alt="Artist’s impression: premium 2-in-1 beach villa with balconies and parking" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"></picture><span class="badge">PREMIUM</span></div>
+    <div class="ph ai" data-anim="clip-reveal"><picture data-img="villa"><source type="image/avif" srcset="images/villa-800.avif 800w, images/villa-1400.avif 1400w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><source type="image/webp" srcset="images/villa-800.webp 800w, images/villa-1400.webp 1400w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><img src="images/villa.jpg" width="1400" height="1067" loading="lazy" alt="Artist’s impression: premium 2-in-1 beach villa with balconies and parking" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"></picture><span class="badge">PREMIUM</span></div>
     <div class="body"><h3>2-in-1 Beach Villa</h3><div class="price">&#8377;2 Crore</div>
      <ul><li>Two-storey contemporary design, sit-out and balconies</li><li>Master bedroom, additional bedrooms, sitting, dining, kitchen</li><li>Private parking and landscaped surroundings</li><li>Can be rented out (see Rent-out options)</li></ul>
-     <a class="btn btn-primary" href="#enquire" data-villa="Premium 2-in-1 villa (Rs 2 Cr)">Enquire about this villa</a></div>
+     <a class="btn btn-primary" href="#enquire" data-panel data-villa="Premium 2-in-1 villa (Rs 2 Cr)">Enquire about this villa</a></div>
    </article></div>
    <div class="car-slide"><article class="card">
-    <div class="ph ai"><picture data-img="wall"><source type="image/avif" srcset="images/wall-608.avif 608w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><source type="image/webp" srcset="images/wall-608.webp 608w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><img src="images/wall.jpg" width="608" height="640" loading="lazy" alt="Artist’s impression: compact modern villa with terracotta feature wall" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"></picture><span class="badge b2">BUDGET</span></div>
+    <div class="ph ai" data-anim="clip-reveal"><picture data-img="wall"><source type="image/avif" srcset="images/wall-608.avif 608w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><source type="image/webp" srcset="images/wall-608.webp 608w" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"><img src="images/wall.jpg" width="608" height="640" loading="lazy" alt="Artist’s impression: compact modern villa with terracotta feature wall" sizes="(min-width:1000px) 33vw, (min-width:700px) 50vw, 86vw"></picture><span class="badge b2">BUDGET</span></div>
     <div class="body"><h3>Single-Storey Villa</h3><div class="price">&#8377;50 Lakh</div>
      <ul><li>3-cent plot, single storey</li><li>Expandable to two storeys later (pillar-beam frame)</li><li>Customisation possible</li><li>Same gated community and amenities</li></ul>
-     <a class="btn btn-primary" href="#enquire" data-villa="Budget single-storey villa (Rs 50 Lakh)">Enquire about this villa</a></div>
+     <a class="btn btn-primary" href="#enquire" data-panel data-villa="Budget single-storey villa (Rs 50 Lakh)">Enquire about this villa</a></div>
    </article></div>
    <div class="car-slide"><article class="card">
     <div class="body"><span class="role" style="margin-bottom:10px">Plan</span><h3>Inside the villa</h3>
@@ -166,8 +176,8 @@
  <p class="note" style="margin-top:14px;text-align:center">Images are design concepts. Prices as given by the developer; GST, registration and other charges extra unless stated.</p>
 </div></section>
 <section id="walkthrough"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">Walkthrough</span><h2>Walk through Heavenly Homes</h2><p>Watch the walkthrough, then drag to look around the beachfront in the 360 preview.</p></div>
- <div class="wt rv">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">Walkthrough</span><h2 data-anim="line-reveal">Walk through Heavenly Homes</h2><p>Watch the walkthrough, then drag to look around the beachfront in the 360 preview.</p></div>
+ <div class="wt" data-anim="stagger">
   <div class="vbox" id="vbox">
    <video id="vid" muted loop playsinline preload="none" poster="images/hero.jpg" aria-label="Defender Villas walkthrough video"><source src="images/walkthrough.mp4" type="video/mp4"></video>
    <button class="vplay" id="vplay" type="button" aria-label="Play walkthrough video"><i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z"/></svg></i>Play walkthrough</button>
@@ -193,9 +203,9 @@
 </div></section>
 
 <section id="gallery" class="alt"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">Gallery</span><h2>See the community</h2><p>Swipe or tap to enlarge. Renders and concept visuals from the developer.</p></div>
- <div class="car g3 rv" role="region" aria-roledescription="carousel" aria-label="Project gallery">
-  <div class="car-track" tabindex="0">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">Gallery</span><h2 data-anim="line-reveal">See the community</h2><p>Swipe or tap to enlarge. Renders and concept visuals from the developer.</p></div>
+ <div class="car g3" role="region" aria-roledescription="carousel" aria-label="Project gallery">
+  <div class="car-track" tabindex="0" data-anim="stagger">
    <div class="car-slide"><button class="gs ai" type="button" data-lb><picture data-img="hero"><source type="image/avif" srcset="images/hero-800.avif 800w, images/hero-1400.avif 1400w" sizes="(min-width:700px) 33vw, 86vw"><source type="image/webp" srcset="images/hero-800.webp 800w, images/hero-1400.webp 1400w" sizes="(min-width:700px) 33vw, 86vw"><img src="images/hero.jpg" width="1400" height="789" loading="lazy" alt="Artist’s impression: beach villa with terracotta wall and glass staircase" sizes="(min-width:700px) 33vw, 86vw"></picture><span>Beach villa</span></button></div>
    <div class="car-slide"><button class="gs ai" type="button" data-lb><picture data-img="villa"><source type="image/avif" srcset="images/villa-800.avif 800w, images/villa-1400.avif 1400w" sizes="(min-width:700px) 33vw, 86vw"><source type="image/webp" srcset="images/villa-800.webp 800w, images/villa-1400.webp 1400w" sizes="(min-width:700px) 33vw, 86vw"><img src="images/villa.jpg" width="1400" height="1067" loading="lazy" alt="Artist’s impression: 2-in-1 villa front with parking" sizes="(min-width:700px) 33vw, 86vw"></picture><span>2-in-1 villa front</span></button></div>
    <div class="car-slide"><button class="gs ai" type="button" data-lb><picture data-img="row"><source type="image/avif" srcset="images/row-800.avif 800w, images/row-1400.avif 1400w" sizes="(min-width:700px) 33vw, 86vw"><source type="image/webp" srcset="images/row-800.webp 800w, images/row-1400.webp 1400w" sizes="(min-width:700px) 33vw, 86vw"><img src="images/row.jpg" width="1400" height="618" loading="lazy" alt="Artist’s impression: row of villas along the internal road" sizes="(min-width:700px) 33vw, 86vw"></picture><span>Villa row</span></button></div>
@@ -216,10 +226,10 @@
 </div></section>
 
 <section class="banner" id="development">
- <picture data-img="aerial"><source type="image/avif" srcset="images/aerial-800.avif 800w, images/aerial-1400.avif 1400w" sizes="100vw"><source type="image/webp" srcset="images/aerial-800.webp 800w, images/aerial-1400.webp 1400w" sizes="100vw"><img src="images/aerial.jpg" width="1400" height="689" loading="lazy" alt="Artist’s impression: evening aerial view of the beachfront development with leisure areas" sizes="100vw"></picture>
- <div class="wrap rv">
+ <picture data-img="aerial"><source type="image/avif" srcset="images/aerial-800.avif 800w, images/aerial-1400.avif 1400w" sizes="100vw"><source type="image/webp" srcset="images/aerial-800.webp 800w, images/aerial-1400.webp 1400w" sizes="100vw"><img data-anim="parallax" src="images/aerial.jpg" width="1400" height="689" loading="lazy" alt="Artist’s impression: evening aerial view of the beachfront development with leisure areas" sizes="100vw"></picture>
+ <div class="wrap" data-anim="stagger">
   <span class="eyebrow" style="color:#f2d7a6">The development</span>
-  <h2>A coastline you’ll want to come home to</h2>
+  <h2 data-anim="line-reveal">A coastline you’ll want to come home to</h2>
   <p>Planned beachfront surroundings and community spaces, designed around the sea. Concept visuals from the developer’s brochure.</p>
   <p class="cap">Artist’s impression. Final layouts subject to approvals.</p>
   <div class="cta-row" style="margin-top:20px"><a class="btn btn-primary" href="#enquire">Book a site visit</a></div>
@@ -227,8 +237,8 @@
 </section>
 
 <section id="location"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">Location</span><h2>A coastal address, well connected</h2></div>
- <div class="grid two rv">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">Location</span><h2 data-anim="line-reveal">A coastal address, well connected</h2></div>
+ <div class="grid two" data-anim="stagger">
   <div>
    <ul class="loc-list">
     <li>Under 30 minutes to Kochi (Lulu Mall)</li>
@@ -265,8 +275,8 @@
 </div></section>
 
 <section class="alt"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">Built to last</span><h2>Key construction specifications</h2></div>
- <div class="specs rv">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">Built to last</span><h2 data-anim="line-reveal">Key construction specifications</h2></div>
+ <div class="specs" data-anim="stagger">
   <div><b>Flooring:</b> vitrified tiles in living, dining, bedrooms; anti-skid in toilets</div>
   <div><b>Paint:</b> Berger or equivalent, weather-resistant exterior</div>
   <div><b>Doors:</b> teakwood main entrance; water-resistant toilet doors</div>
@@ -276,8 +286,8 @@
   <div><b>Railings:</b> stainless steel with wooden top where applicable</div>
   <div><b>Structure:</b> pillar-beam construction; soil test done before construction</div>
  </div>
- <div class="sec-head rv" style="margin-top:56px"><span class="eyebrow">Community</span><h2>Amenities</h2></div>
- <div class="am rv">
+ <div class="sec-head" data-anim="stagger" style="margin-top:56px"><span class="eyebrow">Community</span><h2 data-anim="line-reveal">Amenities</h2></div>
+ <div class="am" data-anim="stagger">
   <div><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>Gated community, 24/7 security</div>
   <div><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22 9 2M20 22 15 2M12 6v3M12 13v3"/></svg></span>Wide internal roads</div>
   <div><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>Underground electrical cabling</div>
@@ -288,8 +298,8 @@
 </div></section>
 
 <section id="trust"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">Buy with confidence</span><h2>Approvals &amp; construction progress</h2></div>
- <div class="grid two rv">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">Buy with confidence</span><h2 data-anim="line-reveal">Approvals &amp; construction progress</h2></div>
+ <div class="grid two" data-anim="stagger">
   <div>
    <h3 style="margin-bottom:6px;font-size:1.3rem">Approvals and documents</h3>
    <ul class="trust" id="tl">
@@ -317,12 +327,12 @@
   <div><b>2. Site visit</b>We arrange your visit and meet you at the project when you are in Kerala.</div>
   <div><b>3. Documents</b>Guidance on documents and payments from abroad. Please also check current FEMA/RBI rules with your bank or adviser.</div>
  </div>
- <div class="cta-row"><a class="btn btn-wa" data-needs="wa" hidden href="#enquire" data-wa="main" data-wt="Hi, I’m in the Gulf and would like a video tour of {brand}."><svg class="ico"><use href="#i-wa"/></svg>WhatsApp for a video tour</a><a class="btn btn-ghost" href="#enquire" data-villa="Video tour (Gulf / NRI buyer)">Request a call back</a></div>
+ <div class="cta-row"><a class="btn btn-wa" data-needs="wa" hidden href="#enquire" data-wa="main" data-wt="Hi, I’m in the Gulf and would like a video tour of {brand}."><svg class="ico"><use href="#i-wa"/></svg>WhatsApp for a video tour</a><a class="btn btn-ghost" href="#enquire" data-panel data-villa="Video tour (Gulf / NRI buyer)">Request a call back</a></div>
 </div></section>
 
 <section id="rent" class="alt"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">Investment</span><h2>Rent-out options</h2><p>Two simple ways to earn from your villa when you’re not there.</p></div>
- <div class="grid two rv">
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">Investment</span><h2 data-anim="line-reveal">Rent-out options</h2><p>Two simple ways to earn from your villa when you’re not there.</p></div>
+ <div class="grid two" data-anim="stagger">
   <div class="card"><div class="body"><h3>List on Airbnb yourself</h3><p style="color:var(--mute);margin-top:8px">Manage your own bookings and pricing.</p></div></div>
   <div class="card"><div class="body"><h3>Company lease-back</h3><p style="color:var(--mute);margin-top:8px">Lease the villa to the developer and receive agreed rent. Terms shared on enquiry.</p></div></div>
  </div>
@@ -330,9 +340,9 @@
 </div></section>
 
 <section id="group"><div class="wrap">
- <div class="sec-head rv" style="margin-bottom:20px"><span class="eyebrow">Our Group</span><h2 style="font-size:clamp(1.5rem,3.2vw,2.1rem)">Who’s who behind Heavenly Homes</h2></div>
- <div class="car grp rv" role="region" aria-roledescription="carousel" aria-label="Our group">
-  <div class="car-track" tabindex="0">
+ <div class="sec-head" data-anim="stagger" style="margin-bottom:20px"><span class="eyebrow">Our Group</span><h2 data-anim="line-reveal" style="font-size:clamp(1.5rem,3.2vw,2.1rem)">Who’s who behind Heavenly Homes</h2></div>
+ <div class="car grp" role="region" aria-roledescription="carousel" aria-label="Our group">
+  <div class="car-track" tabindex="0" data-anim="stagger">
    <div class="car-slide ft"><article class="gf" id="bizcard">
     <span class="ftag">Featured</span>
     <span class="lg"><img src="images/logo-sister.png" alt="Sister concern logo" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><span class="mg">MJ</span></span>
@@ -368,7 +378,7 @@
  </div>
 </div></section>
 <section id="faq"><div class="wrap">
- <div class="sec-head rv"><span class="eyebrow">FAQ</span><h2>Common questions</h2></div>
+ <div class="sec-head" data-anim="stagger"><span class="eyebrow">FAQ</span><h2 data-anim="line-reveal">Common questions</h2></div>
  <details><summary>What are the prices?</summary><p>Premium 2-in-1 beach villa: &#8377;2 crore. Budget single-storey villa: &#8377;50 lakh, expandable to two storeys. GST, registration and other charges extra unless stated.</p></details>
  <details><summary>How big is each plot?</summary><p>Plots are 3 cents. Customisation is possible.</p></details>
  <details><summary>Is the project approved?</summary><p>Approval and registration details are listed in the Approvals section. Documents are available on request.</p></details>
@@ -380,9 +390,9 @@
 
 <section id="enquire" class="cta-sec"><div class="wrap">
  <div class="cta-grid">
-  <div class="rv">
+  <div data-anim="stagger">
    <span class="eyebrow" style="color:#f2d7a6">Enquire</span>
-   <h2>Get prices and book a site visit</h2>
+   <h2 data-anim="line-reveal">Get prices and book a site visit</h2>
    <p>Tell us which villa interests you. Our team will call you back, usually the same day, and arrange a visit or a video tour.</p>
    <ul class="ticks" style="margin-top:18px">
     <li>Site visits arranged at your convenience</li>
@@ -391,7 +401,7 @@
    </ul>
    <a class="btn btn-wa" data-needs="wa" hidden href="#enquire" data-wa="main" data-wt="Hi, I’m interested in {brand}."><svg class="ico"><use href="#i-wa"/></svg>Or chat on WhatsApp</a>
   </div>
-  <form class="lead enq rv" id="enq" novalidate>
+  <form class="lead enq" id="enq" novalidate data-anim="fade-up">
    <h3>Request a call back</h3>
    <div class="row">
     <div><label for="name">Name *</label><input id="name" name="name" autocomplete="name" required></div>
@@ -436,11 +446,18 @@
 <nav class="sticky" aria-label="Quick contact">
  <a class="s-wa" href="#enquire" data-needs="wa" data-wa="main" data-wt="Hi, I’m interested in {brand}" aria-label="Chat on WhatsApp" hidden><svg class="ico"><use href="#i-wa"/></svg></a>
  <a class="s-call" href="#enquire" data-needs="call" data-call="main" aria-label="Call us" hidden><svg class="ico"><use href="#i-phone"/></svg></a>
- <a class="s-enq" href="#enquire" id="sEnq" aria-label="Enquire now" hidden><svg class="ico"><use href="#i-msg"/></svg></a>
+ <a class="s-enq" href="#enquire" id="sEnq" data-panel aria-label="Enquire now" hidden><svg class="ico"><use href="#i-msg"/></svg></a>
 </nav>
+
+<div class="panel" id="enqPanel" role="dialog" aria-modal="true" aria-labelledby="qTitle" hidden data-lenis-prevent>
+ <div class="panel-backdrop" data-close></div>
+ <div class="panel-sheet">
+  <button class="panel-close" type="button" aria-label="Close enquiry form" data-close>&times;</button>
+  <div class="panel-body" id="panelBody"></div>
+ </div>
+</div>
 
 <div class="lb" id="lb" role="dialog" aria-label="Image viewer"><button aria-label="Close">&times;</button><img alt=""></div>
 
-<script src="js/main.js"></script>
 </body>
 </html>

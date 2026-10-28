@@ -1,0 +1,171 @@
+// Behaviour tests for Phase 1-2 (motion foundation and hero). Serve the site first (npm run serve).
+// Usage: node tools/test-motion.mjs [baseUrl]
+import { chromium } from 'playwright';
+import { mkdirSync } from 'node:fs';
+
+const base = process.argv[2] || 'http://localhost:8080/';
+const out = '.shots/phase2'; mkdirSync(out, { recursive: true });
+const OPTIONAL = /(logo-sister|interior-\w+|progress-latest|hero-loop)\./;
+const results = [];
+const check = (name, ok, info = '') => { results.push({ name, ok, info }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  - ' + info : ''}`); };
+const browser = await chromium.launch();
+
+async function open(opts = {}, url = base) {
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, ...opts });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); }); // failed loads are checked via responses
+  page.on('response', r => { if (r.status() >= 400 && !OPTIONAL.test(r.url())) errors.push(`${r.status()} ${r.url()}`); });
+  await page.goto(url, { waitUntil: 'load' });
+  return { ctx, page, errors };
+}
+const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(60); } await page.waitForTimeout(900); };
+
+// ---------- desktop 1440, motion on ----------
+{
+  const { ctx, page, errors } = await open();
+  await page.waitForTimeout(3200); // let the intro finish
+  const st = await page.evaluate(() => ({
+    motion: document.documentElement.classList.contains('motion'),
+    lenis: document.documentElement.classList.contains('lenis'),
+    panelMode: document.documentElement.classList.contains('hero-panel'),
+    formInPanel: !!document.querySelector('#panelBody #heroForm'),
+    h1Lines: document.querySelectorAll('.hero h1 .ln').length,
+    h1Label: document.querySelector('.hero h1').getAttribute('aria-label'),
+    copyVisible: [...document.querySelectorAll('.hero-copy>*')].every(e => getComputedStyle(e).visibility === 'visible' && +getComputedStyle(e).opacity > .5),
+    heroH: document.querySelector('.hero').getBoundingClientRect().height, vh: innerHeight,
+    logo: getComputedStyle(document.querySelector('.lo-l')).display,
+  }));
+  check('desktop: GSAP motion + Lenis active', st.motion && st.lenis, JSON.stringify(st));
+  check('desktop: hero is full viewport height', Math.abs(st.heroH - st.vh) < 2, `${st.heroH}px of ${st.vh}px`);
+  check('desktop: hero form moved into panel', st.panelMode && st.formInPanel);
+  check('desktop: headline split into masked lines with aria-label', st.h1Lines > 0 && !!st.h1Label, `${st.h1Lines} lines, label "${st.h1Label}"`);
+  check('desktop: hero copy visible after intro', st.copyVisible);
+  check('desktop: white logo over hero', st.logo !== 'none');
+  await page.screenshot({ path: `${out}/1440-hero.png` });
+
+  // header hides on scroll down, shows on scroll up; solid header shows colour logo
+  await wheel(page, 1400);
+  const down = await page.evaluate(() => ({ hide: document.getElementById('hdr').classList.contains('hide'), y: scrollY }));
+  check('desktop: header hides on scroll down', down.hide, `scrollY ${Math.round(down.y)}`);
+  await page.screenshot({ path: `${out}/1440-scrolled.png` });
+  await wheel(page, -300);
+  const up = await page.evaluate(() => ({ hide: document.getElementById('hdr').classList.contains('hide'), solid: document.getElementById('hdr').classList.contains('solid'), dark: getComputedStyle(document.querySelector('.lo-d')).display }));
+  check('desktop: header shows on scroll up (solid, colour logo)', !up.hide && up.solid && up.dark !== 'none');
+  const prog = await page.evaluate(() => getComputedStyle(document.querySelector('.progress span')).transform);
+  check('desktop: progress line follows scroll', prog !== 'none' && prog !== 'matrix(0, 0, 0, 1, 0, 0)', prog);
+
+  // reveals: scroll through the page, then everything must be visible
+  for (let i = 0; i < 30; i++) await page.mouse.wheel(0, 500), await page.waitForTimeout(90);
+  await page.waitForTimeout(1800);
+  const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-anim], [data-anim="stagger"] > *')].filter(e => !e.closest('[hidden]') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).map(e => e.tagName + '.' + e.className + ' ' + (e.textContent || '').trim().slice(0, 30)));
+  check('desktop: every revealed element ends fully visible', hidden.length === 0, hidden.slice(0, 5).join(' | '));
+  const counts = await page.$$eval('[data-anim="count"]', b => b.map(x => x.textContent));
+  check('desktop: counters end on the original text', counts.join('|') === '3 cent|< 30 min|~3 km', counts.join(' | '));
+
+  // anchor link via Lenis with header offset
+  await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(600);
+  await page.click('nav[aria-label="Main"] a[href="#location"]'); await page.waitForTimeout(2000);
+  const anc = await page.evaluate(() => ({ top: Math.round(document.getElementById('location').getBoundingClientRect().top), hash: location.hash }));
+  check('desktop: nav anchor scrolls to section below the header', anc.top >= 60 && anc.top <= 90 && anc.hash === '#location', `section top at ${anc.top}px, hash ${anc.hash}`);
+
+  // enquiry panel: open, focus, trap, Esc, focus returns, scroll locked
+  const enq = page.locator('#hdr .nav-actions .btn-primary[data-panel]');
+  await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(500);
+  await enq.click(); await page.waitForTimeout(700);
+  const p = await page.evaluate(() => ({ open: !document.getElementById('enqPanel').hidden, focus: document.activeElement.id, locked: document.documentElement.classList.contains('locked'), lenisStopped: document.documentElement.classList.contains('lenis-stopped'), hash: location.hash }));
+  check('panel: opens from header Enquire, focus on Name, page locked', p.open && p.focus === 'q-name' && p.locked && p.lenisStopped, JSON.stringify(p));
+  await page.screenshot({ path: `${out}/1440-panel.png` });
+  const y0 = await page.evaluate(() => scrollY); await page.mouse.wheel(0, 800); await page.waitForTimeout(600);
+  check('panel: page does not scroll behind the panel', (await page.evaluate(() => scrollY)) === y0);
+  for (let i = 0; i < 12; i++) await page.keyboard.press('Tab');
+  const inside = await page.evaluate(() => document.getElementById('enqPanel').contains(document.activeElement));
+  check('panel: Tab focus stays inside the panel', inside);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(700);
+  const c = await page.evaluate(() => ({ hidden: document.getElementById('enqPanel').hidden, focusBack: document.activeElement.matches('#hdr .nav-actions .btn-primary[data-panel]'), locked: document.documentElement.classList.contains('locked') }));
+  check('panel: Esc closes, focus returns to Enquire, scroll unlocked', c.hidden && c.focusBack && !c.locked, JSON.stringify(c));
+  // villa button pre-selects the panel form
+  await page.locator('#villas').scrollIntoViewIfNeeded(); await page.waitForTimeout(1500);
+  await page.click('[data-villa="Budget single-storey villa (Rs 50 Lakh)"]'); await page.waitForTimeout(700);
+  check('panel: villa button opens panel with that villa selected', await page.evaluate(() => !document.getElementById('enqPanel').hidden && document.getElementById('q-villa').value.startsWith('Budget')));
+  // submit with empty ENDPOINTS shows thank-you (existing behaviour)
+  await page.fill('#q-name', 'Test Person'); await page.fill('#q-phone', '9876543210'); await page.click('#heroForm button[type=submit]'); await page.waitForTimeout(800);
+  check('panel: form submits and shows the thank-you message', await page.evaluate(() => getComputedStyle(document.querySelector('#heroForm .ok')).display === 'block'));
+  await page.click('.panel-close'); await page.waitForTimeout(700);
+
+  // lightbox locks Lenis
+  await page.locator('#gallery').scrollIntoViewIfNeeded(); await page.waitForTimeout(1500);
+  await page.locator('#gallery [data-lb]').first().click(); await page.waitForTimeout(300);
+  const lb = await page.evaluate(() => ({ on: document.getElementById('lb').classList.contains('on'), stopped: document.documentElement.classList.contains('lenis-stopped') }));
+  await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+  const lb2 = await page.evaluate(() => ({ on: document.getElementById('lb').classList.contains('on'), stopped: document.documentElement.classList.contains('lenis-stopped') }));
+  check('lightbox: opens and stops Lenis; Esc closes and restarts it', lb.on && lb.stopped && !lb2.on && !lb2.stopped);
+  check('desktop: no JS errors or unexpected failed requests', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
+// ---------- mobile 390 (touch, native scrolling) ----------
+{
+  const { ctx, page, errors } = await open({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });
+  await page.waitForTimeout(3200);
+  await page.screenshot({ path: `${out}/390-hero.png` });
+  const st = await page.evaluate(() => ({ heroH: document.querySelector('.hero').getBoundingClientRect().height, vh: innerHeight, pos: getComputedStyle(document.querySelector('.hero-media img')).objectPosition, overflow: document.documentElement.scrollWidth > innerWidth }));
+  check('mobile: full-height hero (100svh) with mobile crop', st.heroH >= 842 && st.pos.startsWith('56%'), `${st.heroH}/${st.vh}px, object-position ${st.pos}`);
+  check('mobile: no horizontal page scroll', !st.overflow);
+  await page.tap('#menuBtn'); await page.waitForTimeout(300);
+  check('mobile: menu opens', await page.evaluate(() => !document.getElementById('mnav').hidden));
+  await page.tap('#mnav a[href="#gallery"]'); await page.waitForTimeout(1800);
+  const g = await page.evaluate(() => ({ closed: document.getElementById('mnav').hidden, top: Math.round(document.getElementById('gallery').getBoundingClientRect().top) }));
+  check('mobile: menu link closes menu and scrolls to section', g.closed && g.top > 40 && g.top < 100, `gallery top ${g.top}px`);
+  await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(600);
+  await page.tap('#hdr .nav-actions .btn-primary[data-panel]'); await page.waitForTimeout(800);
+  await page.screenshot({ path: `${out}/390-panel.png` });
+  check('mobile: Enquire opens the panel', await page.evaluate(() => !document.getElementById('enqPanel').hidden));
+  await page.tap('.panel-close'); await page.waitForTimeout(700);
+  await page.evaluate(() => scrollTo(0, 700)); await page.waitForTimeout(1200);
+  await page.screenshot({ path: `${out}/390-scrolled.png` });
+  check('mobile: no JS errors', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
+// ---------- reduced motion ----------
+{
+  const { ctx, page, errors } = await open({ reducedMotion: 'reduce' });
+  await page.waitForTimeout(400);
+  const st = await page.evaluate(() => ({
+    motion: document.documentElement.classList.contains('motion'), lenis: document.documentElement.classList.contains('lenis'),
+    hidden: [...document.querySelectorAll('[data-anim], .hero-copy>*:not(.cap)')].filter(e => e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).length,
+    imgTransform: getComputedStyle(document.querySelector('.hero-media img')).transform,
+  }));
+  check('reduced motion: no smooth scroll, nothing hidden, no Ken Burns', !st.motion && !st.lenis && st.hidden === 0 && st.imgTransform === 'none', JSON.stringify(st));
+  await page.click('#hdr .nav-actions .btn-primary[data-panel]'); await page.waitForTimeout(200);
+  check('reduced motion: panel opens instantly', await page.evaluate(() => !document.getElementById('enqPanel').hidden && getComputedStyle(document.querySelector('.panel-sheet')).transform === 'none'));
+  check('reduced motion: no JS errors', errors.length === 0, errors.join(' | '));
+  await ctx.close();
+}
+
+// ---------- JavaScript disabled ----------
+{
+  const { ctx, page } = await open({ javaScriptEnabled: false });
+  const st = await page.evaluate === undefined ? {} : null;
+  const vis = await page.locator('.hero h1').isVisible(), form = await page.locator('.hero #heroForm').isVisible(), about = await page.locator('#about h2').isVisible();
+  check('no JS: headline, hero form (inline) and sections visible', vis && form && about);
+  await page.screenshot({ path: `${out}/1440-nojs.png` });
+  await ctx.close();
+}
+
+// ---------- scripts blocked (JS on but motion.js / main.js fail to load): failsafe ----------
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  await ctx.route(/(motion|main)\.js|gsap|lenis/, r => r.abort());
+  const page = await ctx.newPage(); await page.goto(base, { waitUntil: 'load' }); await page.waitForTimeout(3400);
+  const st = await page.evaluate(() => ({ cls: document.documentElement.className, h1: getComputedStyle(document.querySelector('.hero h1')).visibility, form: getComputedStyle(document.querySelector('#heroForm')).display, about: getComputedStyle(document.querySelector('#about [data-anim]')).visibility }));
+  check('scripts fail: failsafe shows all content and the inline form', st.h1 === 'visible' && st.form !== 'none' && st.about === 'visible', JSON.stringify(st));
+  await ctx.close();
+}
+
+await browser.close();
+const failed = results.filter(r => !r.ok);
+console.log(`\n${results.length - failed.length}/${results.length} passed`);
+process.exit(failed.length ? 1 : 0);
