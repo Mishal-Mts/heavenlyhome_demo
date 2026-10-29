@@ -28,6 +28,8 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 - Nothing missing is requested at page load: optional gallery photos are probed when the gallery comes near; the hero video is used only if the image script found the file (`data-loop` on #hero); the walkthrough still frame is `data-poster`, applied when the section comes near.
 - Lighthouse (`tools/serve.mjs` + `tools/lighthouse.mjs`): mobile 97-98 / 100 / 100 / 100, desktop 100 / 100 / 100 / 100. `tools/test-final.mjs`: throttled phone/desktop, vCard, map, video, 360, keyboard, inline mode.
 
+- Cache busting: index.html loads css/styles.css, js/main.js and js/motion.js with `?v=YYYYMMDD`. Change that value whenever those files change, or visitors may keep old cached copies (GitHub Pages caches for 10 minutes).
+
 ## IMAGE SAFETY RULES
 - Never delete, overwrite, rename, move or recompress any existing image in /images. Processing writes new files only (images/auto/).
 - `images/brochure-originals/` is a permanent read-only backup of the whole /images folder as it was before Phase 5. Never modify it.

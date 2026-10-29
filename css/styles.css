@@ -638,3 +638,5 @@ header.solid .logo small{display:none}
 header.solid .nav .btn{min-height:40px}
 header.solid .mnav{top:calc(60px + env(safe-area-inset-top,0px));max-height:calc(100svh - 60px - env(safe-area-inset-top,0px))}
 @media(max-width:420px){header.solid .logo .lg img{height:32px}}
+/* safeguard: the header never slides away, even if a browser still runs an older cached script */
+header.hide{transform:none}
