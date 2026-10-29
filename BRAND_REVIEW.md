@@ -2,7 +2,9 @@
 
 The site is being rebranded to **Defender Villas** (defendervillas.com). Brand surfaces (logo, header, footer, page title, meta tags, WhatsApp messages, vCard, form consent line, aria-labels, alt text) now use `CONFIG.brand.name` in `js/main.js`.
 
-The places below are **narrative copy**: the client's own sentences that use "Heavenly Homes" as the **project name**. They are **unchanged** until you decide one of these:
+> **Decision made: option B (rename fully).** Every "Heavenly Homes" in the site files (index.html, css/, js/) now reads "Defender Villas", and the site uses the new "Defender Villas" logo. The table below is kept as a record of the original wording.
+
+The places below are **narrative copy**: the client's own sentences that use "Heavenly Homes" as the **project name**. The options were:
 
 - **A. Keep "Heavenly Homes" as the project name:** Defender Villas is the brand and Heavenly Homes is the project. Nothing below changes. Optionally set `CONFIG.brand.project = 'Heavenly Homes'`.
 - **B. Rename fully:** every line below changes to "Defender Villas". Each change needs the client's approval because it alters their copy.

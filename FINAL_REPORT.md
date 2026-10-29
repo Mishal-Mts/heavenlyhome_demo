@@ -51,7 +51,7 @@ See `MISSING_ASSETS.md` for exact file names and sizes.
 - **Brand files:** the brand-file script needs `--force`, to protect the existing brand files.
 
 ## Decisions waiting on you
-1. **Project name:** keep "Heavenly Homes" as the project name, or rename the seven narrative lines (`BRAND_REVIEW.md`).
+1. ~~**Project name:**~~ **Done:** renamed to "Defender Villas" everywhere on the site, with the new "Defender Villas" logo.
 2. **Header tagline:** "BY DEFENDER REAL ESTATES" under the "Defender" logo: keep, remove or change to "VILLAS".
 3. **Enquiry form position:** in the slide-in panel (current) or inline in the hero (`HERO_FORM_MODE`).
 4. **Colour grade:** the gentle grade on web image copies (`imageGrade:'warm'`), on or off.

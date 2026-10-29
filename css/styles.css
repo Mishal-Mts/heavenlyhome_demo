@@ -622,3 +622,10 @@ summary::after{color:var(--gold)}
  #rent .sec-head p{margin:0}
  #rent>.wrap>.note{grid-column:2;text-align:left!important}
 }
+
+/* two-line "Defender Villas" logo: larger so "VILLAS" stays readable */
+.logo .lg img{height:44px;max-width:none}
+footer .lg img{height:52px}
+.gl .lg img,#group .gl .lg img{height:60px}
+@media(max-width:420px){.logo .lg img{height:38px}}
+@media(max-width:360px){.logo .lg img{height:34px}}

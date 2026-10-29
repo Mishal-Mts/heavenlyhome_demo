@@ -48,7 +48,7 @@ Static site for premium gated beach villas near Kodungallur, Thrissur, Kerala. T
 
 ## REBRAND rules
 - Brand name, domain and tagline come from `CONFIG.brand`. Brand surfaces (logo, header, footer, title and meta, WhatsApp `data-wt` text via `{brand}`, vCard ORG/NOTE, consent line, aria-labels, alt text) use it.
-- Narrative copy that says "Heavenly Homes" stays as written until the client decides. See `BRAND_REVIEW.md`.
+- The project name is now "Defender Villas" everywhere on the site, including the former "Heavenly Homes" narrative copy (client decision, option B in `BRAND_REVIEW.md`). Don't reintroduce "Heavenly Homes".
 - Logo variants: `images/logo-defender-villas.png` (red, for light backgrounds and the solid header) and `images/logo-defender-villas-white.png` (for the hero, dark sections and the footer). The header shows `.lo-l` while transparent and `.lo-d` when `header.solid`. Fallback wordmark: "DEFENDER VILLAS".
 - Palette changes go only through the CSS custom properties in `:root`, with WCAG AA contrast (4.5:1 for text). Palette changes need client approval.
 - The canonical URL, Open Graph and Twitter tags, sitemap.xml and robots.txt point at https://defendervillas.com/. HTTPS must be enabled on the host.
