@@ -629,3 +629,12 @@ footer .lg img{height:52px}
 .gl .lg img,#group .gl .lg img{height:60px}
 @media(max-width:420px){.logo .lg img{height:38px}}
 @media(max-width:360px){.logo .lg img{height:34px}}
+
+/* sticky header: always visible; once scrolled it becomes a slim, quiet bar */
+header.solid{box-shadow:0 1px 0 var(--line),0 6px 18px rgba(7,26,38,.06)}
+header.solid .nav{height:60px}
+header.solid .logo .lg img{height:36px}
+header.solid .logo small{display:none}
+header.solid .nav .btn{min-height:40px}
+header.solid .mnav{top:calc(60px + env(safe-area-inset-top,0px));max-height:calc(100svh - 60px - env(safe-area-inset-top,0px))}
+@media(max-width:420px){header.solid .logo .lg img{height:32px}}

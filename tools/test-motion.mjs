@@ -45,10 +45,10 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   check('desktop: white logo over hero', st.logo !== 'none');
   await page.screenshot({ path: `${out}/1440-hero.png` });
 
-  // header hides on scroll down, shows on scroll up; solid header shows colour logo
+  // header stays visible while scrolling down, as a slim solid bar with the colour logo
   await wheel(page, 1400);
-  const down = await page.evaluate(() => ({ hide: document.getElementById('hdr').classList.contains('hide'), y: scrollY }));
-  check('desktop: header hides on scroll down', down.hide, `scrollY ${Math.round(down.y)}`);
+  const down = await page.evaluate(() => { const h = document.getElementById('hdr'), r = h.getBoundingClientRect(); return { top: Math.round(r.top), height: Math.round(r.height), solid: h.classList.contains('solid'), y: scrollY }; });
+  check('desktop: header stays visible on scroll down, slim (60px) and solid', down.top === 0 && down.height === 60 && down.solid, JSON.stringify(down));
   await page.screenshot({ path: `${out}/1440-scrolled.png` });
   await wheel(page, -300);
   const up = await page.evaluate(() => ({ hide: document.getElementById('hdr').classList.contains('hide'), solid: document.getElementById('hdr').classList.contains('solid'), dark: getComputedStyle(document.querySelector('.lo-d')).display }));

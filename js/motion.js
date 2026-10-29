@@ -144,17 +144,8 @@
   }
   });
 
-  // ---------- header: hide on scroll down, show on scroll up (desktop) ----------
-  if(hdr){
-    mm.add(DESK+' and '+OK,function(){
-      var st=ScrollTrigger.create({start:0,end:'max',onUpdate:function(s){
-        var y=s.scroll(),down=s.direction===1;
-        hdr.classList.toggle('hide',down&&y>320&&!hdr.classList.contains('open')&&!root.classList.contains('locked'));
-      }});
-      hdr.addEventListener('focusin',function(){hdr.classList.remove('hide');});
-      return function(){st.kill();hdr.classList.remove('hide');};
-    });
-  }
+  // ---------- header: stays visible on every screen (the Enquire button is always one tap away).
+  // Once scrolled it becomes a slim bar via header.solid in css/styles.css; it no longer hides on scroll down.
 
   // ---------- scroll progress line ----------
   var bar=$('.progress span');
