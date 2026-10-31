@@ -189,6 +189,45 @@
   "sourceSize": "1400x689"
  },
  {
+  "slot": "dev-panel-beachfront",
+  "current": "images/aerial.jpg",
+  "currentSize": "1400x689",
+  "hires": "images/dev-panel-beachfront-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1400x689"
+ },
+ {
+  "slot": "dev-panel-pavilion",
+  "current": "images/pavilion.jpg",
+  "currentSize": "1322x568",
+  "hires": "images/dev-panel-pavilion-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1322x568"
+ },
+ {
+  "slot": "dev-panel-sunset",
+  "current": "images/sunset.jpg",
+  "currentSize": "1047x501",
+  "hires": "images/dev-panel-sunset-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK",
+  "sourceSize": "1047x501"
+ },
+ {
+  "slot": "developer-md",
+  "current": "(none: optional)",
+  "currentSize": "",
+  "hires": "images/developer-md-hires.jpg",
+  "hiresExists": false,
+  "using": "hidden (no image yet)",
+  "status": ""
+ },
+ {
   "slot": "enquire-backdrop",
   "current": "images/pavilion.jpg",
   "currentSize": "1322x568",

@@ -76,7 +76,7 @@
     },
     'count':function(el){
       var txt=el.textContent,m=txt.match(/^(\D*?)(\d+(?:\.\d+)?)([\s\S]*)$/);if(!m)return;
-      var end=parseFloat(m[2]),dec=(m[2].split('.')[1]||'').length,o={v:0};
+      var end=parseFloat(m[2]),dec=(m[2].split('.')[1]||'').length,o={v:parseFloat(el.getAttribute('data-from'))||0}; // data-from: start value (default 0)
       el.setAttribute('aria-label',txt);
       var paint=function(){el.textContent=m[1]+o.v.toFixed(dec)+m[3];};paint();
       gsap.to(o,{v:end,duration:1.6,ease:'power2.out',onUpdate:paint,onComplete:function(){el.textContent=txt;},scrollTrigger:trig(el)});
@@ -260,10 +260,61 @@
     return function(){track.removeEventListener('focusin',onFocus);gal.classList.remove('is-hscroll');gsap.set(track,{clearProps:'transform'});if(car.refresh)car.refresh();};
   });
 
-  // location sketch: the route from the project to NH-66 draws itself as the map scrolls into view
-  var route=$('#mapbox .route-draw');
-  if(route&&!late)mm.add(OK,function(){
-    gsap.fromTo(route,{strokeDashoffset:1},{strokeDashoffset:0,ease:'none',scrollTrigger:{trigger:'#mapbox',start:'top 80%',end:'center 50%',scrub:true}});
+  // ---------- closing sections: The development, Location, About the developer, Our Group ----------
+  // The development: the aerial image opens from a framed mask and zooms slowly; on desktop the scene holds
+  // full-screen while its text changes (three steps). Phones get the same reveal and zoom, without the hold.
+  var dv=$('#development');
+  if(dv&&!late)mm.add({pin:PIN,ok:OK},function(ctx){
+    if(!ctx.conditions.ok)return;
+    var stage=$('.dv-stage',dv),media=$('.dv-media',stage),img=$('img',media),mq=$('.dv-mq',dv);
+    gsap.fromTo(media,{clipPath:'inset(7% 6% 7% 6% round 28px)'},{clipPath:'inset(0% 0% 0% 0% round 0px)',ease:'none',
+      scrollTrigger:{trigger:stage,start:'top bottom',end:'top 10%',scrub:true}});
+    if(mq)gsap.fromTo(mq,{xPercent:0},{xPercent:-22,ease:'none',scrollTrigger:{trigger:mq,start:'top bottom',end:'bottom top',scrub:true}});
+    if(!ctx.conditions.pin){
+      gsap.fromTo(img,{scale:1.02},{scale:1.14,ease:'none',scrollTrigger:{trigger:stage,start:'top bottom',end:'bottom top',scrub:true}});
+      return;
+    }
+    var steps=$$('.dv-step',stage),dots=$$('.dv-dots i',stage),now=0;
+    dv.classList.add('is-scene');
+    gsap.set(steps.slice(1),{autoAlpha:0,y:40});
+    var dot=function(p){var i=p<.36?0:p<.7?1:2;if(i===now)return;now=i;dots.forEach(function(d,j){d.classList.toggle('on',j===i);});};
+    var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:stage,start:'top top',end:'+=150%',pin:true,scrub:true,anticipatePin:1,
+      onUpdate:function(s){dot(s.progress);}}});
+    tl.fromTo(img,{scale:1.04},{scale:1.16,duration:3},0)
+      .to(steps[0],{autoAlpha:0,y:-40,duration:.35},.8)
+      .to(steps[1],{autoAlpha:1,y:0,duration:.35},1.1)
+      .to(steps[1],{autoAlpha:0,y:-40,duration:.35},1.8)
+      .to(steps[2],{autoAlpha:1,y:0,duration:.35},2.1);
+    // keyboard: focusing the button scrolls back to the step that shows it
+    var onFocus=function(){seek(tl.scrollTrigger,0);};
+    steps[0].addEventListener('focusin',onFocus);
+    return function(){steps[0].removeEventListener('focusin',onFocus);dv.classList.remove('is-scene');gsap.set(steps.concat(img),{clearProps:'opacity,visibility,transform'});};
+  });
+
+  // Location: the route to NH-66 draws first, then the routes to each town, and each name fades in as its line arrives
+  var mapb=$('#mapbox');
+  if(mapb&&!late)mm.add(OK,function(){
+    var routes=$$('.route-draw',mapb),towns=$$('.mtown',mapb),km=$('.mlabel',mapb);
+    var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:mapb,start:'top 80%',end:'center 50%',scrub:true}});
+    tl.fromTo(routes[0],{strokeDashoffset:1},{strokeDashoffset:0,duration:1},0).fromTo(km,{opacity:0},{opacity:1,duration:.3},.7);
+    routes.slice(1).forEach(function(r,i){
+      tl.fromTo(r,{strokeDashoffset:1},{strokeDashoffset:0,duration:.8},.5+i*.35);
+      if(towns[i])tl.fromTo(towns[i],{opacity:0},{opacity:1,duration:.3},1.1+i*.35);
+    });
+  });
+
+  // About the developer: the outlined 1994 fills with colour after it counts up; a thin gold line draws across
+  var dev=$('#developer');
+  if(dev&&!late)mm.add(OK,function(){
+    var fill=$('.dy-fill',dev),rule=$('.dev-rule i',dev);
+    if(fill)gsap.fromTo(fill,{clipPath:'inset(100% 0% 0% 0%)'},{clipPath:'inset(0% 0% 0% 0%)',duration:1.6,delay:1.2,ease:T.easeInOut,scrollTrigger:{trigger:fill.parentNode,start:T.start,once:true}});
+    if(rule)gsap.fromTo(rule,{scaleX:0},{scaleX:1,ease:'none',scrollTrigger:{trigger:dev,start:'top 75%',end:'center 50%',scrub:true}});
+  });
+
+  // Our Group: a thin line draws between the two cards (desktop layout only, where both sit side by side)
+  var link=$('#group .grp-link i');
+  if(link&&!late)mm.add('(min-width: 900px) and '+OK,function(){
+    gsap.fromTo(link,{scaleX:0},{scaleX:1,ease:'none',scrollTrigger:{trigger:'#group',start:'top 70%',end:'center 50%',scrub:true}});
   });
   });
 

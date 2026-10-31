@@ -696,3 +696,115 @@ section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
 /* development banner: shorter band, same image and text */
 .banner.cine{min-height:min(68svh,620px)}
 @media(max-width:767px){.banner.cine{min-height:440px}}
+
+/* =========== closing sections: The development, Location, About the developer, Our Group =========== */
+/* Same palette, fonts, buttons and corners as the rest of the site. Motion lives in js/motion.js. */
+/* --- The development: full-screen aerial scene, three overlapping panels, outlined words --- */
+.dv{display:block;position:relative;padding-top:0;padding-bottom:calc(var(--section-y) + 28px);overflow:hidden;color:#fff}
+.dv-stage{position:relative;min-height:max(540px,88svh);display:flex;align-items:flex-end;overflow:hidden}
+@media(min-width:1024px){.dv-stage{min-height:100svh}}
+.dv-media{position:absolute;inset:0;overflow:hidden;background:var(--deep)}
+.dv-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 60%}
+.dv-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(7,26,38,.94) 0%,rgba(7,26,38,.62) 50%,rgba(7,26,38,.2) 100%);pointer-events:none}
+.dv-copy{position:relative;z-index:2;width:100%;display:grid;padding-top:120px;padding-bottom:clamp(40px,7vw,84px)}
+.dv-step{grid-area:1/1;align-self:end}
+.dv h2{color:#fff;font-size:clamp(2.1rem,4.6vw,3.6rem);line-height:1.08;max-width:16ch;margin-bottom:18px}
+.dv p{max-width:58ch;color:#e3edf2}
+.dv .cap{font-size:.72rem;opacity:.75;margin-top:12px}
+.dv-extra{display:none}
+.dv p.dv-big{font:400 clamp(2rem,4.4vw,3.4rem)/1.12 var(--serif);color:#fff;max-width:20ch;margin-bottom:14px}
+.dv-dots{display:none}
+.dv.is-scene .dv-extra{display:block}
+.dv.is-scene .dv-dots{display:flex;flex-direction:column;gap:10px;position:absolute;right:max(var(--pad),calc((100vw - var(--wrapmax))/2));top:50%;z-index:3;transform:translateY(-50%)}
+.dv-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);transition:background .4s,transform .4s}
+.dv-dots i.on{background:#f2d7a6;transform:scale(1.35)}
+/* panels: different crops of the brochure images; swap in new photos through the dev-panel-* slots */
+.dv-panels{position:relative;height:clamp(300px,52vw,620px);margin-top:clamp(40px,6vw,88px)}
+.dv-p{position:absolute}
+.dv-f{overflow:hidden;border-radius:var(--r);box-shadow:0 30px 70px rgba(0,0,0,.42);outline:1px solid rgba(242,215,166,.3);outline-offset:6px;height:100%}
+.dv-f picture,.dv-f img{display:block;width:100%;height:100%;object-fit:cover}
+.dv-p.p1{left:var(--pad);top:0;width:56%;height:78%;z-index:1}
+.dv-p.p1 img{object-position:30% 70%}
+.dv-p.p2{right:var(--pad);top:8%;width:42%;height:48%;z-index:2}
+.dv-p.p2 img{object-position:62% 50%}
+.dv-p.p3{left:44%;bottom:0;width:36%;height:46%;z-index:3}
+.dv-p.p3 img{object-position:40% 55%}
+/* the big outlined line of words */
+.dv-marquee{overflow:hidden;margin-top:clamp(36px,5vw,72px);white-space:nowrap;pointer-events:none}
+.dv-mq{display:inline-flex;gap:.5em;font:400 clamp(3rem,9vw,8.2rem)/1.05 var(--serif);color:transparent;-webkit-text-stroke:1px rgba(242,215,166,.55);will-change:transform}
+@supports not (-webkit-text-stroke:1px #000){.dv-mq{color:rgba(242,215,166,.22)}}
+/* the scene no longer sticks behind the Location section (it pins on its own); Location keeps its rounded top */
+@media(min-width:1024px) and (prefers-reduced-motion:no-preference){.handoff #development{position:relative;z-index:0}}
+
+/* --- Location: dark navy map card and travel cards --- */
+.loc-grid{display:grid;gap:22px}
+@media(min-width:960px){.loc-grid{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:36px;align-items:start}}
+#location .mapbox{background:var(--navy);border:0;border-radius:22px;box-shadow:0 30px 70px rgba(11,42,60,.28),0 0 0 1px rgba(242,215,166,.22) inset}
+#location .mapbox::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 90px rgba(36,80,108,.5) inset;pointer-events:none}
+#location .mapbox iframe{height:clamp(300px,62vw,480px)}
+#location .mapbtn{z-index:2;background:#fff;color:var(--navy);bottom:40px}
+#location .mapbtn:hover{background:#f2d7a6}
+.mwave path{transform-box:fill-box}
+.mwave2{animation:mwave 7s ease-in-out infinite alternate}
+.mwave3{animation:mwave 9s ease-in-out infinite alternate-reverse}
+@keyframes mwave{from{transform:translate(0,-6px)}to{transform:translate(6px,6px)}}
+.route-draw{stroke-dashoffset:0}
+#location .loc-list{display:grid;gap:12px}
+#location .loc-list li{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r);background:#fff;box-shadow:0 10px 28px rgba(11,42,60,.06);font-size:.94rem;color:var(--ink);transition:transform .5s cubic-bezier(.22,1,.36,1),box-shadow .5s,border-color .5s}
+#location .loc-list li::before{display:none}
+#location .loc-list li:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(11,42,60,.12);border-color:rgba(138,95,36,.35)}
+.lc-ic{flex:none;width:44px;height:44px;border-radius:12px;background:var(--navy);color:#f2d7a6;display:grid;place-items:center}
+.lc-ic svg{width:22px;height:22px}
+.lc-n{display:block;font:600 1.45rem/1.15 var(--serif);color:var(--navy);margin-bottom:2px}
+@media(min-width:960px){#location .loc-list li{padding:13px 16px}}
+
+/* --- About the developer: heritage year, photo spot, dark contact card, three company cards --- */
+.dev{position:relative;overflow:hidden}
+.dev-top{display:grid;gap:10px;align-items:end}
+@media(min-width:960px){.dev-top{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px}}
+.dev .dev-year{position:relative;display:block;margin:0;padding:0;border:0;line-height:.9}
+.dev .dev-year b,.dy-fill{display:block;font:400 clamp(5.4rem,15vw,12.5rem)/.9 var(--serif);letter-spacing:-.02em;font-style:normal}
+.dev .dev-year b{color:transparent;-webkit-text-stroke:1.5px #d9b26a}
+@supports not (-webkit-text-stroke:1px #000){.dev .dev-year b{color:#d9b26a}}
+.dy-fill{position:absolute;left:0;top:0;color:#d9b26a;pointer-events:none}
+.dev .dev-year span{display:block;margin-top:10px;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;color:#d6e3ea}
+@media(min-width:960px){.dev .dev-year{text-align:right}.dy-fill{left:auto;right:0}}
+.dev-rule{height:1px;margin:clamp(28px,4vw,48px) 0;background:rgba(242,215,166,.14)}
+.dev-rule i{display:block;height:100%;background:linear-gradient(90deg,#d9b26a,rgba(217,178,106,.2));transform-origin:0 50%}
+.dev .dev-grid{display:grid;gap:22px;align-items:stretch}
+@media(min-width:960px){.dev .dev-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px}}
+.dev .dev-md{display:flex;gap:22px;align-items:center;padding:clamp(20px,3vw,32px);border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(242,215,166,.2);transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .5s}
+.md-photo{position:relative;flex:none;width:clamp(104px,14vw,150px);aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,#24506c,#071a26);outline:1px solid rgba(242,215,166,.45);outline-offset:5px}
+.md-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.md-init{position:absolute;inset:0;display:grid;place-items:center;font:400 clamp(1.7rem,3vw,2.3rem) var(--serif);letter-spacing:.08em;color:#f2d7a6}
+.md-photo picture:not([hidden])~.md-init{display:none}
+.dev .dev-card{background:var(--deep);border:1px solid rgba(242,215,166,.32);box-shadow:0 30px 70px rgba(0,0,0,.35)}
+.dev .dev-row:last-child{border-bottom:0}
+.dev .dev-ids{display:grid;grid-template-columns:1fr;gap:14px;margin-top:22px;padding:0}
+@media(min-width:640px){.dev .dev-ids{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr)}}
+.dev .dev-ids>div{grid-column:auto;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(242,215,166,.2);transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .5s}
+.dev .dev-ids>div:hover,.dev .dev-md:hover{transform:translateY(-4px);border-color:rgba(242,215,166,.45)}
+@media(max-width:520px){.dev .dev-md{flex-direction:column;align-items:flex-start}}
+
+/* --- Our Group: two cards, a thin line drawn between them, gentle hover lift --- */
+.grp{position:relative}
+.grp .gf,.grp .gl{transition:transform .6s cubic-bezier(.22,1,.36,1),box-shadow .6s}
+.grp .gl{position:relative;border-radius:22px;border:1px solid var(--line);box-shadow:0 18px 44px rgba(11,42,60,.08)}
+.grp .gl::before{content:"";position:absolute;top:0;left:50%;width:44px;height:2px;background:var(--gold);transform:translateX(-50%)}
+.grp .car-slide:hover .gf,.grp .car-slide:hover .gl{transform:translateY(-6px)}
+.grp .car-slide:hover .gl{box-shadow:0 28px 60px rgba(11,42,60,.14)}
+.grp-link{display:none}
+@media(min-width:900px){
+ #group .grp .car-track{gap:64px;position:relative;z-index:1}
+ .grp-link{display:block;position:absolute;left:50%;top:calc(50% - 10px);width:min(860px,96%);height:1px;transform:translate(-50%,-50%);z-index:0;pointer-events:none}
+ .grp-link i{display:block;height:100%;background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold) 80%,transparent);transform-origin:50% 50%}
+}
+@media(prefers-reduced-motion:reduce){.mwave2,.mwave3{animation:none}.grp .gf,.grp .gl,#location .loc-list li,.dev .dev-ids>div,.dev .dev-md{transition:none}}
+/* a logo that loads before its fallback wordmark is parsed (cached image) still hides the wordmark */
+.lg img:not([hidden])~.wm,.lg img:not([hidden])~.mg{display:none}
+/* closing sections: fixes after review */
+.dev .dev-year b,.dy-fill{font-variant-numeric:lining-nums}
+.dev .dev-year span{margin-top:18px}
+@media(min-width:601px){#location .mapbtn{left:auto;right:18px;bottom:18px;transform:none}}
+@media(max-width:600px){#location .mapbtn{position:static;transform:none;display:flex;margin:0 auto 18px}.dv{padding-bottom:var(--section-y)}#location .loc-list li{padding:14px;gap:12px;font-size:.92rem}.lc-ic{width:40px;height:40px}.lc-n{font-size:1.25rem}}
+@media(max-width:520px){.dev .dev-md{flex-direction:row;align-items:flex-start;gap:16px}.md-photo{width:88px}.md-init{font-size:1.4rem}.dev-md h3{font-size:1.4rem}}

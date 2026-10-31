@@ -46,6 +46,8 @@ for (const width of [1440, 390]) {
         if (r.width < 4 || r.height < 4 || r.bottom < 70 || r.top > innerHeight - 4 || r.right < 0 || r.left > innerWidth) return;
         const fs = parseFloat(cs.fontSize), bold = +cs.fontWeight >= 700, large = fs >= 24 || (bold && fs >= 18.66);
         let op = 1; for (let p = el; p; p = p.parentElement) op *= +getComputedStyle(p).opacity;
+        // skip text that is mid-crossfade (a pinned scene changing its text) and outlined text with a transparent fill (decorative)
+        if (op < .5 || /rgba\(.*,\s*0\)$/.test(cs.color)) return;
         out.push({ text: el.textContent.trim().slice(0, 40), color: cs.color, op, large, box: [Math.max(0, r.left), Math.max(70, r.top), Math.min(innerWidth, r.right), Math.min(innerHeight, r.bottom)] });
       });
       return out;

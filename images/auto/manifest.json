@@ -247,6 +247,48 @@
   "fh": 689,
   "lowres": true
  },
+ "dev-panel-beachfront": {
+  "key": "images/aerial.jpg|159382|1793166481432.9768|warm",
+  "source": "images/aerial.jpg",
+  "width": 1400,
+  "height": 689,
+  "widths": [
+   800,
+   1400
+  ],
+  "fallback": "images/aerial.jpg",
+  "fw": 1400,
+  "fh": 689,
+  "lowres": false
+ },
+ "dev-panel-pavilion": {
+  "key": "images/pavilion.jpg|125491|1793166481675.7363|warm",
+  "source": "images/pavilion.jpg",
+  "width": 1322,
+  "height": 568,
+  "widths": [
+   800,
+   1322
+  ],
+  "fallback": "images/pavilion.jpg",
+  "fw": 1322,
+  "fh": 568,
+  "lowres": false
+ },
+ "dev-panel-sunset": {
+  "key": "images/sunset.jpg|124750|1793166481864.385|warm",
+  "source": "images/sunset.jpg",
+  "width": 1047,
+  "height": 501,
+  "widths": [
+   800,
+   1047
+  ],
+  "fallback": "images/sunset.jpg",
+  "fw": 1047,
+  "fh": 501,
+  "lowres": false
+ },
  "enquire-backdrop": {
   "key": "images/pavilion.jpg|125491|1793166481675.7363|warm",
   "source": "images/pavilion.jpg",

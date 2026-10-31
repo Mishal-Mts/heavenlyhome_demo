@@ -14,7 +14,7 @@ async function open(opts = {}, url = base, waitUntil = 'load') {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, ...opts });
   const page = await ctx.newPage();
   const errors = [];
-  page.on('pageerror', e => errors.push(e.message));
+  page.on('pageerror', e => errors.push(e.message + ' @ ' + (e.stack || '').split('\n').slice(1, 3).join(' ')));
   page.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); }); // failed loads are checked via responses
   page.on('response', r => { if (r.status() >= 400 && !OPTIONAL.test(r.url())) errors.push(`${r.status()} ${r.url()}`); });
   await page.goto(url, { waitUntil });
@@ -63,7 +63,7 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-anim], [data-anim="stagger"] > *')].filter(e => !e.closest('.sec-bg') && !e.closest('[hidden]') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).map(e => e.tagName + '.' + e.className + ' ' + (e.textContent || '').trim().slice(0, 30)));
   check('desktop: every revealed element ends fully visible', hidden.length === 0, hidden.slice(0, 5).join(' | '));
   const counts = await page.$$eval('[data-anim="count"]', b => b.map(x => x.textContent));
-  check('desktop: counters end on the original text', counts.join('|') === '6 & 3 cents|< 30 min|~3 km|1994', counts.join(' | '));
+  check('desktop: counters end on the original text', counts.join('|') === '6 & 3 cents|< 30 min|~3 km|< 30 min|< 30 min|~3 km|1994', counts.join(' | '));
 
   // anchor link via Lenis with header offset
   await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(600);
@@ -124,10 +124,15 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   const bleed = await page.evaluate(() => ({ right: Math.round(document.querySelector('#about .frame').getBoundingClientRect().right), vw: document.documentElement.clientWidth, hscroll: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
   check('about: image runs to the right edge, no horizontal scroll', bleed.right >= bleed.vw - 1 && !bleed.hscroll, JSON.stringify(bleed));
   await page.screenshot({ path: `${out}/1440-about.png` });
-  const devTop = await page.evaluate(() => Math.round(document.getElementById('development').getBoundingClientRect().top + scrollY));
-  await page.evaluate(y => window.lenis.scrollTo(y + 500, { immediate: true }), devTop); await page.waitForTimeout(600);
-  const cur = await page.evaluate(() => ({ dev: Math.round(document.getElementById('development').getBoundingClientRect().top), loc: Math.round(document.getElementById('location').getBoundingClientRect().top), vh: innerHeight }));
-  check('hand-off: banner holds at the top while Location slides over it', cur.dev === 0 && cur.loc < cur.vh, JSON.stringify(cur));
+  // development scene: the aerial image holds full-screen while the text changes (step 1 -> step 2)
+  const devTop = await page.evaluate(() => Math.round(document.querySelector('#development .dv-stage').getBoundingClientRect().top + scrollY));
+  await page.evaluate(y => window.lenis.scrollTo(y, { immediate: true }), devTop); await page.waitForTimeout(600);
+  const op = () => page.evaluate(() => [...document.querySelectorAll('#development .dv-step')].map(e => +(+getComputedStyle(e).opacity).toFixed(2)));
+  const s0 = await op();
+  await page.evaluate(y => window.lenis.scrollTo(y + innerHeight * .8, { immediate: true }), devTop); await page.waitForTimeout(600);
+  const cur = await page.evaluate(() => ({ stage: Math.round(document.querySelector('#development .dv-stage').getBoundingClientRect().top), scene: document.getElementById('development').classList.contains('is-scene') }));
+  const s1 = await op();
+  check('development: image holds full-screen while the text changes', cur.scene && cur.stage === 0 && s0[0] === 1 && s1[0] === 0 && s1[1] === 1, JSON.stringify({ ...cur, s0, s1 }));
   await page.screenshot({ path: `${out}/1440-curtain.png` });
   await page.evaluate(() => window.lenis.scrollTo('#enquire', { immediate: true })); await page.waitForTimeout(1800);
   await page.screenshot({ path: `${out}/1440-enquire.png` });
