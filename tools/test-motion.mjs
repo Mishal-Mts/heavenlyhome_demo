@@ -63,7 +63,7 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   const hidden = await page.evaluate(() => [...document.querySelectorAll('[data-anim], [data-anim="stagger"] > *')].filter(e => !e.closest('.sec-bg') && !e.closest('[hidden]') && e.offsetParent !== null && (getComputedStyle(e).visibility === 'hidden' || +getComputedStyle(e).opacity < .99)).map(e => e.tagName + '.' + e.className + ' ' + (e.textContent || '').trim().slice(0, 30)));
   check('desktop: every revealed element ends fully visible', hidden.length === 0, hidden.slice(0, 5).join(' | '));
   const counts = await page.$$eval('[data-anim="count"]', b => b.map(x => x.textContent));
-  check('desktop: counters end on the original text', counts.join('|') === '3 cent|< 30 min|~3 km', counts.join(' | '));
+  check('desktop: counters end on the original text', counts.join('|') === '6 & 3 cents|< 30 min|~3 km|1994', counts.join(' | '));
 
   // anchor link via Lenis with header offset
   await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(600);

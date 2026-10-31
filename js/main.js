@@ -7,13 +7,15 @@ var CONFIG={
     domain:'https://defendervillas.com', //   Live domain (canonical URL). HTTPS must be enabled on the host.
     tagline:''                           //   Optional short tagline.
   },
-  phone:'',        // Main sales phone: country code + digits, no spaces, e.g. '91XXXXXXXXXX'. Needed for the Call buttons, header number and footer.
-  whatsapp:'',     // WhatsApp number, same format. If empty, the main phone is used for WhatsApp.
-  email:'',        // Sales email address (footer and project card in Our Group).
+  phone:'917561033350', // Main sales phone: country code + digits, no spaces, e.g. '91XXXXXXXXXX'. Needed for the Call buttons, header number and footer.
+  whatsapp:'917561033350', // WhatsApp number, same format. If empty, the main phone is used for WhatsApp.
+  email:'tonyantony8888@gmail.com', // Sales email address (footer and project card in Our Group).
   mapLink:'https://www.google.com/maps?q=10.298030853271484,76.1274185180664&z=17&hl=en', // Google Maps link for the project location (map button and iframe use it).
   website:'https://defendervillas.com', // Project website (project card in Our Group).
-  office:'',       // Defender Real Estates & Builders Limited registered office address (footer).
-  cin:'',          // Defender company CIN (footer).
+  office:'1/IV, Thadicaren House, Edathiruthy - 680703, Thrissur Dt., Kerala, India', // Defender Real Estates & Builders Limited registered office address (footer).
+  cin:'U70101KL1994PLC008411', // Defender company CIN (footer).
+  udyam:'KL-13-0120495',  // Defender UDYAM registration number (footer).
+  pan:'AAGCD6212J',       // Defender PAN (footer).
   reraNo:'',       // K-RERA registration number. Shows the compliance bar under the hero, the Approvals list and the footer.
   reraQr:'',       // Path to the official K-RERA QR image, e.g. 'images/rera-qr.png' (Approvals section).
   crz:'',          // CRZ clearance wording exactly as per the order: authority, reference no. and date.
@@ -69,17 +71,17 @@ var CONFIG={
     phone:'',      //   Phone, country code + digits. Shows the Call icon.
     whatsapp:'',   //   WhatsApp number. If empty the phone is used. Shows the WhatsApp icon.
     email:'',      //   Email. Added to the saved contact.
-    address:'',    //   Office address (tap-to-map row on the card).
+    address:'2042 Wooddale Dr Ste 250, Woodbury, MN 55125, United States', //   Office address (tap-to-map row on the card).
     website:'',    //   Website (row on the card).
-    company:'',    //   Business name for the saved contact (default: CONFIG.brand.name) and footer.
+    company:'Heavenly Homes USA', //   Business name for the saved contact (default: CONFIG.brand.name) and footer.
     licence:''     //   Contractor licence / realtor registration number (footer).
   },
   mercea:{         // Mercea Technical Services LLC, Dubai
     services:'',   //   One-line description of services (replaces the default line on its card).
     website:'',    //   Website starting with https:// (turns the card button into Visit website).
     phone:'',      //   Phone, country code + digits (footer).
-    email:'',      //   Email (footer).
-    address:'',    //   Dubai address (footer).
+    email:'josetony@merceagroup.com', //   Email (card and footer). Phone is intentionally not shown (client request).
+    address:'AB Plaza - 8, Floor - 1101, Room No: 30, Al Mamzar, Dubai, UAE, PO Box 89957', //   Dubai address (card and footer).
     licence:''     //   Trade licence number (footer).
   }
 };
@@ -127,12 +129,12 @@ var ENDPOINTS=[];
   // footer group lines (only filled values)
   var fl=$('#flines');
   function fline(a){a=a.filter(Boolean);if(a.length>1){var p=document.createElement('p');p.textContent=a.join(' \u00b7 ');fl.appendChild(p);}}
-  fline(['Defender Real Estates & Builders Limited',C.cin&&'CIN: '+C.cin,C.office&&'Registered office: '+C.office]);
+  fline(['Defender Real Estates & Builders Limited',C.cin&&'CIN: '+C.cin,C.udyam&&'UDYAM: '+C.udyam,C.pan&&'PAN: '+C.pan,C.office&&'Registered office: '+C.office]);
   fline(['Minu John, Realtor & Licensed General Contractor',M.company,M.licence&&'Licence no.: '+M.licence]);
   fline(['Mercea Technical Services LLC, Dubai',D.address,D.phone&&fmt(D.phone),D.email,D.licence&&'Trade licence no.: '+D.licence]);
   // contact rows on the group cards: a row appears only when its value exists
   function rows(id,o){
-    var ul=$(id),n=0,ph=String(o.phone||'').replace(/\D/g,''),wb=String(o.website||'').trim();
+    var ul=$(id);if(!ul)return;var n=0,ph=String(o.phone||'').replace(/\D/g,''),wb=String(o.website||'').trim();
     function add(icon,text,href,ext){var l=document.createElement('li'),a=document.createElement('a'),sp=document.createElement('span');a.href=href;a.title=text;if(ext){a.target='_blank';a.rel='noopener noreferrer';}
       a.innerHTML='<svg><use href="#'+icon+'"/></svg>';sp.textContent=text;a.appendChild(sp);l.appendChild(a);ul.appendChild(l);n++;}
     if(o.address)add('i-pin',o.address,'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(o.address),true);

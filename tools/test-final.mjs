@@ -12,7 +12,8 @@ const browser = await chromium.launch();
 
 // rewrite CONFIG values in js/main.js for a test (the real file is not changed)
 const mainJs = readFileSync('js/main.js', 'utf8');
-const withConfig = (ctx, edits) => ctx.route('**/js/main.js', r => { let s = mainJs; for (const [a, b] of edits) s = s.replace(a, b); r.fulfill({ body: s, contentType: 'application/javascript' }); });
+// the trailing * also matches the ?v= version number on the script address
+const withConfig = (ctx, edits) => ctx.route('**/js/main.js*', r => { let s = mainJs; for (const [a, b] of edits) s = s.replace(a, b); r.fulfill({ body: s, contentType: 'application/javascript' }); });
 
 // ---------- slow phone: 4x CPU slowdown + Fast 4G ----------
 for (const [label, viewport, mobile] of [['phone', { width: 390, height: 844 }, true], ['desktop', { width: 1440, height: 900 }, false]]) {
@@ -52,7 +53,7 @@ for (const [label, viewport, mobile] of [['phone', { width: 390, height: 844 }, 
   await page.evaluate(() => window.lenis ? window.lenis.scrollTo('#group', { immediate: true }) : document.getElementById('group').scrollIntoView()); await page.waitForTimeout(1200);
   const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#vcfbtn')]);
   const vcf = readFileSync(await dl.path(), 'utf8');
-  check('vCard: downloads Minu-John.vcf with ORG and NOTE "Defender Villas"', dl.suggestedFilename() === 'Minu-John.vcf' && /ORG:Defender Villas/.test(vcf) && /NOTE:Defender Villas\\, Perinjanam/.test(vcf), vcf.split('\r\n').filter(l => /^(ORG|NOTE|TEL|EMAIL)/.test(l)).join(' | '));
+  check('vCard: downloads Minu-John.vcf with ORG "Heavenly Homes USA" and NOTE "Defender Villas"', dl.suggestedFilename() === 'Minu-John.vcf' && /ORG:Heavenly Homes USA/.test(vcf) && /NOTE:Defender Villas\\, Perinjanam/.test(vcf), vcf.split('\r\n').filter(l => /^(ORG|NOTE|TEL|EMAIL)/.test(l)).join(' | '));
   await ctx.close();
 }
 
