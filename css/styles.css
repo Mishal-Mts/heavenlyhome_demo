@@ -634,7 +634,7 @@ footer .lg img{height:52px}
 header.solid{box-shadow:0 1px 0 var(--line),0 6px 18px rgba(7,26,38,.06)}
 header.solid .nav{height:60px}
 header.solid .logo .lg img{height:36px}
-header.solid .logo small{display:none}
+header.solid .logo small{font-size:.5rem;margin-top:3px}
 header.solid .nav .btn{min-height:40px}
 header.solid .mnav{top:calc(60px + env(safe-area-inset-top,0px));max-height:calc(100svh - 60px - env(safe-area-inset-top,0px))}
 @media(max-width:420px){header.solid .logo .lg img{height:32px}}
@@ -676,3 +676,23 @@ header.hide{transform:none}
 #group .ci span{white-space:normal;overflow:visible;text-overflow:clip}
 #group .ci a{align-items:flex-start;line-height:1.45;padding:4px 0}
 #group .ci svg{margin-top:2px}
+
+/* ---------- header: logo and company line as one centred stack (all header states) ---------- */
+.logo{align-items:center;text-align:center}
+.logo .lg{justify-content:center}
+.logo small{white-space:nowrap}
+@media(max-width:420px){.logo small{font-size:.42rem;letter-spacing:.06em;margin-top:4px}header.solid .logo small{font-size:.4rem;margin-top:2px}}
+@media(max-width:360px){.logo small,header.solid .logo small{font-size:.38rem;letter-spacing:.03em}}
+
+/* ---------- outer spacing: one variable for every section ---------- */
+:root{--section-y:clamp(44px,5.5vw,84px)}
+@media(max-width:600px){:root{--section-y:40px}}
+section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
+/* sections sitting on the same background: no double gap where one ends and the next begins */
+.cine+.cine,#group+#faq{padding-top:calc(var(--section-y) * .5)}
+/* Our Group no longer forces a full-screen height on desktop */
+#group{padding-top:var(--section-y);padding-bottom:var(--section-y)}
+@media(min-width:900px){#group{min-height:0}}
+/* development banner: shorter band, same image and text */
+.banner.cine{min-height:min(68svh,620px)}
+@media(max-width:767px){.banner.cine{min-height:440px}}

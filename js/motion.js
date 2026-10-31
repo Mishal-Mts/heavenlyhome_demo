@@ -225,17 +225,17 @@
     var bodyA=$$('.body>*',a),bodyB=$$('.body>*',b),imgA=$('.ph img',a),imgB=$('.ph img',b);
     var setActive=function(p){var on=p>.5;a.style.pointerEvents=on?'none':'';b.style.pointerEvents=on?'':'none';a.setAttribute('aria-hidden',on);b.setAttribute('aria-hidden',!on);};
     gsap.set(b,{opacity:0});setActive(0);
-    var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:vScene,start:'top top',end:'+=130%',pin:true,scrub:true,anticipatePin:1,refreshPriority:2,
+    var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:vScene,start:'top top',end:'+=90%',pin:true,scrub:true,anticipatePin:1,refreshPriority:2,
       onUpdate:function(s){setActive(s.progress);}}});
     // the first card's text leaves before the second card's text arrives, so the two never overlap
-    tl.to({},{duration:.3})
+    tl.to({},{duration:.12})
       .to(bodyA,{y:-24,opacity:0,stagger:.03,duration:.3},'swap')
       .to(imgA,{scale:1.08,duration:1},'swap')
       .to(b,{opacity:1,duration:.4},'swap+=.3')           // the second card fades in on top of the still-opaque first card
       .set(a,{opacity:0},'swap+=.71')
       .fromTo(imgB,{scale:1.16},{scale:1,duration:1},'swap+=.1')
       .fromTo(bodyB,{y:34,opacity:0},{y:0,opacity:1,stagger:.06,duration:.4},'swap+=.62')
-      .to({},{duration:.3});
+      .to({},{duration:.12});
     var onFocus=function(e){var st=tl.scrollTrigger;seek(st,b.contains(e.target)?.95:0);};
     a.addEventListener('focusin',onFocus);b.addEventListener('focusin',onFocus);
     return function(){
