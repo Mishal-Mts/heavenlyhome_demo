@@ -104,9 +104,15 @@
       gsap.fromTo(mq,{xPercent:d>0?-22:0},{xPercent:d>0?0:-22,ease:'none',scrollTrigger:{trigger:mq.parentNode,start:'top bottom',end:'bottom top',scrub:true}});
     });
     // section headings: a short gold line draws under the heading as it arrives (css: .sec-head.in h2::after)
-    $$('.sec-head').forEach(function(el){
+    // the same .in class draws the gold lines of the specification cards and the amenity icon rings (css)
+    $$('.sec-head, .sp-grid, .am-grid').forEach(function(el){
       ScrollTrigger.create({trigger:el,start:T.start,once:true,onEnter:function(){el.classList.add('in');}});
     });
+  });
+  // amenities panel opens from a framed mask as it scrolls into view
+  mm.add(OK,function(){
+    var ap=$('.am-panel');if(!ap)return;
+    gsap.fromTo(ap,{clipPath:'inset(6% 5% 6% 5% round 28px)'},{clipPath:'inset(0% 0% 0% 0% round 28px)',ease:'none',scrollTrigger:{trigger:ap,start:'top bottom',end:'top 40%',scrub:true}});
   });
   // parallax: tablet and up
   mm.add('(min-width: 768px) and '+OK,function(){

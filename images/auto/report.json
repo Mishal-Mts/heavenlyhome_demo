@@ -219,6 +219,26 @@
   "sourceSize": "1047x501"
  },
  {
+  "slot": "specs-image",
+  "current": "images/stairs.jpg",
+  "currentSize": "740x1095",
+  "hires": "images/specs-image-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK on normal screens, a little soft on high-DPI screens",
+  "sourceSize": "740x1095"
+ },
+ {
+  "slot": "amenities-backdrop",
+  "current": "images/pavilion.jpg",
+  "currentSize": "1322x568",
+  "hires": "images/amenities-backdrop-hires.jpg",
+  "hiresExists": false,
+  "using": "current",
+  "status": "OK on normal screens, a little soft on high-DPI screens",
+  "sourceSize": "1322x568"
+ },
+ {
   "slot": "enquire-backdrop",
   "current": "images/pavilion.jpg",
   "currentSize": "1322x568",

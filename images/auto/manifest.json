@@ -289,6 +289,33 @@
   "fh": 501,
   "lowres": false
  },
+ "specs-image": {
+  "key": "images/stairs.jpg|114237|1793166481819.517|warm",
+  "source": "images/stairs.jpg",
+  "width": 740,
+  "height": 1095,
+  "widths": [
+   740
+  ],
+  "fallback": "images/stairs.jpg",
+  "fw": 740,
+  "fh": 1095,
+  "lowres": false
+ },
+ "amenities-backdrop": {
+  "key": "images/pavilion.jpg|125491|1793166481675.7363|warm",
+  "source": "images/pavilion.jpg",
+  "width": 1322,
+  "height": 568,
+  "widths": [
+   800,
+   1322
+  ],
+  "fallback": "images/pavilion.jpg",
+  "fw": 1322,
+  "fh": 568,
+  "lowres": false
+ },
  "enquire-backdrop": {
   "key": "images/pavilion.jpg|125491|1793166481675.7363|warm",
   "source": "images/pavilion.jpg",
