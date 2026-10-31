@@ -23,7 +23,7 @@ const NEED = {
   'hero': 1600, 'hero-mobile': 860, 'about-main': 1000, 'about-beach': 360, 'villa-premium': 770, 'villa-budget': 770,
   'walkthrough-poster': 660, 'preview-360': 1000, 'development-banner': 1600, 'enquire-backdrop': 1600,
   'nri-backdrop': 1600, 'strip-texture': 1600, 'atmos-dawn': 1600, 'atmos-day': 1600, 'atmos-sunset': 1600, 'atmos-dusk': 1600,
-  'dev-panel-beachfront': 640, 'dev-panel-pavilion': 560, 'dev-panel-sunset': 480, 'developer-md': 400,
+  'dev-panel-beachfront': 640, 'dev-panel-pavilion': 560, 'dev-panel-sunset': 480,
 };
 const need = slot => NEED[slot] || (slot.startsWith('gallery-') ? 560 : 800);
 

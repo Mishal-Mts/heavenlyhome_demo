@@ -750,9 +750,9 @@ section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
 @keyframes mwave{from{transform:translate(0,-6px)}to{transform:translate(6px,6px)}}
 .route-draw{stroke-dashoffset:0}
 #location .loc-list{display:grid;gap:12px}
-#location .loc-list li{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r);background:#fff;box-shadow:0 10px 28px rgba(11,42,60,.06);font-size:.94rem;color:var(--ink);transition:transform .5s cubic-bezier(.22,1,.36,1),box-shadow .5s,border-color .5s}
+#location .loc-list li{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r);background:#fff;box-shadow:0 10px 28px rgba(11,42,60,.06);font-size:.94rem;color:var(--ink);transition:translate .5s cubic-bezier(.22,1,.36,1),box-shadow .5s,border-color .5s}
 #location .loc-list li::before{display:none}
-#location .loc-list li:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(11,42,60,.12);border-color:rgba(138,95,36,.35)}
+#location .loc-list li:hover{translate:0 -4px;box-shadow:0 18px 40px rgba(11,42,60,.12);border-color:rgba(138,95,36,.35)}
 .lc-ic{flex:none;width:44px;height:44px;border-radius:12px;background:var(--navy);color:#f2d7a6;display:grid;place-items:center}
 .lc-ic svg{width:22px;height:22px}
 .lc-n{display:block;font:600 1.45rem/1.15 var(--serif);color:var(--navy);margin-bottom:2px}
@@ -773,25 +773,21 @@ section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
 .dev-rule i{display:block;height:100%;background:linear-gradient(90deg,#d9b26a,rgba(217,178,106,.2));transform-origin:0 50%}
 .dev .dev-grid{display:grid;gap:22px;align-items:stretch}
 @media(min-width:960px){.dev .dev-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px}}
-.dev .dev-md{display:flex;gap:22px;align-items:center;padding:clamp(20px,3vw,32px);border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(242,215,166,.2);transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .5s}
-.md-photo{position:relative;flex:none;width:clamp(104px,14vw,150px);aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,#24506c,#071a26);outline:1px solid rgba(242,215,166,.45);outline-offset:5px}
-.md-photo img{width:100%;height:100%;object-fit:cover;display:block}
-.md-init{position:absolute;inset:0;display:grid;place-items:center;font:400 clamp(1.7rem,3vw,2.3rem) var(--serif);letter-spacing:.08em;color:#f2d7a6}
-.md-photo picture:not([hidden])~.md-init{display:none}
+.dev .dev-md{display:flex;gap:22px;align-items:center;padding:clamp(20px,3vw,32px);border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(242,215,166,.2);transition:translate .5s cubic-bezier(.22,1,.36,1),border-color .5s}
 .dev .dev-card{background:var(--deep);border:1px solid rgba(242,215,166,.32);box-shadow:0 30px 70px rgba(0,0,0,.35)}
 .dev .dev-row:last-child{border-bottom:0}
 .dev .dev-ids{display:grid;grid-template-columns:1fr;gap:14px;margin-top:22px;padding:0}
 @media(min-width:640px){.dev .dev-ids{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr)}}
-.dev .dev-ids>div{grid-column:auto;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(242,215,166,.2);transition:transform .5s cubic-bezier(.22,1,.36,1),border-color .5s}
-.dev .dev-ids>div:hover,.dev .dev-md:hover{transform:translateY(-4px);border-color:rgba(242,215,166,.45)}
+.dev .dev-ids>div{grid-column:auto;padding:18px 20px;border-radius:var(--r);background:rgba(255,255,255,.05);border:1px solid rgba(242,215,166,.2);transition:translate .5s cubic-bezier(.22,1,.36,1),border-color .5s}
+.dev .dev-ids>div:hover,.dev .dev-md:hover{translate:0 -4px;border-color:rgba(242,215,166,.45)}
 @media(max-width:520px){.dev .dev-md{flex-direction:column;align-items:flex-start}}
 
 /* --- Our Group: two cards, a thin line drawn between them, gentle hover lift --- */
 .grp{position:relative}
-.grp .gf,.grp .gl{transition:transform .6s cubic-bezier(.22,1,.36,1),box-shadow .6s}
+.grp .gf,.grp .gl{transition:translate .6s cubic-bezier(.22,1,.36,1),box-shadow .6s}
 .grp .gl{position:relative;border-radius:22px;border:1px solid var(--line);box-shadow:0 18px 44px rgba(11,42,60,.08)}
 .grp .gl::before{content:"";position:absolute;top:0;left:50%;width:44px;height:2px;background:var(--gold);transform:translateX(-50%)}
-.grp .car-slide:hover .gf,.grp .car-slide:hover .gl{transform:translateY(-6px)}
+.grp .car-slide:hover .gf,.grp .car-slide:hover .gl{translate:0 -6px}
 .grp .car-slide:hover .gl{box-shadow:0 28px 60px rgba(11,42,60,.14)}
 .grp-link{display:none}
 @media(min-width:900px){
@@ -807,4 +803,39 @@ section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
 .dev .dev-year span{margin-top:18px}
 @media(min-width:601px){#location .mapbtn{left:auto;right:18px;bottom:18px;transform:none}}
 @media(max-width:600px){#location .mapbtn{position:static;transform:none;display:flex;margin:0 auto 18px}.dv{padding-bottom:var(--section-y)}#location .loc-list li{padding:14px;gap:12px;font-size:.92rem}.lc-ic{width:40px;height:40px}.lc-n{font-size:1.25rem}}
-@media(max-width:520px){.dev .dev-md{flex-direction:row;align-items:flex-start;gap:16px}.md-photo{width:88px}.md-init{font-size:1.4rem}.dev-md h3{font-size:1.4rem}}
+@media(max-width:520px){.dev-md h3{font-size:1.4rem}}
+
+/* =========== more motion across the page (js/motion.js adds .in to each .sec-head as it arrives) =========== */
+/* section headings: a short gold line draws under the heading */
+.sec-head h2::after{content:"";display:block;width:56px;height:2px;margin:16px auto 0;background:var(--gold);transform-origin:50% 50%;transition:transform 1.3s cubic-bezier(.16,1,.3,1) .45s}
+.cine .sec-head h2::after{background:#d9b26a}
+.motion .sec-head:not(.in) h2::after{transform:scaleX(0)}
+@media(min-width:1024px){#location .sec-head h2::after,#walkthrough .sec-head h2::after,#trust .sec-head h2::after,#rent .sec-head h2::after{margin-left:0;transform-origin:0 50%}}
+/* outlined lines of words in the Gulf & NRI and enquiry sections (same component as The development) */
+.mq-band{position:relative;z-index:2;margin-top:clamp(28px,4vw,56px)}
+.mq-band .dv-mq{font-size:clamp(2.6rem,7vw,6.2rem)}
+.gulf>.mq-band{margin-bottom:calc(-1 * var(--section-y) + 12px)}
+.cta-sec>.mq-band{margin-top:calc(-1 * var(--section-y) + 8px);margin-bottom:clamp(20px,3vw,40px)}
+/* gentle hover effects (only on devices that can hover); lifts use the translate/scale properties, so they
+   never fight the GSAP entrance transforms */
+@media(hover:hover){
+ .gs img,#villas:not(.is-pinned) .card .ph img,.collage .float{transition:scale 1.4s cubic-bezier(.16,1,.3,1)}
+ .gs:hover img,#villas:not(.is-pinned) .card:hover .ph img{scale:1.06}
+ .collage .float:hover{scale:1.03}
+ #villas:not(.is-pinned) .card,#rent .card,.gsteps>div,.steps>div,details{transition:translate .6s cubic-bezier(.22,1,.36,1),box-shadow .6s,border-color .6s}
+ #villas:not(.is-pinned) .card:hover,#rent .card:hover{translate:0 -6px;box-shadow:0 26px 60px rgba(11,42,60,.16)}
+ .gsteps>div:hover{translate:0 -4px;border-color:rgba(242,215,166,.5)}
+ .steps>div:hover{translate:0 -3px}
+ details:hover{border-color:rgba(138,95,36,.4)}
+ .am .ic{transition:translate .6s cubic-bezier(.22,1,.36,1),rotate .6s cubic-bezier(.22,1,.36,1)}
+ .am div:hover .ic{translate:0 -4px;rotate:-6deg}
+ /* a thin gold line draws along the top of a specification or rent-out card on hover */
+ .specs div,#rent .card{position:relative}
+ .specs div::before,#rent .card::before{content:"";position:absolute;left:0;top:-1px;width:100%;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:0 50%;transition:transform .7s cubic-bezier(.22,1,.36,1);z-index:2}
+ .specs div:hover::before,#rent .card:hover::before{transform:scaleX(1)}
+ /* a soft light passes across the main buttons */
+ .btn-primary{position:relative;overflow:hidden;isolation:isolate}
+ .btn-primary::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.28) 50%,transparent 70%);translate:-120% 0;transition:translate .9s cubic-bezier(.22,1,.36,1)}
+ .btn-primary:hover::after{translate:120% 0}
+}
+@media(prefers-reduced-motion:reduce){.sec-head h2::after,.gs img,.card,.card .ph img,.gsteps>div,.steps>div,details,.am .ic,.specs div::before,#rent .card::before,.btn-primary::after,.collage .float{transition:none!important}}

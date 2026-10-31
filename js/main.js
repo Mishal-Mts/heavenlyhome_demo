@@ -62,7 +62,6 @@ var CONFIG={
     'dev-panel-beachfront':    {current:'images/aerial.jpg',   hires:'images/dev-panel-beachfront-hires.jpg'},    // The development: panel 1 (close crop of the beachfront)
     'dev-panel-pavilion':      {current:'images/pavilion.jpg', hires:'images/dev-panel-pavilion-hires.jpg'},      // The development: panel 2 (pavilion crop)
     'dev-panel-sunset':        {current:'images/sunset.jpg',   hires:'images/dev-panel-sunset-hires.jpg'},        // The development: panel 3 (sunset crop)
-    'developer-md':            {current:'',                    hires:'images/developer-md-hires.jpg'},            // Optional: Managing Director photo (portrait). Until it exists the initials show.
     'enquire-backdrop':        {current:'images/pavilion.jpg', hires:'images/enquire-backdrop-hires.jpg'},        // Closing enquiry section background, full width
     'nri-backdrop':            {current:'',                    hires:'images/nri-backdrop-hires.jpg'},            // Optional: Gulf & NRI section background (shoreline)
     'strip-texture':           {current:'',                    hires:'images/strip-texture-hires.jpg'},           // Optional: faint wave texture behind the stats strip

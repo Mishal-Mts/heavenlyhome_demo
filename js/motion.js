@@ -97,6 +97,17 @@
       if(A[k])A[k](el);else show(el);
     });
   });
+  // big outlined lines of words drift sideways with the scroll (data-dir="-1" drifts the other way)
+  mm.add(OK,function(){
+    $$('.dv-mq').forEach(function(mq){
+      var d=mq.getAttribute('data-dir')==='-1'?1:-1;
+      gsap.fromTo(mq,{xPercent:d>0?-22:0},{xPercent:d>0?0:-22,ease:'none',scrollTrigger:{trigger:mq.parentNode,start:'top bottom',end:'bottom top',scrub:true}});
+    });
+    // section headings: a short gold line draws under the heading as it arrives (css: .sec-head.in h2::after)
+    $$('.sec-head').forEach(function(el){
+      ScrollTrigger.create({trigger:el,start:T.start,once:true,onEnter:function(){el.classList.add('in');}});
+    });
+  });
   // parallax: tablet and up
   mm.add('(min-width: 768px) and '+OK,function(){
     $$('[data-anim="parallax"]').forEach(function(el){
@@ -266,10 +277,9 @@
   var dv=$('#development');
   if(dv&&!late)mm.add({pin:PIN,ok:OK},function(ctx){
     if(!ctx.conditions.ok)return;
-    var stage=$('.dv-stage',dv),media=$('.dv-media',stage),img=$('img',media),mq=$('.dv-mq',dv);
+    var stage=$('.dv-stage',dv),media=$('.dv-media',stage),img=$('img',media);
     gsap.fromTo(media,{clipPath:'inset(7% 6% 7% 6% round 28px)'},{clipPath:'inset(0% 0% 0% 0% round 0px)',ease:'none',
       scrollTrigger:{trigger:stage,start:'top bottom',end:'top 10%',scrub:true}});
-    if(mq)gsap.fromTo(mq,{xPercent:0},{xPercent:-22,ease:'none',scrollTrigger:{trigger:mq,start:'top bottom',end:'bottom top',scrub:true}});
     if(!ctx.conditions.pin){
       gsap.fromTo(img,{scale:1.02},{scale:1.14,ease:'none',scrollTrigger:{trigger:stage,start:'top bottom',end:'bottom top',scrub:true}});
       return;
