@@ -28,5 +28,24 @@
   },
   "toolsDir": "%TEMP%/defender-hero-tools",
   "stepTimeoutSeconds": 300,
-  "html": "index.html"
+  "html": "index.html",
+  "entries": {
+    "shore": {
+      "_help": "Below-the-fold band between About and The villas. Build: node tools/build-hero.mjs --entry shore",
+      "sourceDir": "Videos_2",
+      "clips": [
+        { "file": "hero_image_changed.mp4", "note": "villa on the beach", "start": 0.0, "end": 2.96, "speed": 1, "decimate": 5 },
+        { "file": "hero_image_changed.mp4", "note": "villa, closer angle", "start": 3.04, "end": 5.43, "speed": 1, "decimate": 5 },
+        { "file": "hero_image_changed.mp4", "note": "interior facing the sea", "start": 5.5, "end": 7.4, "speed": 1, "decimate": 5 },
+        { "file": "hero_image_changed.mp4", "note": "aerial over the shore", "start": 7.47, "end": 10.07, "speed": 1, "decimate": 5 }
+      ],
+      "crossfade": 0.6,
+      "grade": { "seamRampSeconds": 1.2 },
+      "output": {
+        "desktop": { "name": "shore", "width": 1920, "height": 1080, "crf": 25, "maxrate": "3M", "bufsize": "6M", "webmCrf": 36, "sharpen": 0, "sizeCapMB": 4 },
+        "mobile": { "name": "shore-mobile", "width": 1280, "height": 720, "crf": 27, "maxrate": "1.5M", "bufsize": "3M", "webmCrf": 40, "sharpen": 0, "sizeCapMB": 2 },
+        "poster": { "name": "shore-poster" }
+      }
+    }
+  }
 }

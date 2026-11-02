@@ -1,0 +1,25 @@
+/* ======================= VIDEO BAND (full-width looping clip below the fold) =======================
+   Markup: section.vband > .vband-frame > picture.vband-poster + video.vband-video + .vband-cap
+   js/video-band.js loads and plays the video only near the viewport, adds .is-playing once it plays (fade-in over
+   the poster), pauses it when it leaves, and sets --vb-scale (1 -> 1.06) as the band scrolls through (768 px up).
+   Only transform and opacity change; the frame has a fixed aspect ratio, so nothing shifts. */
+section.vband.cine{padding:0}
+.vband-frame{position:relative;overflow:hidden;width:100%;aspect-ratio:16/9;max-height:88svh;background:var(--deep,#071a26)}
+@media(max-width:767px){.vband-frame{aspect-ratio:4/5;max-height:none}}
+.vband-poster,.vband-poster img,.vband-video{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vband-poster img,.vband-video{object-fit:cover;object-position:50% 50%;transform:translateZ(0) scale(var(--vb-scale,1));transform-origin:50% 55%;will-change:transform;backface-visibility:hidden}
+.vband-video{opacity:0;transition:opacity 1.2s cubic-bezier(.16,1,.3,1)}
+.vband-frame.is-playing .vband-video{opacity:1}
+/* veil only behind the caption (bottom-left, over bright sand); the top and right of the video stay clear */
+.vband-frame::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  linear-gradient(0deg,rgba(7,26,38,.72) 0%,rgba(7,26,38,.6) 22%,rgba(7,26,38,.28) 40%,rgba(7,26,38,0) 56%),
+  linear-gradient(90deg,rgba(7,26,38,.42) 0%,rgba(7,26,38,.2) 40%,rgba(7,26,38,0) 62%)}
+.vband-frame.ai::after{z-index:3}
+.vband-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding-bottom:clamp(24px,4vw,52px)}
+.vband-cap h2{color:#fff;font-size:clamp(1.9rem,4.2vw,3.3rem);line-height:1.08;margin:0 0 10px;max-width:16ch}
+.vband-cap .cap{display:block;font-size:.74rem;color:#e6eef3;max-width:52ch}
+.vband-cap h2,.vband-cap .cap{text-shadow:0 0 2px rgba(7,26,38,.85),0 1px 3px rgba(7,26,38,.8),0 0 14px rgba(7,26,38,.65)}
+@media(prefers-reduced-motion:reduce){
+ .vband-video{display:none}
+ .vband-poster img{transform:none}
+}

@@ -33,6 +33,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Defender Real Estates & Builders Limited","brand":{"@type":"Brand","name":"Defender Villas"},"url":"https://defendervillas.com/","logo":"https://defendervillas.com/images/logo-defender-villas.png"}</script>
 <link rel="stylesheet" href="css/styles.css?v=20261031f">
 <link rel="stylesheet" href="css/hero-video.css?v=20261102i">
+<link rel="stylesheet" href="css/video-band.css?v=20261102c">
 <script src="vendor/gsap-3.15.0/gsap.min.js" defer></script>
 <script src="vendor/gsap-3.15.0/ScrollTrigger.min.js" defer></script>
 <script src="vendor/gsap-3.15.0/SplitText.min.js" defer></script>
@@ -40,6 +41,7 @@
 <script src="js/main.js?v=20261031f" defer></script>
 <script src="js/motion.js?v=20261102" defer></script>
 <script src="js/hero-video.js?v=20261102c" defer></script>
+<script src="js/video-band.js?v=20261102" defer></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -166,6 +168,23 @@
   </div>
  </div>
 </div></section>
+
+<section class="vband cine" id="shore" aria-labelledby="shore-title">
+ <!-- Video band (css/video-band.css, js/video-band.js). Built by: node tools/build-hero.mjs --entry shore (hero-video.config.json) -->
+ <div class="vband-frame ai">
+  <picture class="vband-poster"><source media="(max-width:767px)" type="image/webp" srcset="images/shore-poster-mobile.webp?v=b944a309f7"><source media="(max-width:767px)" srcset="images/shore-poster-mobile.jpg?v=0d0a442a42"><source type="image/webp" srcset="images/shore-poster.webp?v=1dee4a8233"><img src="images/shore-poster.jpg?v=30692e961d" width="1920" height="1080" loading="lazy" alt="Artist’s impression (AI-generated): a beach villa on the shore, an interior facing the sea and an aerial view of the coast"></picture>
+  <video class="vband-video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1">
+   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/shore.webm?v=aae0d1058e" type="video/webm">
+   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/shore.mp4?v=3c47166d0f" type="video/mp4">
+   <source media="(prefers-reduced-motion:no-preference)" src="videos/shore-mobile.webm?v=49b96ccbb0" type="video/webm">
+   <source media="(prefers-reduced-motion:no-preference)" src="videos/shore-mobile.mp4?v=fd2debd45f" type="video/mp4">
+  </video>
+  <div class="wrap vband-cap" data-anim="stagger">
+   <h2 id="shore-title" data-anim="line-reveal">Look around the shore</h2>
+   <small class="cap">AI-generated artist’s impression. Actual construction may vary.</small>
+  </div>
+ </div>
+</section>
 
 <section id="villas" class="cine"><div class="wrap">
  <div class="v-scene">

@@ -20,8 +20,14 @@ import { existsSync, mkdirSync, statSync, rmSync, renameSync, readFileSync, writ
 import { join, resolve } from 'node:path';
 
 // ---------- config + tools ----------
-const cfgPath = resolve(process.argv.slice(2).find((a, i, all) => !a.startsWith('--') && all[i - 1] !== '--sample') || 'hero-video.config.json');
-const C = JSON.parse(readFileSync(cfgPath, 'utf8')), O = C.output, G = C.grade;
+// --entry NAME builds another video described in the config's "entries" (it overrides the top-level settings);
+// without it the top-level settings build the hero
+const argv = process.argv.slice(2), ENTRY = argv.includes('--entry') ? argv[argv.indexOf('--entry') + 1] : '';
+const cfgPath = resolve(argv.find((a, i) => !a.startsWith('--') && argv[i - 1] !== '--sample' && argv[i - 1] !== '--entry') || 'hero-video.config.json');
+const BASE = JSON.parse(readFileSync(cfgPath, 'utf8')), E = ENTRY ? (BASE.entries || {})[ENTRY] : null;
+if (ENTRY && !E) { console.error(`No entry "${ENTRY}" in ${cfgPath}`); process.exit(1); }
+const merge = (a, b) => { const o = { ...a }; for (const k in b || {}) o[k] = b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && a[k] && typeof a[k] === 'object' ? merge(a[k], b[k]) : b[k]; return o; };
+const C = E ? merge(BASE, E) : BASE, O = C.output, G = C.grade;
 const toolsDir = (process.env.HERO_TOOLS_DIR || C.toolsDir || '').replace(/%(\w+)%/g, (_, v) => process.env[v] || '');
 let ffmpeg, ffprobe;
 try { const req = createRequire(join(resolve(toolsDir), 'package.json')); ffmpeg = req('ffmpeg-static'); ffprobe = req('ffprobe-static').path; }
@@ -79,7 +85,7 @@ const raw = [];
 for (let i = 0; i < SEG.length; i++) {
   const s = SEG[i], out = join(TMP, `seg${i}.mkv`), speed = s.speed || 1;
   log(`clip ${i + 1}: ${s.path} ${s.start}-${s.end} s at ${speed}x`);
-  run(['-i', s.path, '-vf', `trim=${s.start}:${s.end},setpts=(PTS-STARTPTS)/${speed},${speed === 1 || C.interpolation === 'none' ? `fps=${FPS}` : MI},scale=${W}:${H},setsar=1`, '-an', '-c:v', 'ffv1', out]);
+  run(['-i', s.path, '-vf', `trim=${s.start}:${s.end},${s.decimate ? `decimate=cycle=${s.decimate},` : ''}setpts=(PTS-STARTPTS)/${speed},${speed === 1 || C.interpolation === 'none' ? `fps=${FPS}` : MI},scale=${W}:${H},setsar=1`, '-an', '-c:v', 'ffv1', out]);
   let means = await measure(out); const fl = flicker(means), deflick = fl > (G.deflickerAbove ?? 0.6);
   if (deflick) { run(['-i', out, '-vf', 'deflicker=size=9:mode=pm', '-c:v', 'ffv1', join(TMP, `seg${i}d.mkv`)]); rmSync(out); renameSync(join(TMP, `seg${i}d.mkv`), out); means = await measure(out); }
   raw.push({ file: out, means, flicker: +fl.toFixed(2), deflick });
@@ -173,7 +179,7 @@ const report = {
   finalLumaPerSecond: [...Array(Math.ceil(total)).keys()].map(i => y8(avgL(fin.slice(i * FPS, (i + 1) * FPS)))), finalFlicker: +flicker(fin).toFixed(2), loopPointLumaStep: loopStep,
   files: outs.map(([p, cap]) => ({ file: p, MB: +(statSync(p).size / 1048576).toFixed(2), capMB: cap }))
 };
-writeFileSync('.shots/hero-build-report.json', JSON.stringify(report, null, 1));
+writeFileSync(`.shots/${ENTRY || 'hero'}-build-report.json`, JSON.stringify(report, null, 1));
 rmSync(TMP, { recursive: true, force: true });
 
 console.log(`loop ${report.loopSeconds} s, ${FPS} fps, working size ${W}x${H}`);
