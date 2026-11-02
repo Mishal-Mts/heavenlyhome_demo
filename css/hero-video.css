@@ -1,0 +1,68 @@
+/* ======================= MOTION VIDEO HERO (reusable) =======================
+   Markup: <section class="hero hero--video"> > .hero-media > picture.hero-poster + video.hero-video
+   - The poster image is always underneath: it is the LCP image, the fallback when the video fails or
+     autoplay is blocked, and the only layer with reduced motion or Save-Data.
+   - js/hero-video.js adds .is-playing to .hero-media once the video really plays (fade-in), and sets
+     --hv-scale (1 -> 1.08) and --hv-copy (1 -> 0) while the hero scrolls away.
+   Only transform and opacity change. Matches the site's easing (expo-out). */
+.hero--video .hero-media{background:var(--deep,#071a26);will-change:transform} /* motion.js drifts this layer on scroll: keep it on the compositor */
+.hero--video .hero-poster,
+.hero--video .hero-poster img,
+.hero--video .hero-video{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero--video .hero-poster img,
+.hero--video .hero-video{object-fit:cover;object-position:var(--hv-pos,50% 50%);transform:translateZ(0) scale(var(--hv-scale,1));transform-origin:50% 60%;will-change:transform;backface-visibility:hidden}
+.hero--video .hero-video{opacity:0;transition:opacity 1.2s cubic-bezier(.16,1,.3,1)}
+/* Keep the poster image as the Largest Contentful Paint (Chrome counts an autoplaying video's first frame too):
+   - tablet and desktop, where the media fills the screen: Chrome ignores images that exactly cover the viewport,
+     so the poster is drawn 0.1% smaller (under 1 px per edge, and fully covered once the video plays) and the
+     video stays full size, which Chrome ignores the same way
+   - phones, where the media is the top part of the hero: the video is drawn 0.2% smaller than the poster */
+.hero--video .hero-poster img{transform:translateZ(0) scale(calc(var(--hv-scale,1) * .999))}
+@media(max-width:767px){
+ .hero--video .hero-poster img{transform:translateZ(0)}
+ .hero--video .hero-video{transform:translateZ(0) scale(.998)}
+ .hero--video .hero-media.is-playing .hero-video{transform:translateZ(0)}
+}
+.hero--video .hero-media.is-playing .hero-video{opacity:1}
+/* headline and sub-copy fade out as the hero scrolls away (motion.js already lifts the copy) */
+.hero--video .hero-copy{opacity:var(--hv-copy,1)}
+/* phones and portrait tablets: framed right of centre so the opening shot shows the villa
+   together with the sea and beach (change this if a new video has its subject elsewhere) */
+@media(max-width:767px),(orientation:portrait){.hero--video{--hv-pos:66% 50%}}
+/* ---------- overlay: directional and only as dark as the text needs ----------
+   Values come from tools/measure-hero-overlay.mjs: with no overlay, the brightest 2% of video pixels behind each
+   text element over the whole loop gives the minimum navy opacity for WCAG AA (headline 3:1, everything else 4.5:1).
+   Overlay-only needs at 1440 (update 4 video): eyebrow 0.69, AI note 0.67, header line 0.65, sub-copy 0.61, headline 0.44.
+   The text column sits just below the small text's need and its text shadow carries it to AA (measured with
+   --with-shadow); the headline (large text) passes on the overlay alone. The villa, sea and sun side stays almost clear.
+   Re-run the tool (and --verify) whenever the video changes. */
+.hero.hero--video::after,.hero-panel .hero.hero--video::after{background:
+  linear-gradient(90deg,rgba(7,26,38,.67) 0%,rgba(7,26,38,.66) 44%,rgba(7,26,38,.46) 56%,rgba(7,26,38,.1) 68%,rgba(7,26,38,0) 100%),
+  linear-gradient(0deg,rgba(7,26,38,.24) 0%,rgba(7,26,38,0) 22%)}
+.hero-panel .hero.hero--video .hero-copy::before{display:none} /* the radial glow behind the copy is replaced by the gradient */
+/* desktop: the AI note wraps inside the darker text column */
+@media(min-width:960px){.hero--video .hero-copy .cap{max-width:68ch}}
+/* tablet: copy runs across the lower part, so the overlay rises from the bottom and stops above the eyebrow */
+@media(min-width:768px) and (max-width:959px){
+ .hero.hero--video::after,.hero-panel .hero.hero--video::after{background:linear-gradient(0deg,rgba(7,26,38,.58) 0%,rgba(7,26,38,.56) 64%,rgba(7,26,38,.18) 76%,rgba(7,26,38,0) 88%)}
+}
+/* phones: the copy sits below the video on the page colour; only the lower half, where the eyebrow overlaps the
+   video, gets a light veil (0.27: the eyebrow sits over the brighter right side of the opening shot), and the top of the video stays clear */
+@media(max-width:767px){.hero.hero--video::after,.hero-panel .hero.hero--video::after{background:linear-gradient(180deg,rgba(7,26,38,0) 0,rgba(7,26,38,0) 34svh,rgba(7,26,38,.27) 44svh,rgba(7,26,38,.27) 100%)}}
+/* transparent header over the video: a short band, as dark as the nav and company line need */
+body:has(.hero--video) header::before{background:linear-gradient(180deg,rgba(7,26,38,.68) 0%,rgba(7,26,38,.66) 64%,rgba(7,26,38,0) 100%)}
+/* the secondary button over the video carries its own darker glass, like the form card has its own background */
+.hero--video .cta-row .btn-ghost{background:rgba(7,26,38,.34)}
+/* text shadows let the overlay stay light: a tight dark edge around each letter plus a soft halo. The small text
+   (eyebrow, sub-copy, pills, AI note, header) gets the stronger one; tools/measure-hero-overlay.mjs --verify --with-shadow
+   measures them (the plain --verify figure is the overlay alone) */
+.hero--video .hero-copy h1{text-shadow:0 1px 2px rgba(7,26,38,.5),0 2px 22px rgba(7,26,38,.55)}
+.hero--video .hero-copy .sub,.hero--video .hero-copy .eyebrow,.hero--video .hero-copy .cap,.hero--video .hero-copy .pill{text-shadow:0 0 2px rgba(7,26,38,.85),0 1px 3px rgba(7,26,38,.8),0 0 12px rgba(7,26,38,.7)}
+/* the eyebrow is small, widely spaced gold text: a wider halo also darkens the gaps between its letters */
+.hero--video .hero-copy .eyebrow{text-shadow:0 0 2px rgba(7,26,38,.9),0 1px 3px rgba(7,26,38,.85),0 0 14px rgba(7,26,38,.85),0 0 28px rgba(7,26,38,.6)}
+body:has(.hero--video) header:not(.solid) nav ul a,body:has(.hero--video) header:not(.solid) .logo small,body:has(.hero--video) header:not(.solid) .nav-call{text-shadow:0 0 2px rgba(7,26,38,.85),0 1px 3px rgba(7,26,38,.8),0 0 10px rgba(7,26,38,.6)}
+@media(prefers-reduced-motion:reduce){
+ .hero--video .hero-video{display:none}
+ .hero--video .hero-poster img{transform:none}
+ .hero--video .hero-copy{opacity:1}
+}

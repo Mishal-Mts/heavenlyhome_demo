@@ -1,0 +1,28 @@
+{
+  "_help": "Settings for the hero background video. Edit, then run: node tools/build-hero.mjs   (see README-hero.md)",
+  "sourceDir": "videos_1",
+  "clips": [
+    { "file": "v3.mp4", "note": "villa and beach together: opening and main clip", "start": 0.0, "end": 4.5, "speed": 0.6 },
+    { "file": "v1.mp4", "note": "full beach view at sunset, then its own dissolve to a villa on the beach", "start": 0.0, "end": 2.4, "speed": 0.7 }
+  ],
+  "crossfade": 0.5,
+  "fps": 24,
+  "interpolation": "mci",
+  "output": {
+    "videoDir": "videos",
+    "imageDir": "images",
+    "desktop": { "name": "hero", "width": 1920, "height": 1080, "crf": 29, "webmCrf": 43, "sharpen": 0.3, "sizeCapMB": 4 },
+    "mobile": { "name": "hero-mobile", "width": 640, "height": 360, "crf": 28, "webmCrf": 41, "sizeCapMB": 1 },
+    "poster": { "name": "hero-poster", "jpgQuality": 72, "webpQuality": 70, "mobileWidth": 960 }
+  },
+  "grade": {
+    "referenceClip": 0,
+    "exposure": 1.0,
+    "matchBrightness": 0.8,
+    "matchColour": 0.85,
+    "seamRampSeconds": 1.5,
+    "deflickerAbove": 0.6,
+    "final": { "contrast": 1.03, "saturation": 1.1, "gamma": 1.08 }
+  },
+  "toolsDir": "%TEMP%/defender-hero-tools"
+}

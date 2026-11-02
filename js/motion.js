@@ -173,14 +173,19 @@
     var media=$('.hero-media',hero),img=$('.hero-media img',hero),scrim=$('.hero-scrim',hero),copy=$('.hero-copy',hero),cue=$('.scroll-cue',hero);
     var h1=$('h1',copy),eyebrow=$('.eyebrow',copy),sub=$('.sub',copy),pills=$$('.pill',copy),ctas=$$('.cta-row>*',copy),cap=$('.cap',copy);
     var kb=null;
+    // video hero (css/hero-video.css, js/hero-video.js): that script zooms the background and fades the copy,
+    // so the Ken Burns zoom and the scroll zoom below are skipped here (the drift and the copy lift stay)
+    var vidHero=hero.classList.contains('hero--video');
     if(!late)mm.add({motion:OK,phone:'(max-width: 767px)'},function(ctx){
       if(!ctx.conditions.motion)return;
       gsap.set(copy.children,{visibility:'visible'});
       // Ken Burns: settle from a slight zoom, then a very slow drift
+      if(!vidHero){
       kb=gsap.timeline();
       var lo=img.hasAttribute('data-lowres'); // a small brochure image zooms less, so it is not visibly enlarged
       kb.fromTo(img,{scale:lo?1.06:1.14},{scale:lo?1:1.02,duration:2.8,ease:'power2.out'})
         .to(img,{scale:lo?1.03:1.09,duration:18,ease:'sine.inOut',yoyo:true,repeat:-1});
+      }
       // intro: location line, headline lines and the two buttons first; once the headline has settled,
       // the subtext and pills follow (on phones the pills wait until the visitor starts scrolling)
       var intro=gsap.timeline({delay:.15,defaults:{ease:T.ease}});
@@ -200,7 +205,7 @@
       if(cue)intro.fromTo(cue,{autoAlpha:0},{autoAlpha:1,duration:.8},2.5);
       // on scroll: the image drifts down and grows a touch, the scrim deepens, the copy lifts away
       var out=gsap.timeline({scrollTrigger:{trigger:hero,start:'top top',end:'bottom top',scrub:true}});
-      out.fromTo(media,{yPercent:0,scale:1},{yPercent:16,scale:1.06,ease:'none'},0)
+      out.fromTo(media,{yPercent:0,scale:1},{yPercent:16,scale:vidHero?1:1.06,ease:'none'},0)
          .fromTo(scrim,{opacity:0},{opacity:.7,ease:'none'},0)
          .fromTo(copy,{y:0},{y:-70,ease:'none'},0);
       if(cue)gsap.to(cue,{opacity:0,ease:'none',scrollTrigger:{trigger:hero,start:'top top',end:'+=160',scrub:true}});
