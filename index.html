@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#0b2a3c">
 <script>(function(d){var m=!matchMedia('(prefers-reduced-motion: reduce)').matches;d.className='js hero-panel'+(m?' motion':'');setTimeout(function(){if(!window.__mainReady)d.classList.remove('hero-panel');if(!window.__motionReady)d.classList.remove('motion');},4000);})(document.documentElement)</script>
 <!-- hero video poster (LCP image). Built by tools/build-hero.mjs; not managed by update-images.bat -->
-<link rel="preload" as="image" href="images/hero-poster-mobile.webp" type="image/webp" fetchpriority="high" media="(max-width:767px)">
-<link rel="preload" as="image" href="images/hero-poster.webp" type="image/webp" fetchpriority="high" media="(min-width:768px)">
+<link rel="preload" as="image" href="images/hero-poster-mobile.webp?v=6dcde79019" type="image/webp" fetchpriority="high" media="(max-width:767px)">
+<link rel="preload" as="image" href="images/hero-poster.webp?v=18cdaf6322" type="image/webp" fetchpriority="high" media="(min-width:768px)">
 <link rel="preload" href="vendor/fonts/playfair-display-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="vendor/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- SETTINGS: every client detail (phones, emails, addresses, K-RERA no., licences, logos, video) lives in the CONFIG object at the top of js/main.js. Leave a value as '' and the related text or button stays hidden. -->
@@ -92,12 +92,12 @@
 <section class="hero hero--video" id="hero">
  <!-- Motion video hero (css/hero-video.css, js/hero-video.js). Video: built from the clips in hero-video.config.json by tools/build-hero.mjs (see README-hero.md). -->
  <div class="hero-media">
-  <picture class="hero-poster"><source media="(max-width:767px)" type="image/webp" srcset="images/hero-poster-mobile.webp"><source media="(max-width:767px)" srcset="images/hero-poster-mobile.jpg"><source type="image/webp" srcset="images/hero-poster.webp"><img src="images/hero-poster.jpg" width="1920" height="1080" fetchpriority="high" alt="Artist’s impression (AI-generated): the Arabian Sea at sunset and modern beach villas among palms"></picture>
-  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/hero-poster-mobile.webp" aria-hidden="true" tabindex="-1">
-   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.webm" type="video/webm">
-   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.mp4" type="video/mp4">
-   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.webm" type="video/webm">
-   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.mp4" type="video/mp4">
+  <picture class="hero-poster"><source media="(max-width:767px)" type="image/webp" srcset="images/hero-poster-mobile.webp?v=6dcde79019"><source media="(max-width:767px)" srcset="images/hero-poster-mobile.jpg?v=aa3b0ee059"><source type="image/webp" srcset="images/hero-poster.webp?v=18cdaf6322"><img src="images/hero-poster.jpg?v=9ea3ebbd91" width="1920" height="1080" fetchpriority="high" alt="Artist’s impression (AI-generated): the Arabian Sea at sunset and modern beach villas among palms"></picture>
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/hero-poster-mobile.webp?v=6dcde79019" aria-hidden="true" tabindex="-1">
+   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.webm?v=e3cc2d7e35" type="video/webm">
+   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.mp4?v=069d1f4218" type="video/mp4">
+   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.webm?v=d9659cf9a1" type="video/webm">
+   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.mp4?v=fba9a679db" type="video/mp4">
   </video>
  </div>
  <div class="hero-scrim" aria-hidden="true"></div>

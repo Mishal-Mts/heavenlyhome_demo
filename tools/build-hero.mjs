@@ -20,7 +20,7 @@ import { existsSync, mkdirSync, statSync, rmSync, renameSync, readFileSync, writ
 import { join, resolve } from 'node:path';
 
 // ---------- config + tools ----------
-const cfgPath = resolve(process.argv[2] || 'hero-video.config.json');
+const cfgPath = resolve(process.argv.slice(2).find((a, i, all) => !a.startsWith('--') && all[i - 1] !== '--sample') || 'hero-video.config.json');
 const C = JSON.parse(readFileSync(cfgPath, 'utf8')), O = C.output, G = C.grade;
 const toolsDir = (process.env.HERO_TOOLS_DIR || C.toolsDir || '').replace(/%(\w+)%/g, (_, v) => process.env[v] || '');
 let ffmpeg, ffprobe;
@@ -30,7 +30,12 @@ const SEG = C.clips.map(c => ({ ...c, path: join(C.sourceDir, c.file) }));
 for (const s of SEG) if (!existsSync(s.path)) { console.error(`Clip not found: ${s.path} (check "sourceDir" and "clips" in ${cfgPath})`); process.exit(1); }
 const FPS = C.fps || 24, X = C.crossfade ?? 0.5, TMP = join(O.videoDir, '_tmp');
 mkdirSync(TMP, { recursive: true }); mkdirSync(O.imageDir, { recursive: true }); mkdirSync('.shots', { recursive: true });
-const run = args => execFileSync(ffmpeg, ['-hide_banner', '-loglevel', 'error', '-y', ...args], { stdio: 'inherit' });
+const T_START = Date.now(), log = m => console.log(`[${((Date.now() - T_START) / 1000).toFixed(0).padStart(4)}s] ${m}`);
+// -nostdin + ignored stdin: ffmpeg never waits on the terminal; each call is killed after STEP_TIMEOUT instead of hanging
+const STEP_TIMEOUT = (C.stepTimeoutSeconds || 300) * 1000;
+const run = (args, what) => { const t = Date.now(); if (what) log(what + ' ...'); execFileSync(ffmpeg, ['-hide_banner', '-nostdin', '-loglevel', 'error', '-y', ...args], { stdio: ['ignore', 'inherit', 'inherit'], timeout: STEP_TIMEOUT }); if (what) log(`${what} done (${((Date.now() - t) / 1000).toFixed(1)} s)`); };
+// --sample N: encode only the first N seconds of the loop into videos/_sample/ to test encoder settings (no poster, page untouched)
+const SAMPLE = process.argv.includes('--sample') ? +process.argv[process.argv.indexOf('--sample') + 1] || 4 : 0;
 const probe = (p, e) => execFileSync(ffprobe, ['-v', 'error', '-select_streams', 'v:0', '-show_entries', e, '-of', 'csv=p=0', p]).toString().trim();
 // working size = the first clip's size (even numbers); every clip is scaled to it before joining
 const [W, H] = probe(SEG[0].path, 'stream=width,height').split(',').map(n => Math.round(+n / 2) * 2);
@@ -43,7 +48,7 @@ const shoulder = x => x <= 0.8 ? x : 0.8 + 0.2 * Math.tanh((x - 0.8) / 0.2); // 
 const lumOf = ([r, g, b]) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
 const smooth = (arr, r = 12) => arr.map((_, i) => { let s = 0, w = 0; for (let j = -r; j <= r; j++) { const k = Math.min(arr.length - 1, Math.max(0, i + j)), q = Math.exp(-(j * j) / (2 * (r / 2) ** 2)); s += arr[k] * q; w += q; } return s / w; });
 const measure = file => new Promise((res, rej) => { // mean linear RGB of every frame, on a 96x54 copy
-  const p = spawn(ffmpeg, ['-loglevel', 'error', '-i', file, '-vf', 'scale=96:54:flags=area,format=rgb24', '-f', 'rawvideo', '-']);
+  const p = spawn(ffmpeg, ['-nostdin', '-loglevel', 'error', '-i', file, '-vf', 'scale=96:54:flags=area,format=rgb24', '-f', 'rawvideo', '-'], { stdio: ['ignore', 'pipe', 'inherit'] });
   const bufs = []; p.stdout.on('data', d => bufs.push(d)); p.on('error', rej);
   p.on('close', () => { const all = Buffer.concat(bufs), fs = 96 * 54 * 3, out = [];
     for (let o = 0; o + fs <= all.length; o += fs) { const m = [0, 0, 0]; for (let i = 0; i < fs; i += 3) { m[0] += LIN[all[o + i]]; m[1] += LIN[all[o + i + 1]]; m[2] += LIN[all[o + i + 2]]; } out.push(m.map(v => v / (96 * 54))); }
@@ -51,7 +56,7 @@ const measure = file => new Promise((res, rej) => { // mean linear RGB of every 
 });
 const flicker = means => { const y = means.map(m => toEnc(lumOf(m))); let s = 0, n = 0; for (let i = 4; i < y.length - 4; i++) { let a = 0; for (let j = -4; j <= 4; j++) a += y[i + j]; s += (y[i] - a / 9) ** 2; n++; } return n ? Math.sqrt(s / n) : 0; };
 const applyGains = (src, dst, gains) => new Promise((res, rej) => { // per-frame channel gains in linear light
-  const dec = spawn(ffmpeg, ['-loglevel', 'error', '-i', src, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-']);
+  const dec = spawn(ffmpeg, ['-nostdin', '-loglevel', 'error', '-i', src, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], { stdio: ['ignore', 'pipe', 'inherit'] });
   const enc = spawn(ffmpeg, ['-loglevel', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', `${W}x${H}`, '-r', String(FPS), '-i', '-', '-c:v', 'ffv1', dst]);
   const fs = W * H * 3; let pend = Buffer.alloc(0), f = 0;
   const lutFor = g => g.map(gc => Uint8Array.from({ length: 256 }, (_, v) => Math.round(toEnc(shoulder(LIN[v] * gc)))));
@@ -68,11 +73,13 @@ const applyGains = (src, dst, gains) => new Promise((res, rej) => { // per-frame
 });
 
 // ---------- 1) trim, slow down, interpolate (lossless) ----------
+// interpolation: "none" = plain slow-down (setpts, frames repeated to the output rate), "blend", or "mci"
 const MI = C.interpolation === 'blend' ? `minterpolate=fps=${FPS}:mi_mode=blend` : `minterpolate=fps=${FPS}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1`;
 const raw = [];
 for (let i = 0; i < SEG.length; i++) {
   const s = SEG[i], out = join(TMP, `seg${i}.mkv`), speed = s.speed || 1;
-  run(['-i', s.path, '-vf', `trim=${s.start}:${s.end},setpts=(PTS-STARTPTS)/${speed},${speed === 1 ? `fps=${FPS}` : MI},scale=${W}:${H},setsar=1`, '-an', '-c:v', 'ffv1', out]);
+  log(`clip ${i + 1}: ${s.path} ${s.start}-${s.end} s at ${speed}x`);
+  run(['-i', s.path, '-vf', `trim=${s.start}:${s.end},setpts=(PTS-STARTPTS)/${speed},${speed === 1 || C.interpolation === 'none' ? `fps=${FPS}` : MI},scale=${W}:${H},setsar=1`, '-an', '-c:v', 'ffv1', out]);
   let means = await measure(out); const fl = flicker(means), deflick = fl > (G.deflickerAbove ?? 0.6);
   if (deflick) { run(['-i', out, '-vf', 'deflicker=size=9:mode=pm', '-c:v', 'ffv1', join(TMP, `seg${i}d.mkv`)]); rmSync(out); renameSync(join(TMP, `seg${i}d.mkv`), out); means = await measure(out); }
   raw.push({ file: out, means, flicker: +fl.toFixed(2), deflick });
@@ -99,7 +106,7 @@ for (const s of seams) {
 const EXPOSURE = G.exposure ?? 1; // overall lift in linear light; the soft shoulder keeps the sky from clipping
 for (const p of plans) for (const fr of p) for (let c = 0; c < 3; c++) fr[c] = Math.min(1.35, Math.max(0.75, fr[c])) * EXPOSURE;
 const graded = [];
-for (let k = 0; k < SEG.length; k++) { const out = join(TMP, `graded${k}.mkv`); await applyGains(raw[k].file, out, plans[k]); graded.push(out); }
+for (let k = 0; k < SEG.length; k++) { const out = join(TMP, `graded${k}.mkv`); log(`grade clip ${k + 1} ...`); await applyGains(raw[k].file, out, plans[k]); graded.push(out); }
 
 // ---------- 3) loop + final grade ----------
 const durOf = p => +execFileSync(ffprobe, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', p]).toString().trim();
@@ -114,17 +121,21 @@ f += `;[${last}][a2]xfade=transition=fade:duration=${X}:offset=${off.toFixed(3)}
 const T0 = X + 1 / FPS;
 f += `;[loop]trim=${T0.toFixed(4)}:${(off + T0).toFixed(4)},setpts=PTS-STARTPTS,eq=contrast=${fg.contrast ?? 1}:saturation=${fg.saturation ?? 1}:gamma=${fg.gamma ?? 1}[out]`;
 const master = join(TMP, 'master.mkv');
-run([...graded.flatMap(p => ['-i', p]), '-i', graded[0], '-filter_complex', f, '-map', '[out]', '-an', '-c:v', 'libx264', '-crf', '8', '-preset', 'medium', master]);
+run([...graded.flatMap(p => ['-i', p]), '-i', graded[0], '-filter_complex', f, '-map', '[out]', '-an', '-c:v', 'libx264', '-crf', '8', '-preset', 'medium', master], 'join clips, dissolves, final grade');
 
 // ---------- 4) encodes, poster ----------
 const vf = o => `scale=${o.width}:${o.height}:flags=lanczos${o.width > W && o.sharpen ? `,unsharp=5:5:${o.sharpen}` : ''},setsar=1,format=yuv420p`;
 const outs = [];
+const OUTDIR = SAMPLE ? join(O.videoDir, '_sample') : O.videoDir; mkdirSync(OUTDIR, { recursive: true });
+const cut = SAMPLE ? ['-t', String(SAMPLE)] : [];
 for (const o of [O.desktop, O.mobile]) {
-  const mp4 = join(O.videoDir, `${o.name}.mp4`), webm = join(O.videoDir, `${o.name}.webm`);
-  run(['-i', master, '-vf', vf(o), '-an', '-c:v', 'libx264', '-preset', 'slow', '-crf', String(o.crf), '-profile:v', 'high', '-movflags', '+faststart', mp4]);
-  run(['-i', master, '-vf', vf(o), '-an', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(o.webmCrf), '-row-mt', '1', '-deadline', 'good', '-cpu-used', '2', webm]);
-  outs.push([mp4, o.sizeCapMB], [webm, o.sizeCapMB]);
+  const mp4 = join(OUTDIR, `${o.name}.mp4`), webm = join(OUTDIR, `${o.name}.webm`);
+  const cap = o.maxrate ? ['-maxrate', o.maxrate, '-bufsize', o.bufsize || o.maxrate] : [];
+  run(['-i', master, ...cut, '-vf', vf(o), '-an', '-c:v', 'libx264', '-preset', o.preset || 'medium', '-crf', String(o.crf), ...cap, '-profile:v', 'high', '-movflags', '+faststart', mp4], `encode ${mp4}`);
+  outs.push([mp4, o.sizeCapMB]);
+  if (O.webm !== false) { run(['-i', master, ...cut, '-vf', vf(o), '-an', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(o.webmCrf), '-row-mt', '1', '-deadline', 'good', '-cpu-used', String(O.vp9CpuUsed ?? 4), webm], `encode ${webm}`); outs.push([webm, o.sizeCapMB]); }
 }
+if (SAMPLE) { for (const [p] of outs) log(`${p} ${(statSync(p).size / 1048576).toFixed(2)} MB for ${SAMPLE} s -> about ${(statSync(p).size / 1048576 / SAMPLE * (durOf(master))).toFixed(1)} MB for the full ${durOf(master).toFixed(1)} s loop`); rmSync(TMP, { recursive: true, force: true }); process.exit(0); }
 const P = O.poster, png = join(TMP, 'poster.png');
 run(['-i', join(O.videoDir, `${O.desktop.name}.mp4`), '-frames:v', '1', png]);
 await sharp(png).jpeg({ quality: P.jpgQuality, mozjpeg: true, progressive: true }).toFile(join(O.imageDir, `${P.name}.jpg`));
@@ -132,6 +143,22 @@ await sharp(png).webp({ quality: P.webpQuality }).toFile(join(O.imageDir, `${P.n
 const ph = Math.round(P.mobileWidth * O.desktop.height / O.desktop.width / 2) * 2;
 await sharp(png).resize(P.mobileWidth, ph).jpeg({ quality: P.jpgQuality - 2, mozjpeg: true, progressive: true }).toFile(join(O.imageDir, `${P.name}-mobile.jpg`));
 await sharp(png).resize(P.mobileWidth, ph).webp({ quality: P.webpQuality - 2 }).toFile(join(O.imageDir, `${P.name}-mobile.webp`));
+
+// ---------- cache-busting: every video and poster URL in the page gets ?v=<first 10 hex of the file's SHA-1> ----------
+{
+  const { createHash } = await import('node:crypto');
+  const files = [O.desktop, O.mobile].flatMap(o => ['mp4', 'webm'].map(x => `${O.videoDir}/${o.name}.${x}`))
+    .concat(['jpg', 'webp'].flatMap(x => [`${O.imageDir}/${P.name}.${x}`, `${O.imageDir}/${P.name}-mobile.${x}`])).filter(p => existsSync(p));
+  if (C.html && existsSync(C.html)) {
+    let html = readFileSync(C.html, 'utf8'); const tags = [];
+    for (const p of files) {
+      const v = createHash('sha1').update(readFileSync(p)).digest('hex').slice(0, 10), url = p.replace(/\\/g, '/');
+      const re = new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\?v=[0-9a-f]+)?(?=")', 'g');
+      const n = (html.match(re) || []).length; html = html.replace(re, `${url}?v=${v}`); tags.push(`${url} x${n} -> ?v=${v}`);
+    }
+    writeFileSync(C.html, html); console.log('cache-busting in ' + C.html + ':\n  ' + tags.join('\n  '));
+  }
+}
 
 // ---------- report ----------
 const y8 = l => +toEnc(l).toFixed(1), avgL = a => a.reduce((x, m) => x + lumOf(m), 0) / a.length;

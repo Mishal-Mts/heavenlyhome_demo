@@ -2,17 +2,19 @@
   "_help": "Settings for the hero background video. Edit, then run: node tools/build-hero.mjs   (see README-hero.md)",
   "sourceDir": "videos_1",
   "clips": [
-    { "file": "v3.mp4", "note": "villa and beach together: opening and main clip", "start": 0.0, "end": 4.5, "speed": 0.6 },
-    { "file": "v1.mp4", "note": "full beach view at sunset, then its own dissolve to a villa on the beach", "start": 0.0, "end": 2.4, "speed": 0.7 }
+    { "file": "v3.mp4", "note": "villa and beach together: opening and main clip", "start": 0.0, "end": 5.5, "speed": 0.5 },
+    { "file": "v1.mp4", "note": "full beach view at sunset, then its own dissolve to a villa on the beach", "start": 0.0, "end": 4.5, "speed": 0.5 }
   ],
-  "crossfade": 0.5,
+  "crossfade": 2.0,
   "fps": 24,
-  "interpolation": "mci",
+  "interpolation": "none",
   "output": {
     "videoDir": "videos",
+    "webm": true,
+    "vp9CpuUsed": 4,
     "imageDir": "images",
-    "desktop": { "name": "hero", "width": 1920, "height": 1080, "crf": 29, "webmCrf": 43, "sharpen": 0.3, "sizeCapMB": 4 },
-    "mobile": { "name": "hero-mobile", "width": 640, "height": 360, "crf": 28, "webmCrf": 41, "sizeCapMB": 1 },
+    "desktop": { "name": "hero", "width": 1920, "height": 1080, "crf": 24, "maxrate": "4M", "bufsize": "8M", "webmCrf": 35, "sharpen": 0.3, "sizeCapMB": 8 },
+    "mobile": { "name": "hero-mobile", "width": 1280, "height": 720, "crf": 26, "maxrate": "1.5M", "bufsize": "3M", "webmCrf": 43, "sharpen": 0.3, "sizeCapMB": 3 },
     "poster": { "name": "hero-poster", "jpgQuality": 72, "webpQuality": 70, "mobileWidth": 960 }
   },
   "grade": {
@@ -20,9 +22,11 @@
     "exposure": 1.0,
     "matchBrightness": 0.8,
     "matchColour": 0.85,
-    "seamRampSeconds": 1.5,
+    "seamRampSeconds": 3.5,
     "deflickerAbove": 0.6,
     "final": { "contrast": 1.03, "saturation": 1.1, "gamma": 1.08 }
   },
-  "toolsDir": "%TEMP%/defender-hero-tools"
+  "toolsDir": "%TEMP%/defender-hero-tools",
+  "stepTimeoutSeconds": 300,
+  "html": "index.html"
 }
