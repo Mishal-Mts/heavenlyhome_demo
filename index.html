@@ -31,16 +31,16 @@
 <meta name="twitter:description" content="Premium gated 2-in-1 beach villas and budget villas near Kodungallur, Thrissur, Kerala.">
 <meta name="twitter:image" content="https://defendervillas.com/images/og-image.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Defender Real Estates & Builders Limited","brand":{"@type":"Brand","name":"Defender Villas"},"url":"https://defendervillas.com/","logo":"https://defendervillas.com/images/logo-defender-villas.png"}</script>
-<link rel="stylesheet" href="css/styles.css?v=20261104e">
+<link rel="stylesheet" href="css/styles.css?v=20261104f">
 <link rel="stylesheet" href="css/hero-video.css?v=20261104">
-<link rel="stylesheet" href="css/video-band.css?v=20261102c">
+<link rel="stylesheet" href="css/video-band.css?v=20261102c" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="css/video-band.css?v=20261102c"></noscript>
 <script src="vendor/gsap-3.15.0/gsap.min.js" defer></script>
 <script src="vendor/gsap-3.15.0/ScrollTrigger.min.js" defer></script>
 <script src="vendor/gsap-3.15.0/SplitText.min.js" defer></script>
 <script src="vendor/lenis-1.3.26/lenis.min.js" defer></script>
-<script src="js/main.js?v=20261104b" defer></script>
-<script src="js/motion.js?v=20261102" defer></script>
-<script src="js/hero-video.js?v=20261104" defer></script>
+<script src="js/main.js?v=20261104d" defer></script>
+<script src="js/motion.js?v=20261104b" defer></script>
+<script src="js/hero-video.js?v=20261104b" defer></script>
 <script src="js/video-band.js?v=20261102" defer></script>
 </head>
 <body>
@@ -95,7 +95,7 @@
  <!-- Motion video hero (css/hero-video.css, js/hero-video.js). Video: built from the clips in hero-video.config.json by tools/build-hero.mjs (see README-hero.md). -->
  <div class="hero-media">
   <picture class="hero-poster"><source media="(max-width:767px)" type="image/webp" srcset="images/hero-poster-mobile.webp?v=c88d6679b5"><source media="(max-width:767px)" srcset="images/hero-poster-mobile.jpg?v=fc36b97f38"><source type="image/webp" srcset="images/hero-poster.webp?v=8de3863991"><img src="images/hero-poster.jpg?v=e8dd0c658d" width="1920" height="1080" fetchpriority="high" alt="Artist’s impression (AI-generated): waves on a palm-fringed Kerala beach, then a villa among the palms"></picture>
-  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/hero-poster-mobile.webp?v=c88d6679b5" aria-hidden="true" tabindex="-1">
+  <video class="hero-video" muted loop playsinline preload="none" poster="images/hero-poster-mobile.webp?v=c88d6679b5" aria-hidden="true" tabindex="-1">
    <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.mp4?v=9e22a3ca47" type="video/mp4">
    <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.mp4?v=a99c843505" type="video/mp4">
   </video>
@@ -466,7 +466,7 @@
   <div class="car-track" tabindex="0" data-anim="stagger">
    <div class="car-slide ft"><article class="gf" id="bizcard">
     <span class="ftag">Featured</span>
-    <span class="lg"><img src="images/auto/logo-heavenly-homes-h80.webp" width="287" height="80" alt="Heavenly Homes USA" hidden onload="this.hidden=false;if(this.nextElementSibling)this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><span class="mg">HH</span></span>
+    <span class="lg"><img src="images/auto/logo-heavenly-homes-h80.webp" fetchpriority="low" width="287" height="80" alt="Heavenly Homes USA" hidden onload="this.hidden=false;if(this.nextElementSibling)this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><span class="mg">HH</span></span>
     <small>Sister concern</small>
     <h3>Heavenly Homes USA</h3>
     <p class="ttl"><b>Minu John</b><br>Realtor &amp; Licensed General Contractor</p>
@@ -479,7 +479,7 @@
     </div>
    </article></div>
    <div class="car-slide mc"><article class="gl">
-    <span class="lg"><img src="images/logo-mercea.png" width="123" height="147" alt="Mercea Technical Services logo" hidden onload="this.hidden=false;if(this.nextElementSibling)this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><b class="wm" style="color:var(--navy)">MERCEA</b></span>
+    <span class="lg"><img src="images/logo-mercea.png" fetchpriority="low" width="123" height="147" alt="Mercea Technical Services logo" hidden onload="this.hidden=false;if(this.nextElementSibling)this.nextElementSibling.hidden=true;this.parentNode.className+=' has'" onerror="this.remove()"><b class="wm" style="color:var(--navy)">MERCEA</b></span>
     <hr class="ac">
     <h3>Mercea Technical Services LLC</h3>
     <p class="gmd">Jose Tony · Managing Director</p>

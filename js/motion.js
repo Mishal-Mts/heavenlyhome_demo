@@ -87,14 +87,21 @@
   // Everything below the hero is set up at the browser's first idle moment (see the end of this file),
   // so the hero paints and starts animating without waiting for the rest of the page to be measured.
   var later=[];
+  // The deferred set-up runs in small slices (about 30 ms each, then the browser gets a turn), because every
+  // scroll trigger measures the page as it is created; done in one go that blocked a phone for over a second.
+  // slice(fn) queues one piece of work; the queue runs after the later[] blocks and ends with one sort + refresh.
+  // (a media change after start-up, e.g. reduced motion switched off, queues new slices: they start the queue again)
+  var queue=[],busy=false,ready=false,pump;
+  var slice=function(fn){queue.push(fn);if(ready&&!busy){busy=true;setTimeout(pump,0);}};
 
   // ---------- reveals (any width, motion allowed) ----------
   later.push(function(){
-  if(!late)mm.add(OK,function(){
+  if(!late)mm.add(OK,function(ctx){
     $$('[data-anim]').forEach(function(el){
       var k=el.getAttribute('data-anim');if(k==='parallax')return;
       if(el.closest('.hero'))return;
-      if(A[k])A[k](el);else show(el);
+      // ctx.add keeps each reveal in this matchMedia context, so it still reverts with it
+      slice(function(){if(!ctx.isReverted)ctx.add(function(){if(A[k])A[k](el);else show(el);});});
     });
   });
   // big outlined lines of words drift sideways with the scroll (data-dir="-1" drifts the other way)
@@ -343,8 +350,12 @@
   document.addEventListener('site:layout',function(){ScrollTrigger.refresh();});
 
   // run the deferred set-up at the first idle moment (at most ~1.2 s after start), in page order, then measure once
-  var ready=false;
-  var runLater=function(){if(ready)return;ready=true;later.forEach(function(f){f();});ScrollTrigger.sort();ScrollTrigger.refresh();};
+  pump=function(){
+    var t0=performance.now();
+    while(queue.length&&performance.now()-t0<30)queue.shift()();
+    if(queue.length)setTimeout(pump,0);else{busy=false;ScrollTrigger.sort();ScrollTrigger.refresh();}
+  };
+  var runLater=function(){if(ready)return;ready=true;busy=true;queue=later.concat(queue);pump();};
   if('requestIdleCallback' in window)requestIdleCallback(runLater,{timeout:1200});else setTimeout(runLater,300);
   // re-measure whenever the page height changes (late web fonts re-wrapping text, optional photos appearing...),
   // so scroll-triggered reveals never wait at stale positions

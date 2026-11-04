@@ -473,6 +473,13 @@ main>section,.handoff>.curtain{background:#fff}
  .hero-panel .hero .wrap{padding-top:max(300px,50svh)}
  .hero-panel .hero-copy::before{display:none}
  .hero-panel .scroll-cue{display:none}
+ /* the hero buttons stop short of the floating WhatsApp / call buttons (54px + 14px edge) */
+ .hero .cta-row{padding-right:62px}
+}
+/* short phones (e.g. 375x667): the copy starts a little higher so both hero buttons fit on the first screen */
+@media(max-width:767px) and (max-height:700px){
+ .hero-panel .hero .wrap{padding-top:max(270px,44svh)}
+ .hero .cta-row{margin-top:18px}
 }
 
 /* ---------- Phase 4: signature scenes ---------- */

@@ -224,9 +224,10 @@ var ENDPOINTS=[];
     addEventListener('resize',upd);el.refresh=build;build();
   });
   // optional gallery photos: a slide appears only if its image file exists in images/.
-  // Checked when the gallery comes near (not at page load), so missing files cost nothing up front.
+  // tools/build-images.mjs marks the slides whose file exists with data-opt="on"; only those are loaded (when the gallery
+  // comes near), so a missing photo is never requested (no 404s in the console)
   var probe=function(){
-    $$('.car-slide[data-opt]').forEach(function(s){
+    $$('.car-slide[data-opt="on"]').forEach(function(s){
       var im=$('img',s),t=new Image();
       t.onload=function(){im.src=t.src;s.hidden=false;var c=s.closest('.car');if(c&&c.refresh)c.refresh();document.dispatchEvent(new Event('site:layout'));};
       t.src=im.getAttribute('data-src');

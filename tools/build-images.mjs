@@ -96,6 +96,11 @@ html = html.replace(/<picture data-img="([\w-]+)"([^>]*)>([\s\S]*?)<\/picture>/g
   sources += `<source type="image/avif" srcset="${set(n, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${set(n, 'webp')}" sizes="${sizes}">`;
   return `<picture data-img="${n}"${attrs}>${sources}${img}</picture>`;
 });
+// optional gallery slides: data-opt="on" when the photo exists, plain data-opt otherwise (js/main.js loads only "on" slides)
+html = html.replace(/<div class="car-slide" data-opt(?:="on")?( hidden>.*?data-src="([^"]+)")/g, (all, rest, src) => {
+  const on = existsSync(src); rows.push({ slot: 'gallery (optional)', current: src, hiresExists: on, using: on ? 'shown' : 'hidden (no file yet)' });
+  return `<div class="car-slide" data-opt${on ? '="on"' : ''}${rest}`;
+});
 // optional hero video: the page only asks for it when the file exists (no failed request otherwise)
 const loop = ctx.CONFIG.heroLoop || '';
 const hasLoop = !!loop && existsSync(loop);

@@ -15,26 +15,30 @@
   var SCALE=0.08,FADE_START=0.3,FADE_END=0.75; // zoom added over the hero height; the copy fades between 30% and 75% of it
 
   // ---------- video: play, fade in, fall back to the poster ----------
+  // The video (preload="none", no autoplay attribute) starts downloading only after the page's load event, so it
+  // never competes with the poster, fonts and scripts; the poster shows until then.
   var wanted=false; // true once the video is allowed to play
+  var onScreen=true;
   var stop=function(){if(!video)return;[].slice.call(video.querySelectorAll('source')).forEach(function(s){s.remove();});video.removeAttribute('autoplay');video.pause();try{video.load();}catch(e){}video=null;};
+  var play=function(){if(!video)return;var p=video.play&&video.play();if(p&&p.catch)p.catch(function(){/* autoplay blocked: the poster stays */});};
   if(video){
     if(reduce||saveData)stop();
     else{
-      wanted=true;
       video.addEventListener('playing',function(){media.classList.add('is-playing');});
       // the last <source> failing means no source could play: keep the poster
       var srcs=video.querySelectorAll('source');
       if(srcs.length)srcs[srcs.length-1].addEventListener('error',function(){media.classList.remove('is-playing');});
       video.addEventListener('error',function(){media.classList.remove('is-playing');});
-      var p=video.play&&video.play();if(p&&p.catch)p.catch(function(){/* autoplay blocked: the poster stays */});
+      var begin=function(){if(!video)return;wanted=true;video.preload='auto';if(onScreen)play();};
+      if(document.readyState==='complete')begin();else addEventListener('load',begin,{once:true});
     }
   }
 
   // ---------- pause off-screen, resume on return ----------
   if(video&&'IntersectionObserver' in window){
     new IntersectionObserver(function(es){
-      var e=es[0];if(!wanted||!video)return;
-      if(e.isIntersecting){var p=video.play();if(p&&p.catch)p.catch(function(){});}
+      var e=es[0];onScreen=e.isIntersecting;if(!wanted||!video)return;
+      if(e.isIntersecting)play();
       else video.pause();
     },{threshold:0,rootMargin:'120px 0px'}).observe(hero); // 120 px hysteresis: no pause/play toggling at the hero edge
   }
