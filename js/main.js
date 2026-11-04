@@ -9,7 +9,7 @@ var CONFIG={
   },
   phone:'917561033350', // Main sales phone: country code + digits, no spaces, e.g. '91XXXXXXXXXX'. Needed for the Call buttons, header number and footer.
   whatsapp:'917561033350', // WhatsApp number, same format. If empty, the main phone is used for WhatsApp.
-  email:'tonyantony8888@gmail.com', // Sales email address (footer and project card in Our Group).
+  email:'builders@defendervillas.com', // Sales email address (footer and project card in Our Group).
   mapLink:'https://www.google.com/maps?q=10.298030853271484,76.1274185180664&z=17&hl=en', // Google Maps link for the project location (map button and iframe use it).
   website:'https://defendervillas.com', // Project website (project card in Our Group).
   office:'1/IV, Thadicaren House, Edathiruthy - 680703, Thrissur Dt., Kerala, India', // Defender Real Estates & Builders Limited registered office address (footer).
@@ -136,7 +136,7 @@ var ENDPOINTS=[];
   function fline(a){a=a.filter(Boolean);if(a.length>1){var p=document.createElement('p');p.textContent=a.join(' \u00b7 ');fl.appendChild(p);}}
   fline(['Defender Real Estates & Builders Limited',C.cin&&'CIN: '+C.cin,C.udyam&&'UDYAM: '+C.udyam,C.pan&&'PAN: '+C.pan,C.office&&'Registered office: '+C.office]);
   fline(['Minu John, Realtor & Licensed General Contractor',M.company,M.licence&&'Licence no.: '+M.licence]);
-  fline(['Mercea Technical Services LLC, Dubai',D.address,D.phone&&fmt(D.phone),D.email,D.licence&&'Trade licence no.: '+D.licence]);
+  fline(['Mercea Technical Services LLC, Dubai',D.address,D.phone&&fmt(D.phone),D.licence&&'Trade licence no.: '+D.licence]);
   // contact rows on the group cards: a row appears only when its value exists
   function rows(id,o){
     var ul=$(id);if(!ul)return;var n=0,ph=String(o.phone||'').replace(/\D/g,''),wb=String(o.website||'').trim();
