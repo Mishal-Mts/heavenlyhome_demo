@@ -36,7 +36,7 @@
       var e=es[0];if(!wanted||!video)return;
       if(e.isIntersecting){var p=video.play();if(p&&p.catch)p.catch(function(){});}
       else video.pause();
-    },{threshold:0}).observe(hero);
+    },{threshold:0,rootMargin:'120px 0px'}).observe(hero); // 120 px hysteresis: no pause/play toggling at the hero edge
   }
 
   // ---------- scroll: zoom the background, fade the copy ----------

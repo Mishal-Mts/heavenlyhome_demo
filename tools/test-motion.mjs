@@ -195,7 +195,7 @@ const wheel = async (page, dy, steps = 8) => { for (let i = 0; i < steps; i++) {
   await page.waitForTimeout(3200);
   await page.screenshot({ path: `${out}/390-hero.png` });
   const st = await page.evaluate(() => ({ heroH: document.querySelector('.hero').getBoundingClientRect().height, vh: innerHeight, pos: getComputedStyle(document.querySelector('.hero-media img')).objectPosition, video: !!document.querySelector('.hero--video'), overflow: document.documentElement.scrollWidth > innerWidth }));
-  check('mobile: full-height hero (100svh) with mobile crop', st.heroH >= 842 && st.pos.startsWith(st.video ? '66%' : '56%'), `${st.heroH}/${st.vh}px, object-position ${st.pos}`);
+  check('mobile: full-height hero (100svh) with mobile crop', st.heroH >= 842 && st.pos.startsWith(st.video ? '50%' : '56%'), `${st.heroH}/${st.vh}px, object-position ${st.pos}`);
   check('mobile: no horizontal page scroll', !st.overflow);
   const pillsBefore = await page.evaluate(() => getComputedStyle(document.querySelector('.hero .pill')).visibility);
   const subShown = await page.evaluate(() => +getComputedStyle(document.querySelector('.hero .sub')).opacity > .99);

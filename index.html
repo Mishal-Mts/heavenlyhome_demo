@@ -8,8 +8,8 @@
 <meta name="theme-color" content="#0b2a3c">
 <script>(function(d){var m=!matchMedia('(prefers-reduced-motion: reduce)').matches;d.className='js hero-panel'+(m?' motion':'');setTimeout(function(){if(!window.__mainReady)d.classList.remove('hero-panel');if(!window.__motionReady)d.classList.remove('motion');},4000);})(document.documentElement)</script>
 <!-- hero video poster (LCP image). Built by tools/build-hero.mjs; not managed by update-images.bat -->
-<link rel="preload" as="image" href="images/hero-poster-mobile.webp?v=6dcde79019" type="image/webp" fetchpriority="high" media="(max-width:767px)">
-<link rel="preload" as="image" href="images/hero-poster.webp?v=18cdaf6322" type="image/webp" fetchpriority="high" media="(min-width:768px)">
+<link rel="preload" as="image" href="images/hero-poster-mobile.webp?v=c88d6679b5" type="image/webp" fetchpriority="high" media="(max-width:767px)">
+<link rel="preload" as="image" href="images/hero-poster.webp?v=8de3863991" type="image/webp" fetchpriority="high" media="(min-width:768px)">
 <link rel="preload" href="vendor/fonts/playfair-display-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="vendor/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- SETTINGS: every client detail (phones, emails, addresses, K-RERA no., licences, logos, video) lives in the CONFIG object at the top of js/main.js. Leave a value as '' and the related text or button stays hidden. -->
@@ -32,7 +32,7 @@
 <meta name="twitter:image" content="https://defendervillas.com/images/og-image.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Defender Real Estates & Builders Limited","brand":{"@type":"Brand","name":"Defender Villas"},"url":"https://defendervillas.com/","logo":"https://defendervillas.com/images/logo-defender-villas.png"}</script>
 <link rel="stylesheet" href="css/styles.css?v=20261031f">
-<link rel="stylesheet" href="css/hero-video.css?v=20261102i">
+<link rel="stylesheet" href="css/hero-video.css?v=20261104">
 <link rel="stylesheet" href="css/video-band.css?v=20261102c">
 <script src="vendor/gsap-3.15.0/gsap.min.js" defer></script>
 <script src="vendor/gsap-3.15.0/ScrollTrigger.min.js" defer></script>
@@ -40,7 +40,7 @@
 <script src="vendor/lenis-1.3.26/lenis.min.js" defer></script>
 <script src="js/main.js?v=20261031f" defer></script>
 <script src="js/motion.js?v=20261102" defer></script>
-<script src="js/hero-video.js?v=20261102c" defer></script>
+<script src="js/hero-video.js?v=20261104" defer></script>
 <script src="js/video-band.js?v=20261102" defer></script>
 </head>
 <body>
@@ -94,12 +94,10 @@
 <section class="hero hero--video" id="hero">
  <!-- Motion video hero (css/hero-video.css, js/hero-video.js). Video: built from the clips in hero-video.config.json by tools/build-hero.mjs (see README-hero.md). -->
  <div class="hero-media">
-  <picture class="hero-poster"><source media="(max-width:767px)" type="image/webp" srcset="images/hero-poster-mobile.webp?v=6dcde79019"><source media="(max-width:767px)" srcset="images/hero-poster-mobile.jpg?v=aa3b0ee059"><source type="image/webp" srcset="images/hero-poster.webp?v=18cdaf6322"><img src="images/hero-poster.jpg?v=9ea3ebbd91" width="1920" height="1080" fetchpriority="high" alt="Artist’s impression (AI-generated): the Arabian Sea at sunset and modern beach villas among palms"></picture>
-  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/hero-poster-mobile.webp?v=6dcde79019" aria-hidden="true" tabindex="-1">
-   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.webm?v=e3cc2d7e35" type="video/webm">
-   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.mp4?v=069d1f4218" type="video/mp4">
-   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.webm?v=d9659cf9a1" type="video/webm">
-   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.mp4?v=fba9a679db" type="video/mp4">
+  <picture class="hero-poster"><source media="(max-width:767px)" type="image/webp" srcset="images/hero-poster-mobile.webp?v=c88d6679b5"><source media="(max-width:767px)" srcset="images/hero-poster-mobile.jpg?v=fc36b97f38"><source type="image/webp" srcset="images/hero-poster.webp?v=8de3863991"><img src="images/hero-poster.jpg?v=e8dd0c658d" width="1920" height="1080" fetchpriority="high" alt="Artist’s impression (AI-generated): waves on a palm-fringed Kerala beach, then a villa among the palms"></picture>
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="images/hero-poster-mobile.webp?v=c88d6679b5" aria-hidden="true" tabindex="-1">
+   <source media="(min-width:768px) and (prefers-reduced-motion:no-preference)" src="videos/hero.mp4?v=9e22a3ca47" type="video/mp4">
+   <source media="(prefers-reduced-motion:no-preference)" src="videos/hero-mobile.mp4?v=a99c843505" type="video/mp4">
   </video>
  </div>
  <div class="hero-scrim" aria-hidden="true"></div>
@@ -157,7 +155,7 @@
    <ul class="ticks">
     <li>Independent villas on 6-cents plots and 3-cents plots, customisation possible</li>
     <li>Pillar-beam construction; soil test done before construction</li>
-    <li>Rent out via Airbnb or company lease-back (no returns guaranteed)</li>
+    <li>Rent out via Airbnb or company lease-back (terms shared on request)</li>
     <li>Easy access to Kochi International Airport, North Paravur, Kodungallur, Irinjalakuda, Triprayar and Guruvayur</li>
    </ul>
    <div class="cta-row"><a class="btn btn-teal" href="#enquire">Request brochure</a><a class="btn btn-wa" data-needs="wa" hidden href="#enquire" data-wa="main" data-wt="Hi, please send the {brand} brochure and price sheet."><svg class="ico"><use href="#i-wa"/></svg>WhatsApp us</a></div>
@@ -436,7 +434,7 @@
   <div class="card"><div class="body"><h3>List on Airbnb yourself</h3><p style="color:var(--mute);margin-top:8px">Manage your own bookings and pricing.</p></div></div>
   <div class="card"><div class="body"><h3>Company lease-back</h3><p style="color:var(--mute);margin-top:8px">Lease the villa to the developer and receive agreed rent. Terms shared on enquiry.</p></div></div>
  </div>
- <p class="note" style="margin-top:16px;text-align:center">Rental income is not guaranteed. Any lease-back is subject to a written agreement, and income depends on terms and market conditions.</p>
+ <p class="note" style="margin-top:16px;text-align:center">Rental income depends on the agreed terms and market conditions. Any lease-back is set out in a written agreement.</p>
 </div></section>
 
 <section id="developer" class="dev"><div class="wrap">
@@ -508,7 +506,7 @@
  <details><summary>How big is each plot?</summary><p>Plots are 6 cents (premium 2-in-1 villas) and 3 cents (budget villas). Customisation is possible.</p></details>
  <details><summary>Is the project approved?</summary><p>Approval and registration details are listed in the Approvals section. Documents are available on request.</p></details>
  <details><summary>Can I see the villa without travelling?</summary><p>Yes. We arrange live video tours, including at Gulf-friendly hours. Use the WhatsApp button or the enquiry form.</p></details>
- <details><summary>Can I rent out my villa?</summary><p>Yes, through Airbnb directly or via company lease-back. Terms on request. Income is not guaranteed.</p></details>
+ <details><summary>Can I rent out my villa?</summary><p>Yes, through Airbnb directly or via company lease-back. Terms on request. Income depends on the agreed terms and market conditions.</p></details>
  <details><summary>Can NRIs buy?</summary><p>NRIs can generally buy residential property in India, subject to current FEMA and RBI rules. We assist with the process remotely. Please enquire for details.</p></details>
  <details><summary>When is possession?</summary><p>The project is under construction. Please enquire for the current handover timeline.</p></details>
  </div>
@@ -570,7 +568,7 @@
  <div class="disc">
   <p>Images are artist’s impressions and concept visuals; actual construction may vary. Prices, specifications, plot sizes and approvals are subject to the developer’s confirmation and final agreement. Under-construction project. Please verify registration details on the K-RERA website before booking.</p>
   <p data-show-with="atmos-dawn atmos-day atmos-sunset atmos-dusk strip-texture" hidden>Background sky, landscape and wave textures are artist’s impressions.</p>
-  <p>Rental or lease-back income is not guaranteed and is subject to a written agreement. Information on this page is not an offer or legal, tax or investment advice. NRI purchases are subject to prevailing FEMA and RBI rules.</p>
+  <p>Rental or lease-back income depends on the agreed terms and market conditions, and any lease-back is set out in a written agreement. Information on this page is not an offer or legal, tax or investment advice. NRI purchases are subject to prevailing FEMA and RBI rules.</p>
  </div>
 </div></footer>
 

@@ -1,23 +1,27 @@
 {
   "_help": "Settings for the hero background video. Edit, then run: node tools/build-hero.mjs   (see README-hero.md)",
-  "sourceDir": "videos_1",
+  "sourceDir": "Videos_3",
   "clips": [
-    { "file": "v3.mp4", "note": "villa and beach together: opening and main clip", "start": 0.0, "end": 5.5, "speed": 0.5 },
-    { "file": "v1.mp4", "note": "full beach view at sunset, then its own dissolve to a villa on the beach", "start": 0.0, "end": 4.5, "speed": 0.5 }
+    { "file": "Video_Hero_without_watermark.mp4", "note": "Google Flow export (no watermark): beach with waves, transition, villa. Slowed to 0.75x as in the approved edit; BT.601 matrix converted to BT.709", "start": 0.0, "end": 10.0, "speed": 0.75, "inputMatrix": "bt601" }
   ],
-  "crossfade": 2.0,
+  "crossfade": 1.25,
   "fps": 24,
   "interpolation": "none",
+  "noUpscale": true,
+  "masterLossless": true,
   "output": {
     "videoDir": "videos",
-    "webm": true,
-    "vp9CpuUsed": 4,
+    "webm": false,
+    "_webm": "hero ships MP4 only: at matched quality (SSIM) VP9 was larger than H.264 on this clip",
+    "vp9CpuUsed": 3,
+    "colorTags": true,
     "imageDir": "images",
-    "desktop": { "name": "hero", "width": 1920, "height": 1080, "crf": 24, "maxrate": "4M", "bufsize": "8M", "webmCrf": 35, "sharpen": 0.3, "sizeCapMB": 8 },
-    "mobile": { "name": "hero-mobile", "width": 1280, "height": 720, "crf": 26, "maxrate": "1.5M", "bufsize": "3M", "webmCrf": 43, "sharpen": 0.3, "sizeCapMB": 3 },
-    "poster": { "name": "hero-poster", "jpgQuality": 72, "webpQuality": 70, "mobileWidth": 960 }
+    "desktop": { "name": "hero", "width": 1280, "height": 720, "crf": 18, "preset": "slow", "gop": 48, "webmCrf": 26, "sharpen": 0, "sizeCapMB": 15 },
+    "mobile": { "name": "hero-mobile", "width": 1280, "height": 720, "crf": 21, "preset": "slow", "gop": 48, "webmCrf": 30, "sharpen": 0, "sizeCapMB": 6 },
+    "poster": { "name": "hero-poster", "jpgQuality": 90, "webpQuality": 88, "mobileWidth": 960 }
   },
   "grade": {
+    "enabled": false,
     "referenceClip": 0,
     "exposure": 1.0,
     "matchBrightness": 0.8,
@@ -40,11 +44,13 @@
         { "file": "hero_image_changed.mp4", "note": "aerial over the shore", "start": 7.47, "end": 10.07, "speed": 1, "decimate": 5 }
       ],
       "crossfade": 0.6,
-      "grade": { "seamRampSeconds": 1.2 },
+      "fps": 24, "interpolation": "none", "noUpscale": false, "masterLossless": false,
+      "grade": { "enabled": true, "referenceClip": 0, "exposure": 1.0, "matchBrightness": 0.8, "matchColour": 0.85, "seamRampSeconds": 1.2, "deflickerAbove": 0.6, "final": { "contrast": 1.03, "saturation": 1.1, "gamma": 1.08 } },
       "output": {
-        "desktop": { "name": "shore", "width": 1920, "height": 1080, "crf": 25, "maxrate": "3M", "bufsize": "6M", "webmCrf": 36, "sharpen": 0, "sizeCapMB": 4 },
-        "mobile": { "name": "shore-mobile", "width": 1280, "height": 720, "crf": 27, "maxrate": "1.5M", "bufsize": "3M", "webmCrf": 40, "sharpen": 0, "sizeCapMB": 2 },
-        "poster": { "name": "shore-poster" }
+        "webm": true, "vp9CpuUsed": 4, "colorTags": false,
+        "desktop": { "name": "shore", "width": 1920, "height": 1080, "crf": 25, "preset": "medium", "gop": 0, "maxrate": "3M", "bufsize": "6M", "webmCrf": 36, "sharpen": 0, "sizeCapMB": 4 },
+        "mobile": { "name": "shore-mobile", "width": 1280, "height": 720, "crf": 27, "preset": "medium", "gop": 0, "maxrate": "1.5M", "bufsize": "3M", "webmCrf": 40, "sharpen": 0, "sizeCapMB": 2 },
+        "poster": { "name": "shore-poster", "jpgQuality": 72, "webpQuality": 70, "mobileWidth": 960 }
       }
     }
   }

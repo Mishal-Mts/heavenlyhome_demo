@@ -85,13 +85,20 @@ const raw = [];
 for (let i = 0; i < SEG.length; i++) {
   const s = SEG[i], out = join(TMP, `seg${i}.mkv`), speed = s.speed || 1;
   log(`clip ${i + 1}: ${s.path} ${s.start}-${s.end} s at ${speed}x`);
-  run(['-i', s.path, '-vf', `trim=${s.start}:${s.end},${s.decimate ? `decimate=cycle=${s.decimate},` : ''}setpts=(PTS-STARTPTS)/${speed},${speed === 1 || C.interpolation === 'none' ? `fps=${FPS}` : MI},scale=${W}:${H},setsar=1`, '-an', '-c:v', 'ffv1', out]);
+  run(['-i', s.path, '-vf', `trim=${s.start}:${s.end},${s.decimate ? `decimate=cycle=${s.decimate},` : ''}setpts=(PTS-STARTPTS)/${speed},${speed === 1 || C.interpolation === 'none' ? `fps=${FPS}` : MI},scale=${W}:${H}${s.inputMatrix ? `:in_color_matrix=${s.inputMatrix}:out_color_matrix=bt709` : ''},setsar=1`, '-an', '-c:v', 'ffv1', out]);
   let means = await measure(out); const fl = flicker(means), deflick = fl > (G.deflickerAbove ?? 0.6);
   if (deflick) { run(['-i', out, '-vf', 'deflicker=size=9:mode=pm', '-c:v', 'ffv1', join(TMP, `seg${i}d.mkv`)]); rmSync(out); renameSync(join(TMP, `seg${i}d.mkv`), out); means = await measure(out); }
   raw.push({ file: out, means, flicker: +fl.toFixed(2), deflick });
 }
 
 // ---------- 2) one look: match to the reference clip, then meet in the middle at every seam ----------
+// grade.enabled: false skips this whole step (no exposure, colour or seam changes) and the final grade
+const GRADE = G.enabled !== false;
+const nX = Math.max(1, Math.round(X * FPS));
+const graded = [];
+let seams = [];
+if (!GRADE) { for (const r of raw) graded.push(r.file); log('grading off: footage used as supplied'); }
+else {
 const ref = raw[G.referenceClip || 0].means, refL = ref.map(lumOf);
 const refRatio = [0, 1, 2].map(c => ref.reduce((a, m, i) => a + m[c] / refL[i], 0) / ref.length);
 const allL = raw.flatMap(r => r.means.map(lumOf)).sort((a, b) => a - b), TL = allL[Math.floor(allL.length / 2)];
@@ -100,9 +107,9 @@ const plans = raw.map(r => {
   return r.means.map((_, f) => { const gL = (TL / L[f]) ** (G.matchBrightness ?? 0.8);
     return [0, 1, 2].map(c => { const want = ratio[c][f] + (G.matchColour ?? 0.85) * (refRatio[c] - ratio[c][f]); return gL * want / ratio[c][f]; }); });
 });
-const nX = Math.max(1, Math.round(X * FPS)), nRamp = Math.max(nX + 1, Math.round((G.seamRampSeconds ?? 1.5) * FPS));
+const nRamp = Math.max(nX + 1, Math.round((G.seamRampSeconds ?? 1.5) * FPS));
 const winL = (k, a, b) => { let s = 0; for (let f = a; f < b; f++) s += lumOf(raw[k].means[f].map((v, c) => v * plans[k][f][c])); return s / (b - a); };
-const seams = SEG.map((_, a) => { const b = (a + 1) % SEG.length, na = raw[a].means.length, A = winL(a, na - nX, na), B = winL(b, 0, nX); return { a, b, A, B, mid: Math.sqrt(A * B) }; });
+seams = SEG.map((_, a) => { const b = (a + 1) % SEG.length, na = raw[a].means.length, A = winL(a, na - nX, na), B = winL(b, 0, nX); return { a, b, A, B, mid: Math.sqrt(A * B) }; });
 const ease = w => w * w * (3 - 2 * w);
 for (const s of seams) {
   const na = raw[s.a].means.length;
@@ -111,8 +118,8 @@ for (const s of seams) {
 }
 const EXPOSURE = G.exposure ?? 1; // overall lift in linear light; the soft shoulder keeps the sky from clipping
 for (const p of plans) for (const fr of p) for (let c = 0; c < 3; c++) fr[c] = Math.min(1.35, Math.max(0.75, fr[c])) * EXPOSURE;
-const graded = [];
 for (let k = 0; k < SEG.length; k++) { const out = join(TMP, `graded${k}.mkv`); log(`grade clip ${k + 1} ...`); await applyGains(raw[k].file, out, plans[k]); graded.push(out); }
+}
 
 // ---------- 3) loop + final grade ----------
 const durOf = p => +execFileSync(ffprobe, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', p]).toString().trim();
@@ -125,23 +132,27 @@ const fg = G.final || {};
 f += `;[${last}][a2]xfade=transition=fade:duration=${X}:offset=${off.toFixed(3)}[loop]`;
 // start one frame after the crossfade window so the last frame (first clip, fully faded in) leads straight into the first
 const T0 = X + 1 / FPS;
-f += `;[loop]trim=${T0.toFixed(4)}:${(off + T0).toFixed(4)},setpts=PTS-STARTPTS,eq=contrast=${fg.contrast ?? 1}:saturation=${fg.saturation ?? 1}:gamma=${fg.gamma ?? 1}[out]`;
+f += `;[loop]trim=${T0.toFixed(4)}:${(off + T0).toFixed(4)},setpts=PTS-STARTPTS${GRADE ? `,eq=contrast=${fg.contrast ?? 1}:saturation=${fg.saturation ?? 1}:gamma=${fg.gamma ?? 1}` : ''}[out]`;
 const master = join(TMP, 'master.mkv');
-run([...graded.flatMap(p => ['-i', p]), '-i', graded[0], '-filter_complex', f, '-map', '[out]', '-an', '-c:v', 'libx264', '-crf', '8', '-preset', 'medium', master], 'join clips, dissolves, final grade');
+run([...graded.flatMap(p => ['-i', p]), '-i', graded[0], '-filter_complex', f, '-map', '[out]', '-an', ...(C.masterLossless ? ['-c:v', 'ffv1', '-level', '3'] : ['-c:v', 'libx264', '-crf', '8', '-preset', 'medium']), master], 'join clips, dissolves' + (GRADE ? ', final grade' : ''));
 
 // ---------- 4) encodes, poster ----------
-const vf = o => `scale=${o.width}:${o.height}:flags=lanczos${o.width > W && o.sharpen ? `,unsharp=5:5:${o.sharpen}` : ''},setsar=1,format=yuv420p`;
+// noUpscale: an output is never larger than the source (it keeps the source size instead)
+const dims = o => C.noUpscale && o.width > W ? [W, H] : [o.width, o.height];
+const vf = o => { const [w, h] = dims(o); return `scale=${w}:${h}:flags=lanczos${w > W && o.sharpen ? `,unsharp=5:5:${o.sharpen}` : ''},setsar=1,format=yuv420p`; };
+const tags = O.colorTags ? ['-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv'] : [];
+const gopOf = o => o.gop ? ['-g', String(o.gop), '-keyint_min', String(Math.max(1, Math.round(o.gop / 2)))] : [];
 const outs = [];
 const OUTDIR = SAMPLE ? join(O.videoDir, '_sample') : O.videoDir; mkdirSync(OUTDIR, { recursive: true });
 const cut = SAMPLE ? ['-t', String(SAMPLE)] : [];
 for (const o of [O.desktop, O.mobile]) {
   const mp4 = join(OUTDIR, `${o.name}.mp4`), webm = join(OUTDIR, `${o.name}.webm`);
   const cap = o.maxrate ? ['-maxrate', o.maxrate, '-bufsize', o.bufsize || o.maxrate] : [];
-  run(['-i', master, ...cut, '-vf', vf(o), '-an', '-c:v', 'libx264', '-preset', o.preset || 'medium', '-crf', String(o.crf), ...cap, '-profile:v', 'high', '-movflags', '+faststart', mp4], `encode ${mp4}`);
+  run(['-i', master, ...cut, '-vf', vf(o), '-an', '-c:v', 'libx264', '-preset', o.preset || 'medium', '-crf', String(o.crf), ...cap, ...gopOf(o), '-profile:v', 'high', '-pix_fmt', 'yuv420p', ...tags, '-movflags', '+faststart', mp4], `encode ${mp4}`);
   outs.push([mp4, o.sizeCapMB]);
-  if (O.webm !== false) { run(['-i', master, ...cut, '-vf', vf(o), '-an', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(o.webmCrf), '-row-mt', '1', '-deadline', 'good', '-cpu-used', String(O.vp9CpuUsed ?? 4), webm], `encode ${webm}`); outs.push([webm, o.sizeCapMB]); }
+  if (O.webm !== false) { run(['-i', master, ...cut, '-vf', vf(o), '-an', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', String(o.webmCrf), '-row-mt', '1', '-deadline', 'good', '-cpu-used', String(O.vp9CpuUsed ?? 4), ...gopOf(o), '-pix_fmt', 'yuv420p', ...tags, webm], `encode ${webm}`); outs.push([webm, o.sizeCapMB]); }
 }
-if (SAMPLE) { for (const [p] of outs) log(`${p} ${(statSync(p).size / 1048576).toFixed(2)} MB for ${SAMPLE} s -> about ${(statSync(p).size / 1048576 / SAMPLE * (durOf(master))).toFixed(1)} MB for the full ${durOf(master).toFixed(1)} s loop`); rmSync(TMP, { recursive: true, force: true }); process.exit(0); }
+if (SAMPLE) { for (const [p] of outs) log(`${p} ${(statSync(p).size / 1048576).toFixed(2)} MB for ${SAMPLE} s -> about ${(statSync(p).size / 1048576 / SAMPLE * (durOf(master))).toFixed(1)} MB for the full ${durOf(master).toFixed(1)} s loop`); if (!process.env.KEEP_TMP) rmSync(TMP, { recursive: true, force: true }); process.exit(0); }
 const P = O.poster, png = join(TMP, 'poster.png');
 run(['-i', join(O.videoDir, `${O.desktop.name}.mp4`), '-frames:v', '1', png]);
 await sharp(png).jpeg({ quality: P.jpgQuality, mozjpeg: true, progressive: true }).toFile(join(O.imageDir, `${P.name}.jpg`));

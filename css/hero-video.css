@@ -26,9 +26,9 @@
 .hero--video .hero-media.is-playing .hero-video{opacity:1}
 /* headline and sub-copy fade out as the hero scrolls away (motion.js already lifts the copy) */
 .hero--video .hero-copy{opacity:var(--hv-copy,1)}
-/* phones and portrait tablets: framed right of centre so the opening shot shows the villa
-   together with the sea and beach (change this if a new video has its subject elsewhere) */
-@media(max-width:767px),(orientation:portrait){.hero--video{--hv-pos:66% 50%}}
+/* phones and portrait tablets: framed on the centre, where this video keeps the villa in its final scene
+   (change this if a new video has its subject elsewhere) */
+@media(max-width:767px),(orientation:portrait){.hero--video{--hv-pos:50% 50%}}
 /* ---------- overlay: directional and only as dark as the text needs ----------
    Values come from tools/measure-hero-overlay.mjs: with no overlay, the brightest 2% of video pixels behind each
    text element over the whole loop gives the minimum navy opacity for WCAG AA (headline 3:1, everything else 4.5:1).
@@ -44,7 +44,7 @@
 @media(min-width:960px){.hero--video .hero-copy .cap{max-width:68ch}}
 /* tablet: copy runs across the lower part, so the overlay rises from the bottom and stops above the eyebrow */
 @media(min-width:768px) and (max-width:959px){
- .hero.hero--video::after,.hero-panel .hero.hero--video::after{background:linear-gradient(0deg,rgba(7,26,38,.58) 0%,rgba(7,26,38,.56) 64%,rgba(7,26,38,.18) 76%,rgba(7,26,38,0) 88%)}
+ .hero.hero--video::after,.hero-panel .hero.hero--video::after{background:linear-gradient(0deg,rgba(7,26,38,.66) 0%,rgba(7,26,38,.64) 64%,rgba(7,26,38,.2) 76%,rgba(7,26,38,0) 88%)}
 }
 /* phones: the copy sits below the video on the page colour; only the lower half, where the eyebrow overlaps the
    video, gets a light veil (0.27: the eyebrow sits over the brighter right side of the opening shot), and the top of the video stays clear */
