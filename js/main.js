@@ -238,6 +238,7 @@ var ENDPOINTS=[];
   else addEventListener('load',probe);
   // walkthrough video: nothing loads until Play. YouTube (CONFIG.yt) wins over the MP4.
   var vb=$('#vbox'),vid=$('#vid'),vp=$('#vplay'),vf=$('#vfall');
+  if(vb&&vid&&vp){ // the player is optional: the page can show only the 360 preview
   // its still frame loads when the walkthrough comes near (or on Play), not at page load
   var poster=function(){var p=vid.getAttribute('data-poster');if(p&&!vid.getAttribute('poster'))vid.poster=p;};
   if('IntersectionObserver' in window){var io5=new IntersectionObserver(function(es){if(es[0].isIntersecting){io5.disconnect();poster();}},{rootMargin:'800px 0px'});io5.observe(vb);}else poster();
@@ -250,6 +251,7 @@ var ENDPOINTS=[];
     vid.preload='auto';var p=vid.play();
     if(p&&p.then){p.then(function(){vp.style.display='none';vid.controls=true;}).catch(vfail);}
   });
+  }
   // click-to-load map
   $('#mapbtn').addEventListener('click',function(){var b=$('#mapbox');$('svg',b).remove();this.remove();var f=document.createElement('iframe');f.title='Map: '+B+' location, Perinjanam Moonupedika';f.loading='lazy';f.referrerPolicy='no-referrer-when-downgrade';f.src=C.mapLink+(C.mapLink.indexOf('?')>-1?'&':'?')+'output=embed';b.appendChild(f);});
   $('#mapLink').href=C.mapLink;

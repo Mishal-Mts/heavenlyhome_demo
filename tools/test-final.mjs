@@ -69,10 +69,12 @@ for (const [label, viewport, mobile] of [['phone', { width: 390, height: 844 }, 
   check('map: "Load interactive map" swaps the sketch for the Google Maps iframe', /google\.com\/maps\?q=10\.298.*output=embed/.test(map), map.slice(0, 90));
   // video: no walkthrough.mp4 yet -> the friendly fallback appears
   await page.evaluate(() => window.lenis.scrollTo('#walkthrough', { immediate: true })); await page.waitForTimeout(1500);
-  const poster = await page.evaluate(() => document.getElementById('vid').getAttribute('poster') || '');
-  await page.click('#vplay'); await page.waitForTimeout(1500);
-  const vf = await page.evaluate(() => document.getElementById('vfall').classList.contains('on'));
-  check('video: still frame loads near the section; Play without a video file shows the "video tour" fallback', /walkthrough-poster/.test(poster) && vf, `poster ${poster}`);
+  if (await page.$('#vplay')) {
+    const poster = await page.evaluate(() => document.getElementById('vid').getAttribute('poster') || '');
+    await page.click('#vplay'); await page.waitForTimeout(1500);
+    const vf = await page.evaluate(() => document.getElementById('vfall').classList.contains('on'));
+    check('video: still frame loads near the section; Play without a video file shows the "video tour" fallback', /walkthrough-poster/.test(poster) && vf, `poster ${poster}`);
+  } else check('walkthrough: no video player on the page (360 preview only)', !(await page.$('#vid')));
   // 360 drag
   const box = await page.locator('#pano').boundingBox();
   const before = await page.evaluate(() => getComputedStyle(document.getElementById('panoIn')).transform);

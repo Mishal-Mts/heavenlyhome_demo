@@ -705,7 +705,11 @@ section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
 @media(min-width:1024px){.dv-stage{min-height:100svh}}
 .dv-media{position:absolute;inset:0;overflow:hidden;background:var(--deep)}
 .dv-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:50% 60%}
-.dv-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(7,26,38,.94) 0%,rgba(7,26,38,.62) 50%,rgba(7,26,38,.2) 100%);pointer-events:none}
+/* directional: strong only behind the copy (bottom-left), the rest of the aerial stays bright; text-shadow adds safety */
+.dv-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(7,26,38,.7) 0%,rgba(7,26,38,.44) 28%,rgba(7,26,38,.16) 52%,rgba(7,26,38,0) 68%),linear-gradient(90deg,rgba(7,26,38,.46) 0%,rgba(7,26,38,.2) 42%,rgba(7,26,38,0) 60%);pointer-events:none}
+.dv-copy h2,.dv-copy p,.dv-copy .eyebrow{text-shadow:0 0 2px rgba(7,26,38,.9),0 1px 3px rgba(7,26,38,.85),0 0 18px rgba(7,26,38,.7)}
+/* phones: the copy wraps taller, so the gradient reaches higher (still clear across the top of the aerial) */
+@media(max-width:767px){.dv-shade{background:linear-gradient(0deg,rgba(7,26,38,.76) 0%,rgba(7,26,38,.62) 45%,rgba(7,26,38,.52) 56%,rgba(7,26,38,0) 74%)}}
 .dv-copy{position:relative;z-index:2;width:100%;display:grid;padding-top:120px;padding-bottom:clamp(40px,7vw,84px)}
 .dv-step{grid-area:1/1;align-self:end}
 .dv h2{color:#fff;font-size:clamp(2.1rem,4.6vw,3.6rem);line-height:1.08;max-width:16ch;margin-bottom:18px}
@@ -901,3 +905,6 @@ section,.gulf{padding-top:var(--section-y);padding-bottom:var(--section-y)}
 }
 @media(prefers-reduced-motion:reduce){.sp,.sp::before,.sp-ic,.am-t,.am-t .ic,.am-t .ic::before{transition:none}}
 @media(min-width:620px) and (max-width:1023px){.sp-photo{aspect-ratio:21/9}}
+
+/* Walkthrough section without a video player: the 360 preview runs full width */
+#walkthrough .wt{grid-template-columns:1fr;max-width:1080px;margin:0 auto}
