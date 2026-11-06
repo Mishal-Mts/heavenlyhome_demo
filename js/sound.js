@@ -1,12 +1,12 @@
 /* Optional ambient ocean sound (Defender Villas).
    Off by default, no autoplay. The audio file is fetched only on the first tap of #sndBtn.
-   Web Audio loop: audio/ocean-loop.mp3 is a 26 s loop with 1 s pre-roll and 1 s post-roll, so the loop points
+   Web Audio loop: audio/ocean-waves-4.mp3 is a 57 s loop with 1 s pre-roll and 1 s post-roll, so the loop points
    (LOOP_START..LOOP_END) sit inside real audio and the loop stays seamless even if a decoder adds MP3 padding.
    Volume 0.25, ~1 s fades, pauses while the tab is hidden, choice remembered in localStorage.
    Undo: bash _backup_pre_sound/revert-sound.sh */
 (function () {
   'use strict';
-  var SRC = 'audio/ocean-loop.mp3?v=20261105', VOL = 0.25, FADE = 1, LOOP_START = 1, LOOP_END = 27, KEY = 'dv-sound';
+  var SRC = 'audio/ocean-waves-4.mp3?v=20261106', VOL = 0.25, FADE = 1, LOOP_START = 1, LOOP_END = 58, KEY = 'dv-sound';
   var btn = document.getElementById('sndBtn');
   var AC = window.AudioContext || window.webkitAudioContext;
   if (!btn || !AC) return;
