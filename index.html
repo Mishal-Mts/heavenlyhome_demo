@@ -42,6 +42,7 @@
 <script src="js/motion.js?v=20261104b" defer></script>
 <script src="js/hero-video.js?v=20261104b" defer></script>
 <script src="js/video-band.js?v=20261102" defer></script>
+<script src="js/sound.js?v=20261105b" defer></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -566,6 +567,8 @@
  </div>
 </div></footer>
 
+<!-- Optional ambient sound (js/sound.js, audio/ocean-loop.mp3). Off by default; undo: bash _backup_pre_sound/revert-sound.sh -->
+<button class="snd" id="sndBtn" type="button" aria-label="Ocean sound" aria-pressed="false" hidden><svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg><svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11"/></svg></button>
 <nav class="sticky" aria-label="Quick contact">
  <a class="s-wa" href="#enquire" data-needs="wa" data-wa="main" data-wt="Hi, I’m interested in {brand}" aria-label="Chat on WhatsApp" hidden><svg class="ico"><use href="#i-wa"/></svg></a>
  <a class="s-call" href="#enquire" data-needs="call" data-call="main" aria-label="Call us" hidden><svg class="ico"><use href="#i-phone"/></svg></a>
