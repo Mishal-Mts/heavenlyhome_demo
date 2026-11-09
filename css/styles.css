@@ -1426,3 +1426,13 @@ html[data-theme="b"] .cine .card .btn-teal:hover{background:var(--sea);color:#ff
 .dev .dev-md h3,.grp .gf h3,.gf h3{color:var(--champ)}
 /* fix: the plan card sits below the pinned villa scene; it must not take the scene cards' fixed height (it clipped "Ask for the plan") */
 #villas.is-pinned .v-plan .card{height:auto;flex-direction:column}
+/* ---- fly-over on phones (compact mode, js/top-view.js): whole view fitted, spotlight per step, captions swap ---- */
+.tvx-spot{position:absolute;inset:0;z-index:2;pointer-events:none;background:rgba(6,28,38,.55);opacity:0;transition:opacity .5s cubic-bezier(.22,1,.36,1),clip-path .8s cubic-bezier(.22,1,.36,1);clip-path:polygon(evenodd,0 0,100% 0,100% 100%,0 100%,0 0,0 0,100% 0,100% 100%,0 100%,0 0)}
+.tvx-spot.on{opacity:1}
+.tvx-compact .tvx-world,.tvx-compact .tvx-world3d{will-change:auto}
+.tvx-compact .tvx-world3d{border-radius:14px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.tvx-compact .tvx-view::after{display:none}
+.tvx-compact .tvx-card{opacity:0;transform:translate3d(0,14px,0);transition:opacity .45s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(6,28,38,.95);will-change:auto}
+.tvx-compact .tvx-card.on{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.tvx-spot,.tvx-compact .tvx-card{transition:none}}
+.tvx-compact .tvx-card{align-self:start}
