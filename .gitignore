@@ -1,2 +1,31 @@
 node_modules/
 .shots/
+
+# --- never commit (client review, 2026-11-09) ---
+# plan work: the 70 MB vector conversion, geometry, scripts
+plan-work/
+# client documents and raw PDFs
+images/Brochure_1/
+*.pdf
+# source renders (only the web exports in images/auto/ ship)
+images/site-3d.png
+images/site-plan-hires.png
+images/logo-defender-villas-sand.png
+# first-pass placeholder exports and the standalone plan copy, not used by the page
+images/auto/site-plan-*
+images/auto/site-topview.svg
+# source video and audio folders, other sources
+Videos_*/
+videos_1/
+audio_1/
+images/beach_image_2.jpg
+images/originals/image_10.jpeg
+# backups
+_backup*/
+# review material: screenshots, recordings, checklist, notes
+review-shots/
+client-review/
+REVIEW-ROUND2.md
+# tools and build configs (files already tracked on the remote stay tracked; their local changes are not committed)
+tools/
+top-view.config.json

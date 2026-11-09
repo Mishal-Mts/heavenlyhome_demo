@@ -140,12 +140,10 @@
   // Only CSS variables change. Every stop is dark enough for white text (checked in tools/check-contrast.mjs).
   var atm=$('.atmos');
   if(atm){
-    var SKY={ // [top, bottom, glow] from the brand palette: navy base, gold and red light
-      dawn:  ['#0d2638','#1b2a44','rgba(242,215,166,.14)'],
-      day:   ['#08303f','#0c4350','rgba(176,125,58,.16)'],
-      sunset:['#14213a','#36202e','rgba(209,0,28,.22)'],
-      dusk:  ['#071a26','#0f1d33','rgba(242,215,166,.10)']
-    };
+    // [top, bottom, glow]: read from the sea palette in css/styles.css (:root --sky-*), with these values as fallback
+    var SKY={dawn:['#0d2638','#123447','rgba(236,216,174,.14)'],day:['#08303f','#0c4a55','rgba(95,208,198,.12)'],sunset:['#0f2a3d','#173d4a','rgba(214,178,115,.18)'],dusk:['#071a26','#0f2433','rgba(236,216,174,.10)']};
+    var rootCS=getComputedStyle(document.documentElement);
+    for(var s in SKY)['top','bottom','glow'].forEach(function(p,i){var v=rootCS.getPropertyValue('--sky-'+s+'-'+p).trim();if(/^(#[0-9a-f]{6}|rgba?\()/i.test(v))SKY[s][i]=v;});
     var parse=function(c){var m=c.match(/[\d.]+/g);if(c[0]==='#'){var n=parseInt(c.slice(1),16);return [n>>16,n>>8&255,n&255,1];}return [+m[0],+m[1],+m[2],m[3]===undefined?1:+m[3]];};
     for(var k in SKY)SKY[k]=SKY[k].map(parse);
     var mix=function(a,b,t){return 'rgba('+[0,1,2].map(function(i){return Math.round(a[i]+(b[i]-a[i])*t);}).join(',')+','+(a[3]+(b[3]-a[3])*t).toFixed(3)+')';};
