@@ -1424,3 +1424,5 @@ html[data-theme="b"] .cine .card .btn-teal:hover{background:var(--sea);color:#ff
 .tv-proptag{font-size:.5px}
 /* review fix: two card headings on dark grounds still took the older white rule */
 .dev .dev-md h3,.grp .gf h3,.gf h3{color:var(--champ)}
+/* fix: the plan card sits below the pinned villa scene; it must not take the scene cards' fixed height (it clipped "Ask for the plan") */
+#villas.is-pinned .v-plan .card{height:auto;flex-direction:column}
